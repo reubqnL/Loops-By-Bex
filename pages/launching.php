@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+<body>
+<main>
+    <h1>Loops By Bex is launching soon</h1>
+    <p id="elapsed-time"></p>
 
-<h1 id="elapsed-time">Hello</h1>
+    <div class="waitlist">
+        <form>
+            <input type="email" placeholder="Your best email address">
+        </form>
+        <button class="joinWaitlist" onClick="joinWaitlist()">Join Waitlist</button>
+    </div>
+</main>
 
 <script>
     const launchDate = new Date("Oct 26, 2026 13:22:00").getTime();
@@ -32,5 +42,11 @@
 
     setInterval(updateElapsedTime, 1000);
 </script>
+<script>
+    function joinWaitlist() {
+        return null
+    }
+</script>
 
+</body>
 </html>
