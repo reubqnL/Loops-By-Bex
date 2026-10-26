@@ -1,6 +1,7 @@
 @import "global.css";
 h1 {
   font-family: "Original Surfer", sans-serif;
+  margin-bottom: 0.5rem;
 }
 
 html, body {
@@ -20,6 +21,11 @@ body {
   box-sizing: border-box;
 }
 
+p {
+  font-family: "Original Surfer", sans-serif;
+  margin-bottom: 0.5rem;
+}
+
 main {
   display: flex;
   flex-direction: column;
@@ -29,6 +35,26 @@ main {
   max-width: 600px;
   /* auto margins center it vertically when there's space, flows from the top if the screen is too short */
   margin: auto;
+}
+
+.waitlist {
+  display: flex;
+  gap: 1rem;
+}
+.waitlist input, .waitlist button {
+  border: none;
+  width: 18vw;
+  height: 3.5vh;
+  text-align: center;
+  border-radius: 25px;
+}
+.waitlist button {
+  background-color: #f59ff1;
+  border: none;
+  cursor: pointer;
+}
+.waitlist button:hover {
+  transform: translate(1px, 1px);
 }
 
 footer {
