@@ -20,6 +20,9 @@
             <input type="email" name="email" placeholder="Your best email address" required>
             <button type="submit" class="joinWaitlist">Join The Waitlist</button>
         </form>
+        <p class="privacy-notice">
+            We respect your privacy. Unsubscribe at any time. Read our <a href="privacy.php">Privacy Policy</a>.
+        </p>
     </div>
 </main>
 
@@ -39,15 +42,13 @@
 
     function updateElapsedTime() {
         const now = new Date().getTime();
-
-        const difference = now - launchDate;
+        const difference = launchDate - now;
 
         if (difference < 0) {
             document.getElementById("elapsed-time").innerHTML = "00d 00h 00m 00s";
             return;
         }
 
-        // absolute math without capping days into weeks/months
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
@@ -60,7 +61,6 @@
     }
 
     updateElapsedTime();
-
     setInterval(updateElapsedTime, 1000);
 </script>
 
