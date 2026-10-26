@@ -91,6 +91,14 @@ footer svg {
   display: block;
 }
 
+.privacy {
+  text-decoration: none;
+  color: purple;
+}
+.privacy:hover {
+  color: #e087dc;
+}
+
 /* PRIVACY POLICY - for now */
 .privacy-body {
   height: auto !important;

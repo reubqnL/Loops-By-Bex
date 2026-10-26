@@ -26,7 +26,8 @@
     <p>We take the security of your data seriously. Your email is securely transmitted and stored using encrypted database connections.</p>
 
     <h2>4. Unsubscribing & Data Removal</h2>
-    <p>You can request to have your email removed from our database at any time.</p>
+    <p>You can request to have your email removed from our database at any time by emailing:
+        <a href="mailto:cheethamdev@reubenc.com?subject=Privacy%20Request" class="privacy">cheethamdev@reubenc.com</a>.</p>
 
     <div class="back-home">
         <a href="launching.php">&larr; Back to Home</a>

@@ -103,6 +103,15 @@ footer {
   }
 }
 
+.privacy {
+  text-decoration: none;
+  color: purple;
+
+  &:hover {
+    color: #e087dc;
+  }
+}
+
 /* PRIVACY POLICY - for now */
 
 .privacy-body {
