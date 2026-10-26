@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 92" fill="none">
+  <defs>
+    <clipPath id="yarnLeft">
+      <circle cx="76" cy="34" r="20"/>
+    </clipPath>
+    <clipPath id="yarnRight">
+      <circle cx="122" cy="34" r="20"/>
+    </clipPath>
+  </defs>
+  <path d="M18 14v38h23" stroke="#182038" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g clip-path="url(#yarnLeft)">
+    <circle cx="76" cy="34" r="20" fill="#ff9f1c"/>
+    <path d="M52 24c12-10 30-10 46 2" stroke="#ff3b7f" stroke-width="7"/>
+    <path d="M50 32c14-9 32-9 50 4" stroke="#ff5c8a" stroke-width="6"/>
+    <path d="M52 42c16-6 32-4 46 8" stroke="#ffd166" stroke-width="6.5"/>
+    <path d="M64 12c-8 14-8 30 4 46" stroke="#182038" stroke-width="2.6"/>
+    <path d="M74 11c-7 15-7 31 5 47" stroke="#182038" stroke-width="2.6"/>
+    <path d="M84 13c-6 14-5 29 6 44" stroke="#182038" stroke-width="2.4"/>
+  </g>
+  <circle cx="76" cy="34" r="20" stroke="#182038" stroke-width="3.5"/>
+  <g clip-path="url(#yarnRight)">
+    <circle cx="122" cy="34" r="20" fill="#2ec4b6"/>
+    <path d="M98 24c14-10 32-8 48 4" stroke="#80ed99" stroke-width="7"/>
+    <path d="M98 34c16-8 34-6 48 6" stroke="#38b000" stroke-width="6"/>
+    <path d="M100 44c16-6 32-3 46 8" stroke="#3a86ff" stroke-width="7"/>
+    <path d="M110 12c-7 14-7 30 5 46" stroke="#182038" stroke-width="2.6"/>
+    <path d="M120 11c-7 15-6 31 6 47" stroke="#182038" stroke-width="2.6"/>
+    <path d="M130 13c-6 14-5 29 6 44" stroke="#182038" stroke-width="2.4"/>
+  </g>
+  <circle cx="122" cy="34" r="20" stroke="#182038" stroke-width="3.5"/>
+  <path d="M156 52V15h14c8 0 13 4.5 13 11s-5 11-13 11h-14" stroke="#182038" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M219 20c-3-4-8-5.5-14-5.5-8 0-13 3.8-13 9.2 0 11 28 6.8 28 19.3 0 6.2-6 10.2-15 10.2-6.8 0-12.2-2.2-15.5-6" stroke="#182038" stroke-width="9" stroke-linecap="round"/>
+  <path d="M225 68l22-41c1.8-3.3 5.2-4.2 6.8-1.5 1.1 1.9-.4 4.4-2.8 5.2" stroke="#182038" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36 62c28 5 64-5 92-3" stroke="#182038" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="1 0" opacity="0.25"/>
+  <text x="128" y="81" text-anchor="middle" font-family="'Outfit', cursive, sans-serif" font-style="italic" font-weight="600" font-size="23" fill="#182038" letter-spacing="0.4">by Bex</text>
+</svg>
