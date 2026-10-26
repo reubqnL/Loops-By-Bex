@@ -4,15 +4,28 @@ h1 {
 }
 
 body {
-  background: url("../assets/launching.jpeg") lightpink fixed;
-  background-size: auto;
+  background-image: url("../assets/launching.webp");
+  background-color: #f9e9ee;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+footer svg {
+  max-width: 20px;
 }
 
 /*# sourceMappingURL=launching.css.map */
