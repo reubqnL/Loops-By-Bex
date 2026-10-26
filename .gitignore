@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Environment variables (Secrets)
+.env
+*.env
+
+# IDE / Editor configurations
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+
+# Operating System files
+.DS_Store
