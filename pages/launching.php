@@ -16,10 +16,10 @@
     <p id="elapsed-time"></p>
 
     <div class="waitlist">
-        <form>
-            <input type="email" placeholder="Your best email address">
+        <form action="process-waitlist.php" method="POST">
+            <input type="email" name="email" placeholder="Your best email address" required>
+            <button type="submit" class="joinWaitlist">Join The Waitlist</button>
         </form>
-        <button class="joinWaitlist" onClick="joinWaitlist()">Join The Waitlist</button>
     </div>
 </main>
 
@@ -62,11 +62,6 @@
     updateElapsedTime();
 
     setInterval(updateElapsedTime, 1000);
-</script>
-<script>
-    function joinWaitlist() {
-        return null
-    }
 </script>
 
 </body>
