@@ -1,0 +1,32 @@
+# Protect your .env configuration file from direct web access
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect system files and dotfiles
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent direct access to composer configuration files
+<FilesMatch "^(composer\.json|composer\.lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable directory browsing (prevents users from seeing your folder file lists)
+Options -Indexes
+
+# Enable HTTP Security Headers
+<IfModule mod_headers.c>
+    # Protect against MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+
+    # Enable XSS protection in legacy browsers
+    Header set X-XSS-Protection "1; mode=block"
+
+    # Prevent clickjacking by restricting framing
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
