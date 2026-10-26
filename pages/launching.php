@@ -19,7 +19,7 @@
 
     <div class="waitlist">
         <form action="../process-waitlist.php" method="POST">
-            <input type="email" name="email" placeholder="Your best email address" required>
+            <input type="email" name="email" placeholder="Your best email address" required oninvalid="invalidData(this)" oninput="this.setCustomValidity('')">
             <button type="submit" class="joinWaitlist">Join The Waitlist</button>
         </form>
         <p class="privacy-notice">
@@ -65,6 +65,12 @@
 
     updateElapsedTime();
     setInterval(updateElapsedTime, 1000);
+</script>
+
+<script>
+    function invalidData() {
+        return "Enter data"
+    }
 </script>
 
 </body>
