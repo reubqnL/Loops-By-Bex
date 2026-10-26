@@ -1,3 +1,16 @@
+<?php
+session_start();
+
+// if they didn't come through the form, kick them back to launching.php :D
+if (!isset($_SESSION['access_granted']) || $_SESSION['access_granted'] !== true) {
+    header("Location: launching.php");
+    exit();
+}
+
+// clear the ticket so they can't refresh or bookmark the page later
+unset($_SESSION['access_granted']);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
