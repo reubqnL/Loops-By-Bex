@@ -38,6 +38,8 @@ main {
 
   width: 100%;
   max-width: 600px;
+
+  /* auto margins center it vertically when there's space, flows from the top if the screen is too short */
   margin: auto;
 }
 
@@ -67,8 +69,11 @@ main {
     border-radius: 25px;
     font-family: inherit;
     font-size: 1rem;
-    height: 48px;
+    height: 50px;
+    line-height: 50px;
     text-align: center;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   input[type="email"] {
@@ -78,6 +83,14 @@ main {
     padding: 0 1.25rem;
     background: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: block;
+
+    &::placeholder {
+      font-family: "Original Surfer", sans-serif;
+      color: #777777;
+      text-align: center;
+      opacity: 1;
+    }
 
     &:focus {
       outline: 2px solid #e087dc;
@@ -146,7 +159,7 @@ footer {
   }
 }
 
-/* PRIVACY POLICY PAGE - for now... */
+/* PRIVACY POLICY - for now */
 
 .privacy-body {
   height: auto !important;
