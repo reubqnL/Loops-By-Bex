@@ -5,15 +5,17 @@ h1 {
 }
 
 html, body {
-  height: 100%;
+  min-height: 100vh;
   margin: 0;
 }
 
 body {
   background-image: url("../assets/launching.webp");
   background-color: #f9e9ee;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   min-height: 100vh;
-  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,7 +35,6 @@ main {
   justify-content: center;
   width: 100%;
   max-width: 600px;
-  /* auto margins center it vertically when there's space, flows from the top if the screen is too short */
   margin: auto;
 }
 
@@ -46,25 +47,53 @@ main {
 }
 .waitlist form {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
   width: 100%;
+  max-width: 480px;
+  /* Stack input and button vertically on smaller mobile screens */
+}
+@media (max-width: 520px) {
+  .waitlist form {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 .waitlist input, .waitlist button {
   border: none;
-  width: 18vw;
-  height: 3.5vh;
-  text-align: center;
+  box-sizing: border-box;
   border-radius: 25px;
+  font-family: inherit;
+  font-size: 1rem;
+  height: 48px;
+  text-align: center;
+}
+.waitlist input[type=email] {
+  flex: 1;
+  min-width: 220px;
+  width: 100%;
+  padding: 0 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.waitlist input[type=email]:focus {
+  outline: 2px solid #e087dc;
 }
 .waitlist button {
+  width: auto;
+  min-width: 140px;
+  padding: 0 1.5rem;
   background-color: #f59ff1;
-  border: none;
   cursor: pointer;
   transition: all 0.2s ease;
 }
+@media (max-width: 520px) {
+  .waitlist button {
+    width: 100%;
+  }
+}
 .waitlist button:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 .waitlist button:active {
@@ -99,7 +128,7 @@ footer svg {
   color: #e087dc;
 }
 
-/* PRIVACY POLICY - for now */
+/* PRIVACY POLICY PAGE - for now... */
 .privacy-body {
   height: auto !important;
   min-height: 100vh;
@@ -107,10 +136,12 @@ footer svg {
 }
 
 .privacy-main {
+  width: 90%;
   max-width: 700px;
-  margin: 3rem auto;
-  padding: 2.5rem;
-  background-color: rgba(255, 255, 255, 0.65);
+  margin: 2rem auto;
+  padding: 2rem;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.85);
   border-radius: 25px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   text-align: left;
@@ -118,9 +149,20 @@ footer svg {
   flex-direction: column;
   align-items: flex-start !important;
 }
+@media (max-width: 480px) {
+  .privacy-main {
+    padding: 1.25rem;
+    margin: 1rem auto;
+  }
+}
 .privacy-main h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 0.25rem;
+}
+@media (max-width: 480px) {
+  .privacy-main h1 {
+    font-size: 1.5rem;
+  }
 }
 .privacy-main h2 {
   font-family: "Original Surfer", sans-serif;
@@ -134,6 +176,7 @@ footer svg {
   line-height: 1.6;
   margin-bottom: 0.75rem;
   color: #444;
+  word-break: break-word;
 }
 .privacy-main .last-updated {
   font-size: 0.85rem;
