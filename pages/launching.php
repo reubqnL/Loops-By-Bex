@@ -70,7 +70,7 @@
 <script>
     function invalidData(inputElement) {
         if (inputElement.value.trim() === "") {
-            inputElement.setCustomValidity("Please enter an email address before joining!");
+            inputElement.setCustomValidity("Enter a valid email");
         } else {
             inputElement.setCustomValidity("Please enter a valid email address!");
         }
