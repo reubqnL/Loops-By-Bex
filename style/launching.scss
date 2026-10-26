@@ -13,11 +13,13 @@ body {
   background-image: url("../assets/launching.webp");
   background-color: #f9e9ee;
   min-height: 100vh;
+  margin: 0;
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
 main {
@@ -28,11 +30,23 @@ main {
 
   width: 100%;
   max-width: 600px;
-  padding: 1rem;
+
+  /* auto margins center it vertically when there's space, flows from the top if the screen is too short */
+  margin: auto;
 }
 
 footer {
+  font-family: "Original Surfer", sans-serif;
+  text-align: center;
+  margin-top: 2rem;
+
+  a {
+    display: inline-block;
+  }
+
   svg {
-    max-width: 20px;
+    width: 30px;
+    height: 30px;
+    display: block;
   }
 }
