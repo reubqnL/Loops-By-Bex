@@ -1,4 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<h1>Test</h1>
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
+</head>
+
 </html>
