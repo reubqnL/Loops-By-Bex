@@ -57,12 +57,16 @@ main {
     background-color: #f59ff1;
     border: none;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 
     &:hover {
-
-      transform: scale(1.03)
+      transform: scale(1.05);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    &:active {
+      transform: scale(0.98);
+      background-color: #e087dc;
     }
   }
 }
