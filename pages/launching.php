@@ -68,8 +68,12 @@
 </script>
 
 <script>
-    function invalidData() {
-        return "Enter data"
+    function invalidData(inputElement) {
+        if (inputElement.value.trim() === "") {
+            inputElement.setCustomValidity("Please enter an email address before joining!");
+        } else {
+            inputElement.setCustomValidity("Please enter a valid email address!");
+        }
     }
 </script>
 
