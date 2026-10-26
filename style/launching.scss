@@ -55,7 +55,6 @@ main {
     width: 100%;
     max-width: 480px;
 
-    /* Stack input and button vertically on smaller mobile screens */
     @media (max-width: 520px) {
       flex-direction: column;
       align-items: center;
@@ -82,6 +81,13 @@ main {
 
     &:focus {
       outline: 2px solid #e087dc;
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px white inset !important;
+      -webkit-text-fill-color: #000000 !important;
     }
   }
 
