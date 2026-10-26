@@ -91,4 +91,58 @@ footer svg {
   display: block;
 }
 
+/* PRIVACY POLICY - for now */
+.privacy-body {
+  height: auto !important;
+  min-height: 100vh;
+  display: block !important;
+}
+
+.privacy-main {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background-color: rgba(255, 255, 255, 0.65);
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start !important;
+}
+.privacy-main h1 {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+.privacy-main h2 {
+  font-family: "Original Surfer", sans-serif;
+  font-size: 1.15rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.4rem;
+  color: #333;
+}
+.privacy-main p {
+  font-family: "Original Surfer", sans-serif;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+  color: #444;
+}
+.privacy-main .last-updated {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin-bottom: 1.5rem;
+}
+.privacy-main .back-home {
+  margin-top: 2rem;
+}
+.privacy-main .back-home a {
+  font-family: "Original Surfer", sans-serif;
+  color: #000;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+.privacy-main .back-home a:hover {
+  color: #e087dc;
+}
+
 /*# sourceMappingURL=launching.css.map */
