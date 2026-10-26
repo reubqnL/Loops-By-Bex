@@ -3,3 +3,15 @@
 h1 {
   font-family: "Original Surfer", sans-serif;
 }
+
+body {
+  background: url("../assets/launching.jpeg") lightpink fixed;
+  background-size: auto;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
