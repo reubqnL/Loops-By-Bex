@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 210" fill="none">
+  <defs>
+    <linearGradient id="bannerBg" x1="0" y1="0" x2="640" y2="210" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fde8f1"/>
+      <stop offset="55%" stop-color="#fbdbe9"/>
+      <stop offset="100%" stop-color="#fdeaf2"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="210" rx="22" fill="url(#bannerBg)"/>
+  <circle cx="585" cy="36" r="52" fill="#ffffff" opacity="0.35"/>
+  <circle cx="58" cy="38" r="36" fill="#ffffff" opacity="0.3"/>
+  <line x1="128" y1="54" x2="148" y2="60" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+  <line x1="122" y1="74" x2="144" y2="74" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+  <line x1="130" y1="94" x2="149" y2="87" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+  <line x1="518" y1="74" x2="534" y2="62" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+  <line x1="532" y1="88" x2="548" y2="79" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+  <g transform="translate(46, 108)">
+    <circle cx="40" cy="40" r="34" fill="#f9bfd6" stroke="#d63d79" stroke-width="3"/>
+    <path d="M12 28c16-12 38-12 56 2" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M9 40c18-11 42-10 62 4" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M14 53c18-8 36-6 53 6" stroke="#d63d79" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M28 10c-9 18-8 38 6 58" stroke="#d63d79" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M42 8c-8 19-7 40 7 61" stroke="#d63d79" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M55 12c-7 17-6 35 6 52" stroke="#d63d79" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <path d="M118 164c38 16 74-14 114-2 42 12 88 22 146 8 54-13 94 12 138 4" stroke="#d63d79" stroke-width="3" stroke-linecap="round"/>
+  <path d="M562 178c-22-16-38-34-38-51 0-12 9-21 20-21 8 0 15 5 18 12 3-7 10-12 18-12 11 0 20 9 20 21 0 17-16 35-38 51z" fill="#fbd2e3" stroke="#d63d79" stroke-width="3.2" stroke-linejoin="round"/>
+  <line x1="494" y1="142" x2="509" y2="145" stroke="#d63d79" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="496" y1="157" x2="511" y2="155" stroke="#d63d79" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="332" y="84" text-anchor="middle" font-family="'Outfit', sans-serif" font-style="italic" font-weight="600" font-size="37" fill="#c83771">From my hook to</text>
+  <text x="332" y="128" text-anchor="middle" font-family="'Outfit', sans-serif" font-style="italic" font-weight="600" font-size="37" fill="#c83771">your heart</text>
+</svg>
