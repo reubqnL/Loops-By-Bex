@@ -1,6 +1,6 @@
 @import "global.css";
 h1 {
-  font-family: "Original Surfer", sans-serif;
+  font-family: "Outfit", sans-serif;
   margin-bottom: 0.5rem;
   text-align: center;
 }
@@ -25,7 +25,7 @@ body {
 }
 
 p {
-  font-family: "Original Surfer", sans-serif;
+  font-family: "Outfit", sans-serif;
   margin-bottom: 0.5rem;
 }
 
@@ -82,7 +82,7 @@ main {
   display: block;
 }
 .waitlist input[type=email]::placeholder {
-  font-family: "Original Surfer", sans-serif;
+  font-family: "Outfit", sans-serif;
   color: #777777;
   text-align: center;
   opacity: 1;
@@ -101,6 +101,7 @@ main {
   background-color: #f59ff1;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: "Outfit", sans-serif;
 }
 @media (max-width: 520px) {
   .waitlist button {
@@ -122,7 +123,7 @@ main {
 }
 
 footer {
-  font-family: "Original Surfer", sans-serif;
+  font-family: "Outfit", sans-serif;
   text-align: center;
   margin-top: 2rem;
 }
@@ -180,14 +181,14 @@ footer svg {
   }
 }
 .privacy-main h2 {
-  font-family: "Original Surfer", sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 1.15rem;
   margin-top: 1.5rem;
   margin-bottom: 0.4rem;
   color: #333;
 }
 .privacy-main p {
-  font-family: "Original Surfer", sans-serif;
+  font-family: "Outfit", sans-serif;
   line-height: 1.6;
   margin-bottom: 0.75rem;
   color: #444;
@@ -202,7 +203,7 @@ footer svg {
   margin-top: 2rem;
 }
 .privacy-main .back-home a {
-  font-family: "Original Surfer", sans-serif;
+  font-family: "Outfit", sans-serif;
   color: #000;
   text-decoration: underline;
   transition: color 0.2s ease;
