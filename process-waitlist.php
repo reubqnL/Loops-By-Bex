@@ -1,6 +1,7 @@
 <?php
 // boilerplate
 
+session_start();
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,11 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO waitlist (email) VALUES (:email)");
             $stmt->execute(['email' => $email]);
 
+            // grant permission to view launchingty.php
+            $_SESSION['access_granted'] = true;
+
             header("Location: launchingty.php?status=success");
             exit();
 
         } catch (PDOException $e) {
             if ($e->getCode() === '23000') {
+                // also grant permission so they can see the "already registered" message
+                $_SESSION['access_granted'] = true;
                 header("Location: launchingty.php?status=already_registered");
             } else {
                 header("Location: launchingty.php?status=error");
