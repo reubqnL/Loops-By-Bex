@@ -1,23 +1,31 @@
-# Protect your .env configuration file from direct web access
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Silently serve pages/launching.php when visiting loopsbybex.co.uk or www.loopsbybex.co.uk
+RewriteCond %{HTTP_HOST} ^(www\.)?loopsbybex\.co\.uk$ [NC]
+RewriteCond %{REQUEST_URI} ^/?$
+RewriteRule ^$ pages/launching.php [L]
+
+# Disable directory browsing (prevents users from seeing folder file lists)
+Options -Indexes
+
+# Protect .env configuration file
 <Files .env>
     Order allow,deny
     Deny from all
 </Files>
 
-# Protect system files and dotfiles
-<FilesMatch "^\.">
+# Protect system dotfiles (excluding .htaccess)
+<FilesMatch "^\.(?!htaccess)">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Prevent direct access to composer configuration files
+# Prevent direct access to composer files
 <FilesMatch "^(composer\.json|composer\.lock)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
-
-# Disable directory browsing (prevents users from seeing your folder file lists)
-Options -Indexes
 
 # Enable HTTP Security Headers
 <IfModule mod_headers.c>
