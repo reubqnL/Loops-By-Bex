@@ -52,9 +52,11 @@ main {
   background-color: #f59ff1;
   border: none;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 .waitlist button:hover {
-  transform: translate(1px, 1px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 footer {
