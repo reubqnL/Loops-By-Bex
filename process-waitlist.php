@@ -13,22 +13,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO waitlist (email) VALUES (:email)");
             $stmt->execute(['email' => $email]);
 
-            header("Location: landingty.php?status=success");
+            header("Location: launchingty.php?status=success");
             exit();
 
         } catch (PDOException $e) {
             if ($e->getCode() === '23000') {
-                header("Location: landingty.php?status=already_registered");
+                header("Location: launchingty.php?status=already_registered");
             } else {
-                header("Location: landingty.php?status=error");
+                header("Location: launchingty.php?status=error");
             }
             exit();
         }
     } else {
-        header("Location: landingty.php?status=invalid_email");
+        header("Location: launchingty.php?status=invalid_email");
         exit();
     }
 } else {
-    header("Location: landing.php");
+    header("Location: launching.php");
     exit();
 }
