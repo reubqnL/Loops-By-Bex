@@ -3,6 +3,8 @@
 <head>
     <meta name="viewport" content="width=device-width" initial-scale="1.0">
 
+    <title>Launching Soon! | Loops By Bex</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
@@ -21,7 +23,7 @@
             <button type="submit" class="joinWaitlist">Join The Waitlist</button>
         </form>
         <p class="privacy-notice">
-            We respect your privacy. Unsubscribe at any time. Read our <a href="privacy.php">Privacy Policy</a>.
+            We respect your privacy. Unsubscribe at any time. Read our <a href="privacy.php" class="privacy">Privacy Policy</a>.
         </p>
     </div>
 </main>
@@ -42,7 +44,8 @@
 
     function updateElapsedTime() {
         const now = new Date().getTime();
-        const difference = launchDate - now;
+
+        const difference = now - launchDate;
 
         if (difference < 0) {
             document.getElementById("elapsed-time").innerHTML = "00d 00h 00m 00s";
