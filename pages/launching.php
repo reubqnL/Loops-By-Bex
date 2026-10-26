@@ -16,7 +16,7 @@
     <p id="elapsed-time"></p>
 
     <div class="waitlist">
-        <form action="process-waitlist.php" method="POST">
+        <form action="../process-waitlist.php" method="POST">
             <input type="email" name="email" placeholder="Your best email address" required>
             <button type="submit" class="joinWaitlist">Join The Waitlist</button>
         </form>
