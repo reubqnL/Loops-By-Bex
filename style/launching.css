@@ -3,6 +3,11 @@ h1 {
   font-family: "Original Surfer", sans-serif;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   background-image: url("../assets/launching.webp");
   background-color: #f9e9ee;
@@ -21,7 +26,6 @@ main {
   width: 100%;
   max-width: 600px;
   padding: 1rem;
-  box-sizing: border-box;
 }
 
 footer svg {
