@@ -1,0 +1,47 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# 1. Redirect direct requests for /pages/something.php or /something.php to clean /something
+RewriteCond %{THE_REQUEST} \s/pages/([^\s\.]+)\.php [NC]
+RewriteRule ^pages/([^\s\.]+)$ /%1 [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/([^\s\.]+)\.php [NC]
+RewriteRule ^([^\s\.]+)$ /%1 [R=301,L]
+
+# 2. Silently serve pages/launching.php when visiting the homepage root
+RewriteCond %{HTTP_HOST} ^(www\.)?loopsbybex\.co\.uk$ [NC]
+RewriteCond %{REQUEST_URI} ^/?$
+RewriteRule ^$ pages/launching.php [L]
+
+# 3. Map extensionless URLs (like /privacy or /launching) to pages/*.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
+RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L]
+
+# Disable directory browsing
+Options -Indexes
+
+# Protect .env configuration file
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect system dotfiles (excluding .htaccess)
+<FilesMatch "^\.(?!htaccess)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent direct access to composer files
+<FilesMatch "^(composer\.json|composer\.lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Enable HTTP Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>

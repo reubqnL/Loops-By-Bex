@@ -1,0 +1,236 @@
+@import "global.css";
+
+h1 {
+  font-family: "Outfit", sans-serif;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+html, body {
+  min-height: 100vh;
+  margin: 0;
+}
+
+body {
+  background-image: url("../assets/launching.webp");
+  background-color: #f9e9ee;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+p {
+  font-family: "Outfit", sans-serif;
+  margin-bottom: 0.5rem;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 600px;
+
+  /* auto margins center it vertically when there's space, flows from the top if the screen is too short */
+  margin: auto;
+}
+
+.waitlist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+
+  form {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    width: 100%;
+    max-width: 480px;
+
+    @media (max-width: 520px) {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  input, button {
+    border: none;
+    box-sizing: border-box;
+    border-radius: 25px;
+    font-family: inherit;
+    font-size: 1rem;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="email"] {
+    flex: 1;
+    min-width: 220px;
+    width: 100%;
+    padding: 0 1.25rem;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: block;
+
+    &::placeholder {
+      font-family: "Outfit", sans-serif;
+      color: #777777;
+      text-align: center;
+      opacity: 1;
+    }
+
+    &:focus {
+      outline: 2px solid #e087dc;
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px white inset !important;
+      -webkit-text-fill-color: #000000 !important;
+    }
+  }
+
+  button {
+    width: auto;
+    min-width: 140px;
+    padding: 0 1.5rem;
+    background-color: #f59ff1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Outfit", sans-serif;
+
+    @media (max-width: 520px) {
+      width: 100%;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    &:active {
+      transform: scale(0.98);
+      background-color: #e087dc;
+    }
+  }
+
+  .privacy-notice {
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 0.25rem;
+  }
+}
+
+footer {
+  font-family: "Outfit", sans-serif;
+  text-align: center;
+  margin-top: 2rem;
+
+  a {
+    display: inline-block;
+  }
+
+  svg {
+    width: 30px;
+    height: 30px;
+    display: block;
+  }
+}
+
+.privacy {
+  text-decoration: none;
+  color: purple;
+
+  &:hover {
+    color: #e087dc;
+  }
+}
+
+/* PRIVACY POLICY - for now */
+
+.privacy-body {
+  height: auto !important;
+  min-height: 100vh;
+  display: block !important;
+}
+
+.privacy-main {
+  width: 90%;
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start !important;
+
+  @media (max-width: 480px) {
+    padding: 1.25rem;
+    margin: 1rem auto;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.25rem;
+
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  h2 {
+    font-family: "Outfit", sans-serif;
+    font-size: 1.15rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.4rem;
+    color: #333;
+  }
+
+  p {
+    font-family: "Outfit", sans-serif;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    color: #444;
+    word-break: break-word;
+  }
+
+  .last-updated {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .back-home {
+    margin-top: 2rem;
+
+    a {
+      font-family: "Outfit", sans-serif;
+      color: #000;
+      text-decoration: underline;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #e087dc;
+      }
+    }
+  }
+}
