@@ -24,7 +24,7 @@
             <button type="submit" class="joinWaitlist">Join The Waitlist</button>
         </form>
         <p class="privacy-notice">
-            We respect your privacy. Unsubscribe at any time. Read our <a href="privacy.php" class="privacy">Privacy Policy</a>.
+            We respect your privacy. Unsubscribe at any time. Read our <a href="/pages/privacy.php" class="privacy">Privacy Policy</a>.
         </p>
     </div>
 </main>
