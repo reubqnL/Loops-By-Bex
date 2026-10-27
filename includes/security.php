@@ -89,8 +89,12 @@ function send_security_headers(string $appEnv = 'production'): void
         return;
     }
 
+    $isDev = strtolower($appEnv) === 'development';
+
     header('X-Content-Type-Options: nosniff');
-    header('X-Frame-Options: SAMEORIGIN');
+    if (!$isDev) {
+        header('X-Frame-Options: SAMEORIGIN');
+    }
     header('Referrer-Policy: strict-origin-when-cross-origin');
     header('Permissions-Policy: geolocation=(), microphone=(), camera=(), usb=(), payment=(self "https://js.stripe.com" "https://checkout.stripe.com")');
     header(
@@ -103,11 +107,11 @@ function send_security_headers(string $appEnv = 'production'): void
         . "connect-src 'self' https://api.stripe.com; "
         . "frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; "
         . "base-uri 'self'; "
-        . "form-action 'self' https://checkout.stripe.com; "
-        . "frame-ancestors 'self';"
+        . "form-action 'self' https://checkout.stripe.com;"
+        . ($isDev ? '' : " frame-ancestors 'self';")
     );
 
-    if (is_https_request() && strtolower($appEnv) === 'production') {
+    if (is_https_request() && !$isDev) {
         header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
     }
 }
