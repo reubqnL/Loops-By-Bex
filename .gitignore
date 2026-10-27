@@ -1,17 +1,18 @@
-# Dependencies
 node_modules/
 vendor/
 
-# Environment variables (Secrets)
 .env
 *.env
+!.env.example
 
-# IDE / Editor configurations
+storage/*.sqlite
+storage/*.log
+*.css.map
+
 .idea/
 .vscode/
 *.suo
 *.ntvs*
 *.njsproj
 
-# Operating System files
 .DS_Store
