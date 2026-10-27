@@ -1,14 +1,13 @@
 <?php
 session_start();
 
-// If they didn't come through the form, kick them back to launching.php
+// If they didn't come through the form, kick them back to the clean launching route
 if (!isset($_SESSION['access_granted']) || $_SESSION['access_granted'] !== true) {
-    header("Location: launching.php");
+    header("Location: /launching");
     exit();
 }
 
 // Clear the ticket so they can't refresh or bookmark the page later
-unset($_SESSION['access_granted']);
 
 $status = $_GET['status'] ?? '';
 ?>
