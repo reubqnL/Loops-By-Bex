@@ -14,23 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute(['email' => $email]);
 
             $_SESSION['access_granted'] = true;
-            header("Location: pages/launchingty.php?status=success");
+            header("Location: /launchingty?status=success");
             exit();
 
         } catch (PDOException $e) {
             if ($e->getCode() === '23000') {
                 $_SESSION['access_granted'] = true;
-                header("Location: pages/launchingty.php?status=already_registered");
+                header("Location: /launchingty?status=already_registered");
             } else {
-                header("Location: pages/launching.php?status=error");
+                header("Location: /launching?status=error");
             }
             exit();
         }
     } else {
-        header("Location: pages/launching.php?status=invalid_email");
+        header("Location: /launching?status=invalid_email");
         exit();
     }
 } else {
-    header("Location: pages/launching.php");
+    header("Location: /launching");
     exit();
 }
