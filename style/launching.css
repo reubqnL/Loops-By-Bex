@@ -1,17 +1,21 @@
-@import "global.css";
-h1 {
-  font-family: "Outfit", sans-serif;
-  margin-bottom: 0.5rem;
-  text-align: center;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-html, body {
+html,
+body {
   min-height: 100vh;
   margin: 0;
+  font-family: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #221d2d;
 }
 
 body {
-  background-image: url("../assets/launching.webp");
+  background-image: url("/assets/launching.webp");
   background-color: #f9e9ee;
   background-position: center;
   background-size: cover;
@@ -21,7 +25,12 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 2rem 1rem;
-  box-sizing: border-box;
+}
+
+h1 {
+  font-family: "Outfit", sans-serif;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 p {
@@ -36,8 +45,24 @@ main {
   justify-content: center;
   width: 100%;
   max-width: 600px;
-  /* auto margins center it vertically when there's space, flows from the top if the screen is too short */
   margin: auto;
+}
+
+.status-banner {
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+.status-banner.status-warning {
+  background-color: #fff4e5;
+  color: #7c4a03;
+}
+.status-banner.status-error {
+  background-color: #fdecea;
+  color: #8f1d2c;
 }
 
 .waitlist {
@@ -60,7 +85,8 @@ main {
     align-items: center;
   }
 }
-.waitlist input, .waitlist button {
+.waitlist input,
+.waitlist button {
   border: none;
   box-sizing: border-box;
   border-radius: 25px;
@@ -78,29 +104,31 @@ main {
   width: 100%;
   padding: 0 1.25rem;
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   display: block;
 }
 .waitlist input[type=email]::placeholder {
   font-family: "Outfit", sans-serif;
-  color: #777777;
+  color: #6b6375;
   text-align: center;
   opacity: 1;
 }
 .waitlist input[type=email]:focus {
-  outline: 2px solid #e087dc;
+  outline: 2px solid #d03874;
 }
 .waitlist input[type=email]:-webkit-autofill, .waitlist input[type=email]:-webkit-autofill:hover, .waitlist input[type=email]:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px white inset !important;
-  -webkit-text-fill-color: #000000 !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #221d2d !important;
 }
 .waitlist button {
   width: auto;
-  min-width: 140px;
+  min-width: 155px;
   padding: 0 1.5rem;
-  background-color: #f59ff1;
+  background-color: #d03874;
+  color: #ffffff;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   font-family: "Outfit", sans-serif;
 }
 @media (max-width: 520px) {
@@ -110,11 +138,11 @@ main {
 }
 .waitlist button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  background-color: #b52b62;
+  box-shadow: 0 8px 20px rgba(208, 56, 116, 0.22);
 }
 .waitlist button:active {
   transform: scale(0.98);
-  background-color: #e087dc;
 }
 .waitlist .privacy-notice {
   font-size: 0.85rem;
@@ -127,6 +155,10 @@ footer {
   text-align: center;
   margin-top: 2rem;
 }
+footer h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.45rem;
+}
 footer a {
   display: inline-block;
 }
@@ -137,79 +169,9 @@ footer svg {
 }
 
 .privacy {
-  text-decoration: none;
-  color: purple;
+  text-decoration: underline;
+  color: #8f1d58;
 }
 .privacy:hover {
-  color: #e087dc;
+  color: #d03874;
 }
-
-/* PRIVACY POLICY - for now */
-.privacy-body {
-  height: auto !important;
-  min-height: 100vh;
-  display: block !important;
-}
-
-.privacy-main {
-  width: 90%;
-  max-width: 700px;
-  margin: 2rem auto;
-  padding: 2rem;
-  box-sizing: border-box;
-  background-color: rgba(255, 255, 255, 0.85);
-  border-radius: 25px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start !important;
-}
-@media (max-width: 480px) {
-  .privacy-main {
-    padding: 1.25rem;
-    margin: 1rem auto;
-  }
-}
-.privacy-main h1 {
-  font-size: 1.8rem;
-  margin-bottom: 0.25rem;
-}
-@media (max-width: 480px) {
-  .privacy-main h1 {
-    font-size: 1.5rem;
-  }
-}
-.privacy-main h2 {
-  font-family: "Outfit", sans-serif;
-  font-size: 1.15rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.4rem;
-  color: #333;
-}
-.privacy-main p {
-  font-family: "Outfit", sans-serif;
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-  color: #444;
-  word-break: break-word;
-}
-.privacy-main .last-updated {
-  font-size: 0.85rem;
-  opacity: 0.6;
-  margin-bottom: 1.5rem;
-}
-.privacy-main .back-home {
-  margin-top: 2rem;
-}
-.privacy-main .back-home a {
-  font-family: "Outfit", sans-serif;
-  color: #000;
-  text-decoration: underline;
-  transition: color 0.2s ease;
-}
-.privacy-main .back-home a:hover {
-  color: #e087dc;
-}
-
-/*# sourceMappingURL=launching.css.map */
