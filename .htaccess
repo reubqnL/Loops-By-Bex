@@ -1,13 +1,13 @@
 # Enable Rewrite Engine
 RewriteEngine On
 
-# Redirect external .php requests to extensionless URLs (prevents duplicate content)
+# Redirect external .php requests to extensionless URLs
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,7}\s+/pages/([^\s\.]+)\.php [NC]
 RewriteRule ^pages/([^\s\.]+)\.php$ /%1 [R=301,L]
 
-# Internally map clean URLs to files inside the pages folder
+# Map clean URLs to files inside the pages folder (matching /launching to pages/launching.php)
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
 RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L]
 
 # Silently serve pages/launching.php when visiting loopsbybex.co.uk or www.loopsbybex.co.uk
