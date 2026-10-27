@@ -1,0 +1,43 @@
+### Ensure line endings are handled correctly across OS platforms
+
+* text=auto
+
+### Treat common web assets as binary data to prevent corruption
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.pdf binary 
+
+### Exclude package managers and lockfiles from GitHub language statistics
+
+package-lock.json linguist-vendored
+yarn.lock linguist-vendored
+pnpm-lock.yaml linguist-vendored
+bun.lockb linguist-vendored 
+
+### Exclude dependency and local build folders from GitHub language statistics
+
+node_modules/ linguist-vendored
+.next/ linguist-vendored
+.nuxt/ linguist-vendored
+.svelte-kit/ linguist-vendored
+dist/ linguist-vendored
+build/ linguist-vendored
+out/ linguist-vendored
+coverage/ linguist-vendored 
+
+### Override common extensions that GitHub Linguist frequently misidentifies as 'Hack'
+
+*.hh linguist-language=HTML
+*.php linguist-language=PHP
+*.html linguist-language=HTML
+*.js linguist-language=JavaScript
+*.ts linguist-language=TypeScript
