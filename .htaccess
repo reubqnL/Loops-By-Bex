@@ -1,47 +1,63 @@
-# Enable Rewrite Engine
+# Loops By Bex — Production Apache (.htaccess) Configuration (Apache 2.4+ / IONOS)
+Options -Indexes -MultiViews
 RewriteEngine On
 
-# 1. Redirect direct requests for /pages/something.php or /something.php to clean /something
-RewriteCond %{THE_REQUEST} \s/pages/([^\s\.]+)\.php [NC]
-RewriteRule ^pages/([^\s\.]+)$ /%1 [R=301,L]
+ErrorDocument 404 /pages/404.php
 
-RewriteCond %{THE_REQUEST} \s/([^\s\.]+)\.php [NC]
-RewriteRule ^([^\s\.]+)$ /%1 [R=301,L]
-
-# 2. Silently serve pages/launching.php when visiting the homepage root
+# 1. Enforce HTTPS and canonical non-www on the live domain (proxy-aware for IONOS SSL)
 RewriteCond %{HTTP_HOST} ^(www\.)?loopsbybex\.co\.uk$ [NC]
-RewriteCond %{REQUEST_URI} ^/?$
-RewriteRule ^$ pages/launching.php [L]
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+RewriteRule ^ https://loopsbybex.co.uk%{REQUEST_URI} [R=301,L]
 
-# 3. Map extensionless URLs (like /privacy or /launching) to pages/*.php
+RewriteCond %{HTTP_HOST} ^www\.loopsbybex\.co\.uk$ [NC]
+RewriteRule ^ https://loopsbybex.co.uk%{REQUEST_URI} [R=301,L]
+
+# 2. Block direct HTTP access to internal PHP modules, SQL schemas, Composer vendor, SCSS, and internal wireframes
+RewriteRule ^(config\.php|includes(/.*)?|partials(/.*)?|database(/.*)?|vendor(/.*)?|storage(/.*)?|assets/wireframe\.png)$ - [F,L,NC]
+RewriteRule \.(scss|map|sql|sqlite)$ - [F,L,NC]
+
+# 3. Optional server-level 301 redirects once you permanently delete the waitlist files:
+# RewriteRule ^(pages/)?(launching|launchingty)(\.php)?$ / [R=301,L,QSD]
+# RewriteRule ^process-waitlist(\.php)?$ / [R=301,L,QSD]
+
+# 4. Canonicalize /index and /pages/index.php to / (GET/HEAD only)
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$ [NC]
+RewriteCond %{THE_REQUEST} \s/(pages/)?index(\.php)?[\s?] [NC]
+RewriteRule ^(pages/)?index(\.php)?$ / [R=301,L]
+
+# 5. Redirect direct GET/HEAD requests for /pages/something.php to clean /something
+#    (Restricted to GET/HEAD and /pages/* so POST endpoints like /cart-action.php,
+#     /process-waitlist.php, and /webhook-stripe.php never lose their POST body)
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$ [NC]
+RewriteCond %{THE_REQUEST} \s/pages/([a-zA-Z0-9_-]+)\.php[\s?] [NC]
+RewriteRule ^pages/([a-zA-Z0-9_-]+)\.php$ /%1 [R=301,L]
+
+# 6. Serve the homepage at / (APP_LAUNCHING_MODE in .env controls live vs launching mode)
+RewriteRule ^$ pages/index.php [L,QSA]
+
+# 7. Map clean extensionless URLs (e.g. /shop, /about, /order-confirmation, /privacy) to pages/*.php
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
-RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L]
+RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L,QSA]
 
-# Disable directory browsing
-Options -Indexes
-
-# Protect .env configuration file
-<Files .env>
-    Order allow,deny
-    Deny from all
-</Files>
-
-# Protect system dotfiles (excluding .htaccess)
-<FilesMatch "^\.(?!htaccess)">
-    Order allow,deny
-    Deny from all
+# 8. Protect dotfiles (.env, .env.*, .git*), Composer manifests, and LICENSE
+<FilesMatch "^(\.(?!htaccess)|composer\.(json|lock)|LICENSE)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
 
-# Prevent direct access to composer files
-<FilesMatch "^(composer\.json|composer\.lock)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Enable HTTP Security Headers
+# 9. HTTP Security Headers (paired with CSP & HSTS in includes/security.php)
 <IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-XSS-Protection "1; mode=block"
-    Header set X-Frame-Options "SAMEORIGIN"
+    Header always unset X-Powered-By
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), usb=(), payment=(self \"https://js.stripe.com\" \"https://checkout.stripe.com\")"
 </IfModule>
