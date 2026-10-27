@@ -19,8 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } catch (PDOException $e) {
             if ($e->getCode() === '23000') {
-                $_SESSION['access_granted'] = true;
-                header("Location: /launchingty?status=already_registered");
+                header("Location: /launching?status=already_registered");
             } else {
                 header("Location: /launching?status=error");
             }

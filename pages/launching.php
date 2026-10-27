@@ -18,6 +18,17 @@
     <h1>Loops By Bex is launching soon</h1>
     <p id="elapsed-time"></p>
 
+    <?php
+    $status = $_GET['status'] ?? '';
+    if ($status === 'already_registered'):
+        ?>
+        <p style="color: #ff9800; font-weight: bold;">You are already on the waitlist!</p>
+    <?php elseif ($status === 'invalid_email'): ?>
+        <p style="color: #f44336; font-weight: bold;">Please enter a valid email address.</p>
+    <?php elseif ($status === 'error'): ?>
+        <p style="color: #f44336; font-weight: bold;">Something went wrong. Please try again.</p>
+    <?php endif; ?>
+
     <div class="waitlist">
         <form action="/process-waitlist.php" method="POST">
             <input type="email" name="email" placeholder="Your best email address" required oninvalid="invalidData(this)" oninput="this.setCustomValidity('')">
@@ -45,7 +56,6 @@
 
     function updateElapsedTime() {
         const now = new Date().getTime();
-
         const difference = now - launchDate;
 
         if (difference < 0) {
