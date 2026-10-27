@@ -1,21 +1,24 @@
 # Enable Rewrite Engine
 RewriteEngine On
 
-# Redirect external .php requests to extensionless URLs
-RewriteCond %{THE_REQUEST} ^[A-Z]{3,7}\s+/pages/([^\s\.]+)\.php [NC]
-RewriteRule ^pages/([^\s\.]+)\.php$ /%1 [R=301,L]
+# 1. Redirect direct requests for /pages/something.php or /something.php to clean /something
+RewriteCond %{THE_REQUEST} \s/pages/([^\s\.]+)\.php [NC]
+RewriteRule ^pages/([^\s\.]+)$ /%1 [R=301,L]
 
-# Map clean URLs to files inside the pages folder (matching /launching to pages/launching.php)
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
-RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L]
+RewriteCond %{THE_REQUEST} \s/([^\s\.]+)\.php [NC]
+RewriteRule ^([^\s\.]+)$ /%1 [R=301,L]
 
-# Silently serve pages/launching.php when visiting loopsbybex.co.uk or www.loopsbybex.co.uk
+# 2. Silently serve pages/launching.php when visiting the homepage root
 RewriteCond %{HTTP_HOST} ^(www\.)?loopsbybex\.co\.uk$ [NC]
 RewriteCond %{REQUEST_URI} ^/?$
 RewriteRule ^$ pages/launching.php [L]
 
-# Disable directory browsing (prevents users from seeing folder file lists)
+# 3. Map extensionless URLs (like /privacy or /launching) to pages/*.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
+RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L]
+
+# Disable directory browsing
 Options -Indexes
 
 # Protect .env configuration file
@@ -38,12 +41,7 @@ Options -Indexes
 
 # Enable HTTP Security Headers
 <IfModule mod_headers.c>
-    # Protect against MIME type sniffing
     Header set X-Content-Type-Options "nosniff"
-
-    # Enable XSS protection in legacy browsers
     Header set X-XSS-Protection "1; mode=block"
-
-    # Prevent clickjacking by restricting framing
     Header set X-Frame-Options "SAMEORIGIN"
 </IfModule>

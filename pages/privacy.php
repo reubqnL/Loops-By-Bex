@@ -30,7 +30,7 @@
         <a href="mailto:cheethamdev@reubenc.com?subject=Privacy%20Request" class="privacy">cheethamdev@reubenc.com</a>.</p>
 
     <div class="back-home">
-        <a href="launching.php">&larr; Back to Home</a>
+        <a href="/launching">&larr; Back to Home</a>
     </div>
 </main>
 </body>
