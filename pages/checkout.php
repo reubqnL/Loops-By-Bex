@@ -177,38 +177,44 @@ require_once __DIR__ . '/../partials/header.php';
         </div>
 
         <?php if (!empty($errors['general'])): ?>
-            <div class="flash-banner flash-error" style="margin-bottom: 1.25rem;">
+            <div class="flash-banner flash-error" role="alert" style="margin-bottom: 1.25rem;">
                 <?php echo e($errors['general']); ?>
             </div>
         <?php endif; ?>
 
         <div class="two-col-panel">
-            <form action="/checkout" method="POST" class="panel-card" novalidate>
+            <form action="/checkout" method="POST" class="panel-card" novalidate aria-label="Checkout delivery details">
                 <input type="hidden" name="idempotency_key" value="<?php echo e($idempotencyKey); ?>">
 
                 <h2>Delivery Information</h2>
                 <div class="form-grid">
                     <div class="form-field">
-                        <label for="customer_name">Full Name *</label>
-                        <input type="text" id="customer_name" name="customer_name" required maxlength="140" autocomplete="name" value="<?php echo e($values['customer_name']); ?>">
+                        <label for="customer_name">Full Name <span aria-hidden="true">*</span></label>
+                        <input type="text" id="customer_name" name="customer_name" required maxlength="140" autocomplete="name"
+                               value="<?php echo e($values['customer_name']); ?>"
+                               <?php echo isset($errors['customer_name']) ? 'aria-invalid="true" aria-describedby="err-customer-name"' : ''; ?>>
                         <?php if (isset($errors['customer_name'])): ?>
-                            <small style="color: #8f1d35;"><?php echo e($errors['customer_name']); ?></small>
+                            <small id="err-customer-name" role="alert" style="color: #8f1d35;"><?php echo e($errors['customer_name']); ?></small>
                         <?php endif; ?>
                     </div>
 
                     <div class="form-field">
-                        <label for="customer_email">Email Address *</label>
-                        <input type="email" id="customer_email" name="customer_email" required maxlength="254" autocomplete="email" value="<?php echo e($values['customer_email']); ?>">
+                        <label for="customer_email">Email Address <span aria-hidden="true">*</span></label>
+                        <input type="email" id="customer_email" name="customer_email" required maxlength="254" autocomplete="email"
+                               value="<?php echo e($values['customer_email']); ?>"
+                               <?php echo isset($errors['customer_email']) ? 'aria-invalid="true" aria-describedby="err-customer-email"' : ''; ?>>
                         <?php if (isset($errors['customer_email'])): ?>
-                            <small style="color: #8f1d35;"><?php echo e($errors['customer_email']); ?></small>
+                            <small id="err-customer-email" role="alert" style="color: #8f1d35;"><?php echo e($errors['customer_email']); ?></small>
                         <?php endif; ?>
                     </div>
 
                     <div class="form-field field-full">
-                        <label for="shipping_line1">Address Line 1 *</label>
-                        <input type="text" id="shipping_line1" name="shipping_line1" required maxlength="180" autocomplete="address-line1" value="<?php echo e($values['shipping_line1']); ?>">
+                        <label for="shipping_line1">Address Line 1 <span aria-hidden="true">*</span></label>
+                        <input type="text" id="shipping_line1" name="shipping_line1" required maxlength="180" autocomplete="address-line1"
+                               value="<?php echo e($values['shipping_line1']); ?>"
+                               <?php echo isset($errors['shipping_line1']) ? 'aria-invalid="true" aria-describedby="err-shipping-line1"' : ''; ?>>
                         <?php if (isset($errors['shipping_line1'])): ?>
-                            <small style="color: #8f1d35;"><?php echo e($errors['shipping_line1']); ?></small>
+                            <small id="err-shipping-line1" role="alert" style="color: #8f1d35;"><?php echo e($errors['shipping_line1']); ?></small>
                         <?php endif; ?>
                     </div>
 
@@ -218,18 +224,22 @@ require_once __DIR__ . '/../partials/header.php';
                     </div>
 
                     <div class="form-field">
-                        <label for="shipping_city">Town / City *</label>
-                        <input type="text" id="shipping_city" name="shipping_city" required maxlength="100" autocomplete="address-level2" value="<?php echo e($values['shipping_city']); ?>">
+                        <label for="shipping_city">Town / City <span aria-hidden="true">*</span></label>
+                        <input type="text" id="shipping_city" name="shipping_city" required maxlength="100" autocomplete="address-level2"
+                               value="<?php echo e($values['shipping_city']); ?>"
+                               <?php echo isset($errors['shipping_city']) ? 'aria-invalid="true" aria-describedby="err-shipping-city"' : ''; ?>>
                         <?php if (isset($errors['shipping_city'])): ?>
-                            <small style="color: #8f1d35;"><?php echo e($errors['shipping_city']); ?></small>
+                            <small id="err-shipping-city" role="alert" style="color: #8f1d35;"><?php echo e($errors['shipping_city']); ?></small>
                         <?php endif; ?>
                     </div>
 
                     <div class="form-field">
-                        <label for="shipping_postcode">Postcode (UK) *</label>
-                        <input type="text" id="shipping_postcode" name="shipping_postcode" required maxlength="10" autocomplete="postal-code" value="<?php echo e($values['shipping_postcode']); ?>">
+                        <label for="shipping_postcode">Postcode (UK) <span aria-hidden="true">*</span></label>
+                        <input type="text" id="shipping_postcode" name="shipping_postcode" required maxlength="10" autocomplete="postal-code"
+                               value="<?php echo e($values['shipping_postcode']); ?>"
+                               <?php echo isset($errors['shipping_postcode']) ? 'aria-invalid="true" aria-describedby="err-shipping-postcode"' : ''; ?>>
                         <?php if (isset($errors['shipping_postcode'])): ?>
-                            <small style="color: #8f1d35;"><?php echo e($errors['shipping_postcode']); ?></small>
+                            <small id="err-shipping-postcode" role="alert" style="color: #8f1d35;"><?php echo e($errors['shipping_postcode']); ?></small>
                         <?php endif; ?>
                     </div>
 

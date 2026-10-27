@@ -46,7 +46,8 @@ require_once __DIR__ . '/../partials/header.php';
                     <input type="hidden" name="action" value="add">
                     <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
                     <input type="hidden" name="return_to" value="/cart">
-                    <input type="number" name="quantity" value="1" min="1" max="<?php echo (int) min(10, (int) $product['stock_qty']); ?>">
+                    <label for="product-quantity" class="sr-only">Quantity for <?php echo e($product['name']); ?></label>
+                    <input type="number" id="product-quantity" name="quantity" value="1" min="1" max="<?php echo (int) min(10, (int) $product['stock_qty']); ?>" aria-label="Quantity">
                     <button type="submit" class="btn btn-primary">Add to Cart &rarr;</button>
                 </form>
             </div>

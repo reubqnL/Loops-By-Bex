@@ -59,8 +59,9 @@ require_once __DIR__ . '/../partials/header.php';
                                 <input type="hidden" name="action" value="update">
                                 <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
                                 <input type="hidden" name="return_to" value="/cart">
-                                <input type="number" name="quantity" value="<?php echo (int) $line['quantity']; ?>" min="0" max="10">
-                                <button type="submit" class="btn btn-soft-pink btn-sm">Update</button>
+                                <label for="qty-<?php echo e($item['slug']); ?>" class="sr-only">Quantity for <?php echo e($item['name']); ?></label>
+                                <input type="number" id="qty-<?php echo e($item['slug']); ?>" name="quantity" value="<?php echo (int) $line['quantity']; ?>" min="0" max="10">
+                                <button type="submit" class="btn btn-soft-pink btn-sm" aria-label="Update quantity for <?php echo e($item['name']); ?>">Update</button>
                             </form>
 
                             <div style="text-align: right;">
@@ -69,7 +70,7 @@ require_once __DIR__ . '/../partials/header.php';
                                     <input type="hidden" name="action" value="remove">
                                     <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
                                     <input type="hidden" name="return_to" value="/cart">
-                                    <button type="submit" class="text-arrow-link" style="background: none; border: none; cursor: pointer; font-size: 0.82rem;">Remove</button>
+                                    <button type="submit" class="text-arrow-link" style="background: none; border: none; cursor: pointer; font-size: 0.82rem;" aria-label="Remove <?php echo e($item['name']); ?> from cart">Remove</button>
                                 </form>
                             </div>
                         </div>

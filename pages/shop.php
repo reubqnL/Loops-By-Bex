@@ -39,9 +39,10 @@ require_once __DIR__ . '/../partials/header.php';
         </div>
 
         <div class="filter-bar">
-            <div class="category-pills">
+            <nav class="category-pills" aria-label="Product categories">
                 <a href="/shop<?php echo $searchQuery !== '' ? '?q=' . urlencode($searchQuery) : ''; ?>"
-                   class="category-pill<?php echo $selectedCategory === '' ? ' is-active' : ''; ?>">
+                   class="category-pill<?php echo $selectedCategory === '' ? ' is-active' : ''; ?>"
+                   <?php echo $selectedCategory === '' ? 'aria-current="page"' : ''; ?>>
                     All Items
                 </a>
                 <?php foreach ($categories as $cat): ?>
@@ -50,13 +51,15 @@ require_once __DIR__ . '/../partials/header.php';
                     if ($searchQuery !== '') {
                         $catParams['q'] = $searchQuery;
                     }
+                    $isSelectedCat = strcasecmp($selectedCategory, $cat) === 0;
                     ?>
                     <a href="/shop?<?php echo e(http_build_query($catParams)); ?>"
-                       class="category-pill<?php echo strcasecmp($selectedCategory, $cat) === 0 ? ' is-active' : ''; ?>">
+                       class="category-pill<?php echo $isSelectedCat ? ' is-active' : ''; ?>"
+                       <?php echo $isSelectedCat ? 'aria-current="page"' : ''; ?>>
                         <?php echo e($cat); ?>
                     </a>
                 <?php endforeach; ?>
-            </div>
+            </nav>
 
             <?php if ($searchQuery !== '' || $selectedCategory !== ''): ?>
                 <a href="/shop" class="text-arrow-link">Clear filters &times;</a>
@@ -86,8 +89,8 @@ require_once __DIR__ . '/../partials/header.php';
                             <input type="hidden" name="action" value="add">
                             <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
                             <input type="hidden" name="return_to" value="<?php echo e($returnUrl); ?>">
-                            <button type="submit" class="btn btn-primary">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                     <circle cx="9" cy="20" r="1.5"></circle>
                                     <circle cx="18" cy="20" r="1.5"></circle>
                                     <path d="M2.5 3h2.7l2.2 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21.5 7H6.2"></path>

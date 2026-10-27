@@ -63,43 +63,50 @@ require_once __DIR__ . '/../partials/header.php';
         <div class="two-col-panel">
             <section class="panel-card">
                 <?php if ($submitted): ?>
-                    <div class="flash-banner flash-success" style="margin-bottom: 1.25rem;">
+                    <div class="flash-banner flash-success" role="status" aria-live="polite" style="margin-bottom: 1.25rem;">
                         Thank you for your message! Bex will get back to you as soon as possible.
                     </div>
                 <?php endif; ?>
 
                 <h2>Send a Message</h2>
-                <form action="/contact" method="POST" novalidate>
+                <form action="/contact" method="POST" novalidate aria-label="Contact Loops By Bex">
                     <div class="form-grid">
                         <div class="form-field">
-                            <label for="contact_name">Your Name *</label>
-                            <input type="text" id="contact_name" name="name" required maxlength="120" autocomplete="name" value="<?php echo e($values['name']); ?>">
+                            <label for="contact_name">Your Name <span aria-hidden="true">*</span></label>
+                            <input type="text" id="contact_name" name="name" required maxlength="120" autocomplete="name"
+                                   value="<?php echo e($values['name']); ?>"
+                                   <?php echo isset($errors['name']) ? 'aria-invalid="true" aria-describedby="err-contact-name"' : ''; ?>>
                             <?php if (isset($errors['name'])): ?>
-                                <small style="color: #8f1d35;"><?php echo e($errors['name']); ?></small>
+                                <small id="err-contact-name" role="alert" style="color: #8f1d35;"><?php echo e($errors['name']); ?></small>
                             <?php endif; ?>
                         </div>
 
                         <div class="form-field">
-                            <label for="contact_email">Email Address *</label>
-                            <input type="email" id="contact_email" name="email" required maxlength="254" autocomplete="email" value="<?php echo e($values['email']); ?>">
+                            <label for="contact_email">Email Address <span aria-hidden="true">*</span></label>
+                            <input type="email" id="contact_email" name="email" required maxlength="254" autocomplete="email"
+                                   value="<?php echo e($values['email']); ?>"
+                                   <?php echo isset($errors['email']) ? 'aria-invalid="true" aria-describedby="err-contact-email"' : ''; ?>>
                             <?php if (isset($errors['email'])): ?>
-                                <small style="color: #8f1d35;"><?php echo e($errors['email']); ?></small>
+                                <small id="err-contact-email" role="alert" style="color: #8f1d35;"><?php echo e($errors['email']); ?></small>
                             <?php endif; ?>
                         </div>
 
                         <div class="form-field field-full">
-                            <label for="contact_subject">Subject *</label>
-                            <input type="text" id="contact_subject" name="subject" required maxlength="160" value="<?php echo e($values['subject']); ?>">
+                            <label for="contact_subject">Subject <span aria-hidden="true">*</span></label>
+                            <input type="text" id="contact_subject" name="subject" required maxlength="160"
+                                   value="<?php echo e($values['subject']); ?>"
+                                   <?php echo isset($errors['subject']) ? 'aria-invalid="true" aria-describedby="err-contact-subject"' : ''; ?>>
                             <?php if (isset($errors['subject'])): ?>
-                                <small style="color: #8f1d35;"><?php echo e($errors['subject']); ?></small>
+                                <small id="err-contact-subject" role="alert" style="color: #8f1d35;"><?php echo e($errors['subject']); ?></small>
                             <?php endif; ?>
                         </div>
 
                         <div class="form-field field-full">
-                            <label for="contact_message">Message *</label>
-                            <textarea id="contact_message" name="message" required maxlength="3000"><?php echo e($values['message']); ?></textarea>
+                            <label for="contact_message">Message <span aria-hidden="true">*</span></label>
+                            <textarea id="contact_message" name="message" required maxlength="3000"
+                                      <?php echo isset($errors['message']) ? 'aria-invalid="true" aria-describedby="err-contact-message"' : ''; ?>><?php echo e($values['message']); ?></textarea>
                             <?php if (isset($errors['message'])): ?>
-                                <small style="color: #8f1d35;"><?php echo e($errors['message']); ?></small>
+                                <small id="err-contact-message" role="alert" style="color: #8f1d35;"><?php echo e($errors['message']); ?></small>
                             <?php endif; ?>
                         </div>
                     </div>

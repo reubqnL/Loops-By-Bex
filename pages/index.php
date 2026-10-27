@@ -42,23 +42,37 @@ $heroSlides = [
         'is_h1' => false,
     ],
 ];
+$totalSlides = count($heroSlides);
 
 require_once __DIR__ . '/../partials/header.php';
 ?>
 
-<main class="site-main" id="main-content">
+<main class="site-main" id="main-content" tabindex="-1">
     <div class="site-container home-layout-grid">
         <div class="home-primary-col">
-            <section class="hero-carousel" data-carousel>
-                <button type="button" class="carousel-arrow carousel-prev" data-carousel-prev>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <section class="hero-carousel"
+                     data-carousel
+                     role="region"
+                     aria-roledescription="carousel"
+                     aria-label="Featured Loops By Bex highlights">
+                <div class="sr-only" data-carousel-liveregion aria-live="polite" aria-atomic="true"></div>
+
+                <button type="button" class="carousel-arrow carousel-prev" data-carousel-prev aria-label="Previous slide">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
 
                 <div class="hero-slides">
                     <?php foreach ($heroSlides as $index => $slide): ?>
-                        <div class="hero-slide<?php echo $index === 0 ? ' is-active' : ''; ?>" data-carousel-slide="<?php echo (int) $index; ?>">
+                        <?php $isActiveSlide = ($index === 0); ?>
+                        <div class="hero-slide<?php echo $isActiveSlide ? ' is-active' : ''; ?>"
+                             data-carousel-slide="<?php echo (int) $index; ?>"
+                             role="group"
+                             aria-roledescription="slide"
+                             aria-label="<?php echo ($index + 1) . ' of ' . $totalSlides; ?>"
+                             aria-hidden="<?php echo $isActiveSlide ? 'false' : 'true'; ?>"
+                             <?php echo $isActiveSlide ? '' : 'inert'; ?>>
                             <div class="hero-copy">
                                 <span class="hero-handwritten"><?php echo e($slide['tagline']); ?></span>
                                 <?php if ($slide['is_h1']): ?>
@@ -78,30 +92,34 @@ require_once __DIR__ . '/../partials/header.php';
                     <?php endforeach; ?>
                 </div>
 
-                <button type="button" class="carousel-arrow carousel-next" data-carousel-next>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button" class="carousel-arrow carousel-next" data-carousel-next aria-label="Next slide">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </button>
 
-                <div class="carousel-dots">
-                    <?php foreach ($heroSlides as $index => $_slide): ?>
-                        <button type="button" class="carousel-dot<?php echo $index === 0 ? ' is-active' : ''; ?>" data-carousel-dot="<?php echo (int) $index; ?>"></button>
+                <div class="carousel-dots" role="group" aria-label="Choose slide">
+                    <?php foreach ($heroSlides as $index => $slide): ?>
+                        <button type="button"
+                                class="carousel-dot<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                data-carousel-dot="<?php echo (int) $index; ?>"
+                                aria-label="Slide <?php echo (int) ($index + 1); ?>: <?php echo e($slide['heading']); ?>"
+                                <?php echo $index === 0 ? 'aria-current="true"' : ''; ?>></button>
                     <?php endforeach; ?>
                 </div>
             </section>
 
-            <section class="section-new-arrivals">
+            <section class="section-new-arrivals" aria-labelledby="new-arrivals-heading">
                 <div class="arrivals-header">
                     <div class="arrivals-title-group">
-                        <h2 class="sparkle-heading">
-                            <svg class="sparkle-rays" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                        <h2 class="sparkle-heading" id="new-arrivals-heading">
+                            <svg class="sparkle-rays" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false">
                                 <line x1="18" y1="5" x2="6" y2="2"></line>
                                 <line x1="18" y1="14" x2="3" y2="14"></line>
                                 <line x1="18" y1="23" x2="6" y2="26"></line>
                             </svg>
                             <span>New Arrivals</span>
-                            <svg class="sparkle-rays" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                            <svg class="sparkle-rays" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false">
                                 <line x1="6" y1="5" x2="18" y2="2"></line>
                                 <line x1="6" y1="14" x2="21" y2="14"></line>
                                 <line x1="6" y1="23" x2="18" y2="26"></line>
@@ -110,15 +128,15 @@ require_once __DIR__ . '/../partials/header.php';
                         <p class="section-subtitle">Freshly made, just for you</p>
                     </div>
                     <div class="arrivals-action">
-                        <a href="/shop" class="btn btn-outline-pink btn-sm">View All &rarr;</a>
+                        <a href="/shop" class="btn btn-outline-pink btn-sm" aria-label="View all products in shop">View All &rarr;</a>
                     </div>
                 </div>
 
                 <div class="product-grid-4">
                     <?php foreach ($mainArrivals as $product): ?>
                         <article class="product-card">
-                            <a href="/product?slug=<?php echo urlencode($product['slug']); ?>" class="product-card-media">
-                                <img src="<?php echo e($product['image_path']); ?>" alt="<?php echo e($product['name']); ?>" width="320" height="256" loading="lazy">
+                            <a href="/product?slug=<?php echo urlencode($product['slug']); ?>" class="product-card-media" tabindex="-1" aria-hidden="true">
+                                <img src="<?php echo e($product['image_path']); ?>" alt="" width="320" height="256" loading="lazy">
                             </a>
                             <h3 class="product-card-title">
                                 <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?></a>
@@ -128,8 +146,8 @@ require_once __DIR__ . '/../partials/header.php';
                                 <input type="hidden" name="action" value="add">
                                 <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
                                 <input type="hidden" name="return_to" value="/">
-                                <button type="submit" class="btn btn-primary">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                         <circle cx="9" cy="20" r="1.5"></circle>
                                         <circle cx="18" cy="20" r="1.5"></circle>
                                         <path d="M2.5 3h2.7l2.2 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21.5 7H6.2"></path>
@@ -143,17 +161,19 @@ require_once __DIR__ . '/../partials/header.php';
             </section>
         </div>
 
-        <aside class="home-sidebar-col">
-            <section class="sidebar-card">
+        <aside class="home-sidebar-col" aria-label="Store highlights and maker story">
+            <section class="sidebar-card" aria-labelledby="sidebar-arrivals-heading">
                 <div class="sidebar-card-header">
-                    <h2>New Arrivals</h2>
-                    <a href="/shop" class="text-arrow-link">View All &rarr;</a>
+                    <h2 id="sidebar-arrivals-heading">New Arrivals</h2>
+                    <a href="/shop" class="text-arrow-link" aria-label="View all new arrivals in shop">View All &rarr;</a>
                 </div>
                 <div class="sidebar-arrivals-grid">
                     <?php foreach ($sidebarArrivals as $item): ?>
-                        <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="mini-product-card">
+                        <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"
+                           class="mini-product-card"
+                           aria-label="<?php echo e($item['name'] . ', ' . format_gbp((int) $item['price_pence'])); ?>">
                             <div class="mini-product-thumb">
-                                <img src="<?php echo e($item['image_path']); ?>" alt="<?php echo e($item['name']); ?>" width="160" height="160" loading="lazy">
+                                <img src="<?php echo e($item['image_path']); ?>" alt="" width="160" height="160" loading="lazy">
                             </div>
                             <span class="mini-product-name"><?php echo e($item['name']); ?></span>
                             <span class="mini-product-price"><?php echo e(format_gbp((int) $item['price_pence'])); ?></span>
@@ -166,8 +186,8 @@ require_once __DIR__ . '/../partials/header.php';
                 <img src="/assets/hook-to-heart-banner.svg" alt="From my hook to your heart" width="640" height="210" loading="lazy">
             </div>
 
-            <section class="sidebar-card about-preview-card">
-                <h2 class="about-card-heading">About Me</h2>
+            <section class="sidebar-card about-preview-card" aria-labelledby="about-preview-heading">
+                <h2 class="about-card-heading" id="about-preview-heading">About Me</h2>
                 <div class="about-preview-body">
                     <div class="about-preview-photo">
                         <img src="/assets/placeholders/maker-placeholder.svg" alt="Placeholder portrait of Bex, the maker" width="150" height="180" loading="lazy">

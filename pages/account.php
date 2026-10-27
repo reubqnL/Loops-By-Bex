@@ -73,12 +73,12 @@ require_once __DIR__ . '/../partials/header.php';
             </p>
 
             <?php if ($lookupError !== ''): ?>
-                <div class="flash-banner flash-error" style="margin-bottom: 1rem;">
+                <div class="flash-banner flash-error" role="alert" style="margin-bottom: 1rem;">
                     <?php echo e($lookupError); ?>
                 </div>
             <?php endif; ?>
 
-            <form action="/account" method="POST" novalidate>
+            <form action="/account" method="POST" novalidate aria-label="Order status lookup">
                 <div class="form-grid">
                     <div class="form-field">
                         <label for="lookup_order_number">Order Reference *</label>
