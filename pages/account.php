@@ -13,7 +13,13 @@ $foundOrder = null;
 $lookupError = '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    if ($orderNumber === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    verify_csrf_or_redirect('/account');
+
+    if (is_honeypot_triggered()) {
+        $lookupError = 'No matching order was found for those details.';
+    } elseif (!check_rate_limit($pdo, 'order_lookup', 8, 600)) {
+        $lookupError = 'Too many lookup attempts. Please wait a few minutes and try again.';
+    } elseif ($orderNumber === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $lookupError = 'Please enter both your order reference (e.g. LBB-1A2B3C4D) and email address.';
     } else {
         if ($pdo instanceof PDO) {
@@ -79,6 +85,8 @@ require_once __DIR__ . '/../partials/header.php';
             <?php endif; ?>
 
             <form action="/account" method="POST" novalidate aria-label="Order status lookup">
+                <?php echo csrf_field(); ?>
+                <?php echo honeypot_field(); ?>
                 <div class="form-grid">
                     <div class="form-field">
                         <label for="lookup_order_number">Order Reference *</label>

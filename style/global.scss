@@ -82,7 +82,8 @@ textarea {
 }
 
 /* ==================== ACCESSIBILITY UTILITIES ==================== */
-.sr-only {
+.sr-only,
+.hp-trap {
   position: absolute;
   width: 1px;
   height: 1px;

@@ -29,6 +29,18 @@ $values = [
 ];
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    assert_no_raw_card_data_posted();
+    verify_csrf_or_redirect('/checkout');
+
+    if (is_honeypot_triggered()) {
+        header('Location: /shop', true, 303);
+        exit();
+    }
+
+    if (!check_rate_limit($pdo, 'checkout_submit', 8, 600)) {
+        $errors['general'] = 'Too many checkout attempts. Please wait a few minutes before trying again.';
+    }
+
     if ($values['customer_name'] === '' || mb_strlen($values['customer_name']) > 140) {
         $errors['customer_name'] = 'Please enter your full name.';
     }
@@ -139,7 +151,34 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $errors['general'] = 'Order database is currently unavailable. Your card has not been charged.';
         }
 
+        if (empty($errors) && $totalPence > 0) {
+            $stripeSession = create_stripe_checkout_session(
+                $stripeSecret,
+                $orderNumber,
+                $values['customer_email'],
+                $summary,
+                $idempotencyKey
+            );
+            if ($stripeSession === null) {
+                $errors['general'] = 'Unable to connect to our secure payment gateway. Your card has not been charged.';
+            } else {
+                if ($pdo instanceof PDO) {
+                    try {
+                        $refStmt = $pdo->prepare('UPDATE orders SET payment_reference = :ref WHERE order_number = :num');
+                        $refStmt->execute(['ref' => $stripeSession['id'], 'num' => $orderNumber]);
+                    } catch (PDOException $e) {
+                        error_log('[LoopsByBex Checkout] Failed saving Stripe session reference: ' . $e->getMessage());
+                    }
+                }
+                unset($_SESSION['checkout_idempotency_key']);
+                cart_clear();
+                header('Location: ' . $stripeSession['url'], true, 303);
+                exit();
+            }
+        }
+
         if (empty($errors)) {
+            regenerate_session_safely();
             $_SESSION['last_order'] = [
                 'order_number' => $orderNumber,
                 'customer_name' => $values['customer_name'],
@@ -184,6 +223,8 @@ require_once __DIR__ . '/../partials/header.php';
 
         <div class="two-col-panel">
             <form action="/checkout" method="POST" class="panel-card" novalidate aria-label="Checkout delivery details">
+                <?php echo csrf_field(); ?>
+                <?php echo honeypot_field(); ?>
                 <input type="hidden" name="idempotency_key" value="<?php echo e($idempotencyKey); ?>">
 
                 <h2>Delivery Information</h2>

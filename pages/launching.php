@@ -40,6 +40,8 @@ $instagramUrl = env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/');
 
     <div class="waitlist">
         <form action="/process-waitlist.php" method="POST" aria-label="Join the launch waitlist">
+            <?php echo csrf_field(); ?>
+            <?php echo honeypot_field(); ?>
             <label for="waitlist-email" class="sr-only">Your email address</label>
             <input type="email"
                    id="waitlist-email"

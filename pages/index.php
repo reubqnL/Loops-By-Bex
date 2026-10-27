@@ -143,6 +143,7 @@ require_once __DIR__ . '/../partials/header.php';
                             </h3>
                             <p class="product-card-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
                             <form action="/cart-action.php" method="POST" class="product-card-form">
+                                <?php echo csrf_field(); ?>
                                 <input type="hidden" name="action" value="add">
                                 <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
                                 <input type="hidden" name="return_to" value="/">

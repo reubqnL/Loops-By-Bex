@@ -8,9 +8,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     exit();
 }
 
-$action = trim((string) ($_POST['action'] ?? ''));
-$slug = trim((string) ($_POST['slug'] ?? ''));
-$quantity = (int) ($_POST['quantity'] ?? 1);
 $rawReturn = trim((string) ($_POST['return_to'] ?? '/cart'));
 
 // Only allow safe local relative paths starting with a single "/"
@@ -18,6 +15,12 @@ $returnTo = '/cart';
 if ($rawReturn !== '' && str_starts_with($rawReturn, '/') && !str_starts_with($rawReturn, '//') && !str_contains($rawReturn, "\r") && !str_contains($rawReturn, "\n")) {
     $returnTo = $rawReturn;
 }
+
+verify_csrf_or_redirect($returnTo);
+
+$action = trim((string) ($_POST['action'] ?? ''));
+$slug = trim((string) ($_POST['slug'] ?? ''));
+$quantity = (int) ($_POST['quantity'] ?? 1);
 
 switch ($action) {
     case 'add':

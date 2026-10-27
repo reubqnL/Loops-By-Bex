@@ -19,32 +19,41 @@ $values = [
 ];
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    if ($values['name'] === '' || mb_strlen($values['name']) > 120) {
-        $errors['name'] = 'Please enter your name.';
-    }
-    if ($values['email'] === '' || strlen($values['email']) > 254 || !filter_var($values['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Please enter a valid email address.';
-    }
-    if ($values['subject'] === '' || mb_strlen($values['subject']) > 160) {
-        $errors['subject'] = 'Please enter a short subject.';
-    }
-    if ($values['message'] === '' || mb_strlen($values['message']) > 3000) {
-        $errors['message'] = 'Please enter a message (up to 3,000 characters).';
-    }
+    verify_csrf_or_redirect('/contact');
 
-    if (empty($errors)) {
-        if ($pdo instanceof PDO) {
-            try {
-                $stmt = $pdo->prepare(
-                    'INSERT INTO contact_messages (name, email, subject, message) VALUES (:name, :email, :subject, :message)'
-                );
-                $stmt->execute($values);
-            } catch (PDOException $e) {
-                error_log('[LoopsByBex Contact] Failed saving message: ' . $e->getMessage());
-            }
-        }
+    if (is_honeypot_triggered()) {
         $submitted = true;
         $values = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+    } elseif (!check_rate_limit($pdo, 'contact_form', 5, 900)) {
+        $errors['general'] = 'Too many messages sent recently. Please wait a few minutes and try again.';
+    } else {
+        if ($values['name'] === '' || mb_strlen($values['name']) > 120) {
+            $errors['name'] = 'Please enter your name.';
+        }
+        if ($values['email'] === '' || strlen($values['email']) > 254 || !filter_var($values['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Please enter a valid email address.';
+        }
+        if ($values['subject'] === '' || mb_strlen($values['subject']) > 160) {
+            $errors['subject'] = 'Please enter a short subject.';
+        }
+        if ($values['message'] === '' || mb_strlen($values['message']) > 3000) {
+            $errors['message'] = 'Please enter a message (up to 3,000 characters).';
+        }
+
+        if (empty($errors)) {
+            if ($pdo instanceof PDO) {
+                try {
+                    $stmt = $pdo->prepare(
+                        'INSERT INTO contact_messages (name, email, subject, message) VALUES (:name, :email, :subject, :message)'
+                    );
+                    $stmt->execute($values);
+                } catch (PDOException $e) {
+                    error_log('[LoopsByBex Contact] Failed saving message: ' . $e->getMessage());
+                }
+            }
+            $submitted = true;
+            $values = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+        }
     }
 }
 
@@ -68,8 +77,16 @@ require_once __DIR__ . '/../partials/header.php';
                     </div>
                 <?php endif; ?>
 
+                <?php if (!empty($errors['general'])): ?>
+                    <div class="flash-banner flash-error" role="alert" style="margin-bottom: 1.25rem;">
+                        <?php echo e($errors['general']); ?>
+                    </div>
+                <?php endif; ?>
+
                 <h2>Send a Message</h2>
                 <form action="/contact" method="POST" novalidate aria-label="Contact Loops By Bex">
+                    <?php echo csrf_field(); ?>
+                    <?php echo honeypot_field(); ?>
                     <div class="form-grid">
                         <div class="form-field">
                             <label for="contact_name">Your Name <span aria-hidden="true">*</span></label>

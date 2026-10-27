@@ -1,11 +1,8 @@
 <?php
 declare(strict_types=1);
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/security.php';
 require_once __DIR__ . '/catalog.php';
 require_once __DIR__ . '/cart.php';
 
@@ -52,7 +49,6 @@ function enforce_site_mode(string $routeType = 'storefront'): void
 {
     $mode = strtolower(env_val('APP_LAUNCHING_MODE', 'preview'));
 
-    // When APP_LAUNCHING_MODE=launching, visitors hitting storefront routes see the launching waitlist
     if ($mode === 'launching' && $routeType === 'storefront') {
         $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
         if ($uri === '/' || $uri === '/index') {
@@ -63,9 +59,14 @@ function enforce_site_mode(string $routeType = 'storefront'): void
         exit();
     }
 
-    // When APP_LAUNCHING_MODE=live, retire launching routes with permanent 301 redirect to /
     if ($mode === 'live' && $routeType === 'launching') {
         header('Location: /', true, 301);
         exit();
     }
 }
+
+$appEnv = env_val('APP_ENV', 'production');
+configure_runtime_security($appEnv);
+start_secure_session();
+send_security_headers($appEnv);
+csrf_token();

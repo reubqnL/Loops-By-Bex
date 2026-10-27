@@ -33,6 +33,7 @@ require_once __DIR__ . '/../partials/header.php';
                     <div class="sidebar-card-header">
                         <h2>Items</h2>
                         <form action="/cart-action.php" method="POST">
+                            <?php echo csrf_field(); ?>
                             <input type="hidden" name="action" value="clear">
                             <input type="hidden" name="return_to" value="/cart">
                             <button type="submit" class="text-arrow-link" style="background: none; border: none; cursor: pointer;">Clear cart</button>
@@ -56,6 +57,7 @@ require_once __DIR__ . '/../partials/header.php';
                             </div>
 
                             <form action="/cart-action.php" method="POST" class="cart-qty-form">
+                                <?php echo csrf_field(); ?>
                                 <input type="hidden" name="action" value="update">
                                 <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
                                 <input type="hidden" name="return_to" value="/cart">
@@ -67,6 +69,7 @@ require_once __DIR__ . '/../partials/header.php';
                             <div style="text-align: right;">
                                 <p style="font-weight: 700;"><?php echo e(format_gbp((int) $line['line_total_pence'])); ?></p>
                                 <form action="/cart-action.php" method="POST">
+                                    <?php echo csrf_field(); ?>
                                     <input type="hidden" name="action" value="remove">
                                     <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
                                     <input type="hidden" name="return_to" value="/cart">
