@@ -1,38 +1,69 @@
+<?php
+require_once __DIR__ . '/../includes/bootstrap.php';
+enforce_site_mode('launching');
+
+$status = (string) ($_GET['status'] ?? '');
+$instagramUrl = env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" initial-scale="1.0">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Launching Soon! | Loops By Bex</title>
 
-    <link rel="icon" type="image/ico" href="../assets/favicon.png">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../style/launching.css">
+    <link rel="stylesheet" href="/style/launching.css">
 </head>
-
 <body>
-<main>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<main id="main-content" tabindex="-1">
     <h1>Loops By Bex is launching soon</h1>
-    <p id="elapsed-time"></p>
+    <p id="elapsed-time" role="timer" aria-live="off" aria-label="Time elapsed since waitlist opened"></p>
+
+    <?php if ($status === 'already_registered'): ?>
+        <p class="status-banner status-warning" role="status" aria-live="polite">You are already on the waitlist!</p>
+    <?php elseif ($status === 'invalid_email'): ?>
+        <p class="status-banner status-error" role="alert">Please enter a valid email address.</p>
+    <?php elseif ($status === 'rate_limited'): ?>
+        <p class="status-banner status-error" role="alert">Too many attempts. Please wait a minute and try again.</p>
+    <?php elseif ($status === 'error'): ?>
+        <p class="status-banner status-error" role="alert">Something went wrong. Please try again.</p>
+    <?php endif; ?>
 
     <div class="waitlist">
-        <form action="../process-waitlist.php" method="POST">
-            <input type="email" name="email" placeholder="Your best email address" required oninvalid="invalidData(this)" oninput="this.setCustomValidity('')">
+        <form action="/process-waitlist.php" method="POST" aria-label="Join the launch waitlist">
+            <?php echo csrf_field(); ?>
+            <?php echo honeypot_field(); ?>
+            <label for="waitlist-email" class="sr-only">Your email address</label>
+            <input type="email"
+                   id="waitlist-email"
+                   name="email"
+                   placeholder="Your best email address"
+                   autocomplete="email"
+                   maxlength="254"
+                   required
+                   aria-describedby="waitlist-privacy-note">
             <button type="submit" class="joinWaitlist">Join The Waitlist</button>
         </form>
-        <p class="privacy-notice">
+        <p class="privacy-notice" id="waitlist-privacy-note">
             We respect your privacy. Unsubscribe at any time. Read our <a href="/privacy" class="privacy">Privacy Policy</a>.
         </p>
     </div>
 </main>
 
-<footer>
+<footer aria-label="Waitlist footer">
     <h2>Follow my journey</h2>
-    <a href="https://www.instagram.com/bex2_011/" target="_blank" rel="noopener" aria-label="Instagram profile">
-        <svg viewBox="0 0 512 512" style="display: block; fill: #000000;" role="img" aria-label="Instagram icon">
+    <a href="<?php echo e($instagramUrl); ?>"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Follow Loops By Bex on Instagram (opens in a new tab)">
+        <svg viewBox="0 0 512 512" style="display: block; fill: #000000;" aria-hidden="true" focusable="false">
             <path d="M256 109.3c47.8 0 53.4 0.2 72.3 1 17.4 0.8 26.9 3.7 33.2 6.2 8.4 3.2 14.3 7.1 20.6 13.4 6.3 6.3 10.1 12.2 13.4 20.6 2.5 6.3 5.4 15.8 6.2 33.2 0.9 18.9 1 24.5 1 72.3s-0.2 53.4-1 72.3c-0.8 17.4-3.7 26.9-6.2 33.2 -3.2 8.4-7.1 14.3-13.4 20.6 -6.3 6.3-12.2 10.1-20.6 13.4 -6.3 2.5-15.8 5.4-33.2 6.2 -18.9 0.9-24.5 1-72.3 1s-53.4-0.2-72.3-1c-17.4-0.8-26.9-3.7-33.2-6.2 -8.4-3.2-14.3-7.1-20.6-13.4 -6.3-6.3-10.1-12.2-13.4-20.6 -2.5-6.3-5.4-15.8-6.2-33.2 -0.9-18.9-1-24.5-1-72.3s0.2-53.4 1-72.3c0.8-17.4 3.7-26.9 6.2-33.2 3.2-8.4 7.1-14.3 13.4-20.6 6.3-6.3 12.2-10.1 20.6-13.4 6.3-2.5 15.8-5.4 33.2-6.2C202.6 109.5 208.2 109.3 256 109.3M256 77.1c-48.6 0-54.7 0.2-73.8 1.1 -19 0.9-32.1 3.9-43.4 8.3 -11.8 4.6-21.7 10.7-31.7 20.6 -9.9 9.9-16.1 19.9-20.6 31.7 -4.4 11.4-7.4 24.4-8.3 43.4 -0.9 19.1-1.1 25.2-1.1 73.8 0 48.6 0.2 54.7 1.1 73.8 0.9 19 3.9 32.1 8.3 43.4 4.6 11.8 10.7 21.7 20.6 31.7 9.9 9.9 19.9 16.1 31.7 20.6 11.4 4.4 24.4 7.4 43.4 8.3 19.1 0.9 25.2 1.1 73.8 1.1s54.7-0.2 73.8-1.1c19-0.9 32.1-3.9 43.4-8.3 11.8-4.6 21.7-10.7 31.7-20.6 9.9-9.9 16.1-19.9 20.6-31.7 4.4-11.4 7.4-24.4 8.3-43.4 0.9-19.1 1.1-25.2 1.1-73.8s-0.2-54.7-1.1-73.8c-0.9-19-3.9-32.1-8.3-43.4 -4.6-11.8-10.7-21.7-20.6-31.7 -9.9-9.9-19.9-16.1-31.7-20.6 -11.4-4.4-24.4-7.4-43.4-8.3C310.7 77.3 304.6 77.1 256 77.1L256 77.1z"></path>
             <path d="M256 164.1c-50.7 0-91.9 41.1-91.9 91.9s41.1 91.9 91.9 91.9 91.9-41.1 91.9-91.9S306.7 164.1 256 164.1zM256 315.6c-32.9 0-59.6-26.7-59.6-59.6s26.7-59.6 59.6-59.6 59.6 26.7 59.6 59.6S288.9 315.6 256 315.6z"></path>
             <circle cx="351.5" cy="160.5" r="21.5"></circle>
@@ -40,43 +71,6 @@
     </a>
 </footer>
 
-<script>
-    const launchDate = new Date("Oct 26, 2026 13:22:00").getTime();
-
-    function updateElapsedTime() {
-        const now = new Date().getTime();
-
-        const difference = now - launchDate;
-
-        if (difference < 0) {
-            document.getElementById("elapsed-time").innerHTML = "00d 00h 00m 00s";
-            return;
-        }
-
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        const format = num => String(num).padStart(2, '0');
-
-        document.getElementById("elapsed-time").innerHTML =
-            `${format(days)}d ${format(hours)}h ${format(minutes)}m ${format(seconds)}s`;
-    }
-
-    updateElapsedTime();
-    setInterval(updateElapsedTime, 1000);
-</script>
-
-<script>
-    function invalidData(inputElement) {
-        if (inputElement.value.trim() === "") {
-            inputElement.setCustomValidity("Enter a valid email");
-        } else {
-            inputElement.setCustomValidity("Please enter a valid email address!");
-        }
-    }
-</script>
-
+<script src="/assets/js/launching.js" defer></script>
 </body>
 </html>
