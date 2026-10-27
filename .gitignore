@@ -5,6 +5,11 @@ vendor/
 # Environment variables (Secrets)
 .env
 *.env
+!.env.example
+
+# Local SQLite / temporary runtime data
+storage/*.sqlite
+storage/*.log
 
 # IDE / Editor configurations
 .idea/

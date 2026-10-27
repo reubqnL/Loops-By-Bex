@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 360" fill="none">
+  <rect width="300" height="360" rx="22" fill="#f6eaf1"/>
+  <circle cx="150" cy="128" r="54" fill="#ffffff" stroke="#c83771" stroke-width="3"/>
+  <path d="M72 308c10-58 44-92 78-92s68 34 78 92" fill="#ffffff" stroke="#c83771" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="150" cy="128" r="24" fill="#fbd2e3"/>
+  <rect x="46" y="302" width="208" height="34" rx="17" fill="#fbd2e3"/>
+  <text x="150" y="324" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="600" font-size="14" fill="#7a2048">Maker Photo Placeholder</text>
+</svg>
