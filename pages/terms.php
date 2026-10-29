@@ -22,7 +22,7 @@ require_once __DIR__ . '/../partials/header.php';
 
             <h2>2. Pricing &amp; Payment</h2>
             <p>
-                All prices are displayed in Pounds Sterling (&pound; GBP). While the shop is in pre-launch placeholder mode, catalogue items are listed at <?php echo e(format_gbp(0)); ?> for preview purposes only and do not constitute commercial stock offers until live pricing is published.
+                All prices are displayed in Pounds Sterling (&pound; GBP). Online card payments are processed securely through Stripe Hosted Checkout; card details are never stored on Loops By Bex servers.
             </p>
 
             <h2>3. Product Safety</h2>

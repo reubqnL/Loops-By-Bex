@@ -32,7 +32,7 @@ require_once __DIR__ . '/../partials/header.php';
         <div class="page-header-band">
             <div>
                 <h1>Handmade Crochet Shop</h1>
-                <p>Placeholder product catalogue — all items are currently set to <?php echo e(format_gbp(0)); ?> prior to launch.</p>
+                <p>Handmade crochet plushies, festive makes, scrunchies, keyrings, and pet accessories.</p>
             </div>
             <a href="/cart" class="btn btn-soft-pink btn-sm">View Cart (<?php echo (int) get_cart_item_count(); ?>) &rarr;</a>
         </div>

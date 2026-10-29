@@ -24,7 +24,7 @@ require_once __DIR__ . '/../partials/header.php';
             </span>
             <h1>Thank you, <?php echo e($order['customer_name']); ?>!</h1>
             <p>
-                Your <?php echo e(format_gbp((int) $order['total_pence'])); ?> placeholder order has been recorded for
+                Your <?php echo e(format_gbp((int) $order['total_pence'])); ?> order has been recorded for
                 <strong><?php echo e($order['customer_email']); ?></strong>.
             </p>
 

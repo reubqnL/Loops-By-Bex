@@ -29,8 +29,8 @@
 }
 
 .cart-thumb {
-  width: 84px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   border-radius: 10px;
   overflow: hidden;
   background: #f8f2f7;
@@ -69,5 +69,3 @@
   font-weight: 700;
   color: var(--text-primary);
 }
-
-/*# sourceMappingURL=cart.css.map */

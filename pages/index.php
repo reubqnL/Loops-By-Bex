@@ -20,8 +20,8 @@ $heroSlides = [
         'description' => 'Unique, handmade crochet creations, perfect for gifts, play and home.',
         'cta_label' => 'Shop Now →',
         'cta_href' => '/shop',
-        'image' => '/assets/placeholders/hero-plushies.svg',
-        'image_alt' => 'Placeholder illustration of three handmade crochet plushies',
+        'image' => '/assets/love-bunny.webp',
+        'image_alt' => 'Handmade white crochet Love Bunny holding a pastel pink heart',
         'is_h1' => true,
     ],
     [
@@ -30,8 +30,8 @@ $heroSlides = [
         'description' => 'Discover how a passion for soft yarn and cosy designs grew into handmade keepsakes made with care.',
         'cta_label' => 'Read My Story →',
         'cta_href' => '/about',
-        'image' => '/assets/placeholders/hero-story.svg',
-        'image_alt' => 'Placeholder illustration of colourful yarn balls and a crochet hook',
+        'image' => '/assets/bee.webp',
+        'image_alt' => 'Handmade chunky blue and brown striped crochet bumblebee',
         'is_h1' => false,
     ],
     [
@@ -40,8 +40,8 @@ $heroSlides = [
         'description' => 'Looking for a particular colour combination or gifting advice? Reach out directly and say hello.',
         'cta_label' => 'Get in Touch →',
         'cta_href' => '/contact',
-        'image' => '/assets/placeholders/hero-custom.svg',
-        'image_alt' => 'Placeholder illustration of a wrapped handmade gift box',
+        'image' => '/assets/bright-pink-christmas-loaf-cat.webp',
+        'image_alt' => 'Handmade pink and white crochet loaf cat wearing a sparkly Santa hat',
         'is_h1' => false,
     ],
 ];

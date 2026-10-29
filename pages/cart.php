@@ -23,7 +23,7 @@ require_once __DIR__ . '/../partials/header.php';
         <?php if (empty($summary['items'])): ?>
             <div class="panel-card" style="text-align: center; padding: 3rem 1.5rem;">
                 <h2>Your cart is currently empty</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 1.35rem;">Explore our handmade crochet placeholder items in the shop.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1.35rem;">Explore handmade crochet plushies, scrunchies, and gifts in the shop.</p>
                 <a href="/shop" class="btn btn-primary">Browse Shop &rarr;</a>
             </div>
         <?php else: ?>
@@ -95,7 +95,7 @@ require_once __DIR__ . '/../partials/header.php';
                     </div>
 
                     <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0.85rem 0 1.2rem;">
-                        Prices are calculated on the server in GBP. All placeholder items are currently <?php echo e(format_gbp(0)); ?>.
+                        Prices are shown in GBP (&pound;). Secure card checkout is powered by Stripe.
                     </p>
 
                     <a href="/checkout" class="btn btn-primary" style="width: 100%;">Proceed to Checkout &rarr;</a>

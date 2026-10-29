@@ -151,3 +151,31 @@
 
     startAutoPlay();
 })();
+
+(() => {
+    const mainImg = document.querySelector('[data-product-main-img]');
+    const thumbs = Array.from(document.querySelectorAll('[data-product-thumb]'));
+    if (!mainImg || thumbs.length === 0) {
+        return;
+    }
+
+    thumbs.forEach((thumb) => {
+        thumb.addEventListener('click', (event) => {
+            const newSrc = thumb.getAttribute('data-src');
+            const newAlt = thumb.getAttribute('data-alt');
+            if (!newSrc) {
+                return;
+            }
+            event.preventDefault();
+            mainImg.setAttribute('src', newSrc);
+            if (newAlt) {
+                mainImg.setAttribute('alt', newAlt);
+            }
+            thumbs.forEach((btn) => {
+                const active = btn === thumb;
+                btn.classList.toggle('is-active', active);
+                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+        });
+    });
+})();

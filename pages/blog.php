@@ -9,27 +9,27 @@ $pageStyles = ['/style/blog.css'];
 $posts = [
     [
         'slug' => 'choosing-cosy-yarn-for-handmade-plushies',
-        'title' => 'Placeholder Post: Choosing Cosy Yarn for Handmade Plushies',
+        'title' => 'Choosing Cosy Yarn for Handmade Plushies',
         'date' => 'October 2026',
         'category' => 'Behind the Stitches',
-        'excerpt' => 'A behind-the-scenes placeholder journal entry on selecting soft, durable yarns for every handmade creation.',
-        'image' => '/assets/placeholders/product-01.svg',
+        'excerpt' => 'A behind-the-scenes look at selecting super-soft chunky chenille and durable yarns for every handmade creation.',
+        'image' => '/assets/love-bunny.webp',
     ],
     [
         'slug' => 'caring-for-your-crochet-friends',
-        'title' => 'Placeholder Post: How to Care for Your Crochet Keepsakes',
+        'title' => 'How to Care for Your Crochet Keepsakes',
         'date' => 'October 2026',
         'category' => 'Care Guide',
-        'excerpt' => 'Simple gentle-wash and drying tips to keep handmade crochet friends looking fresh for years to come.',
-        'image' => '/assets/placeholders/product-05.svg',
+        'excerpt' => 'Simple gentle spot-clean and air-drying tips to keep handmade crochet friends looking fluffy for years to come.',
+        'image' => '/assets/green-axolotl.webp',
     ],
     [
         'slug' => 'from-sketchbook-to-crochet-hook',
-        'title' => 'Placeholder Post: From Sketchbook Idea to Finished Loop',
+        'title' => 'From Idea to Finished Loop',
         'date' => 'October 2026',
         'category' => 'Studio Notes',
-        'excerpt' => 'How new character ideas move from rough stitch counts on paper to finished plush companions.',
-        'image' => '/assets/placeholders/product-08.svg',
+        'excerpt' => 'How colour combinations and stitch counts turn into finished plushies, scrunchies, and gifts.',
+        'image' => '/assets/pink-and-purple-scrunchie.webp',
     ],
 ];
 $selectedSlug = trim((string) ($_GET['post'] ?? ''));
