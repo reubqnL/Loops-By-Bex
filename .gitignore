@@ -18,3 +18,4 @@ storage/*.log
 .DS_Store
 
 stock.md
+security-testing.md

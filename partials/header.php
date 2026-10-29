@@ -2,8 +2,14 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 $resolvedTitle = isset($pageTitle) && trim((string) $pageTitle) !== ''
-    ? trim((string) $pageTitle) . ' | Loops By Bex'
-    : 'Loops By Bex';
+        ? trim((string) $pageTitle) . ' | Loops By Bex'
+        : 'Loops By Bex';
+$resolvedDescription = isset($pageDescription) && trim((string) $pageDescription) !== ''
+        ? trim((string) $pageDescription)
+        : 'Handmade crochet plushies, keepsakes, and custom creations by Loops By Bex in the United Kingdom.';
+$resolvedRobots = isset($pageRobots) && trim((string) $pageRobots) !== ''
+        ? trim((string) $pageRobots)
+        : 'index, follow';
 $currentNav = $activeNav ?? '';
 $cartCount = function_exists('get_cart_item_count') ? get_cart_item_count() : 0;
 $searchQuery = trim((string) ($_GET['q'] ?? ''));
@@ -12,11 +18,11 @@ $flash = consume_flash();
 $extraStyles = isset($pageStyles) && is_array($pageStyles) ? $pageStyles : [];
 
 $siteNavItems = [
-    'home' => ['label' => 'Home', 'href' => '/'],
-    'shop' => ['label' => 'Shop', 'href' => '/shop'],
-    'about' => ['label' => 'About Me', 'href' => '/about'],
-    'blog' => ['label' => 'Blog', 'href' => '/blog'],
-    'contact' => ['label' => 'Contact', 'href' => '/contact'],
+        'home' => ['label' => 'Home', 'href' => '/'],
+        'shop' => ['label' => 'Shop', 'href' => '/shop'],
+        'about' => ['label' => 'About Me', 'href' => '/about'],
+        'blog' => ['label' => 'Blog', 'href' => '/blog'],
+        'contact' => ['label' => 'Contact', 'href' => '/contact'],
 ];
 ?>
 <!DOCTYPE html>
@@ -26,24 +32,25 @@ $siteNavItems = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo e($resolvedTitle); ?></title>
 
-    <meta property="og:title" content="Loops By Bex - Junior Crocheter">
-    <meta property="og:description" content="Website and store for Loops By Bex - Junior Crotcher in the United Kingdom">
-    <meta name='language' content='English'>
-    <meta property="og:url" content="https://loopsbybex.co.uk">
-    <meta property="og:type" content="website">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Loops By Bex - Store">
-    <meta name="twitter:description" content="Junior Crocheter in the United Kingdom">
-
-    <meta name="viewport" content='width=device-width, initial-scale=1'>
+    <meta name="description" content="<?php echo e($resolvedDescription); ?>">
+    <meta name="keywords" content="Crocheter, Crochet Plushies, Handmade Gifts, Store, UK">
     <meta name="author" content="Loops By Bex">
     <meta name="web-author" content="Reuben Cheetham - https://reubenc.com">
-    <meta name="description" content="<?php echo $pageDescription ?>">
-    <meta name='keywords' content="Crocheter, Store, Website, Blog">
     <meta name="topic" content="Crochet Store">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#00AAFFFF">
+    <meta name="language" content="English">
+    <meta name="robots" content="<?php echo e($resolvedRobots); ?>">
+    <meta name="theme-color" content="#DE3163">
+
+    <meta property="og:title" content="<?php echo e($resolvedTitle); ?>">
+    <meta property="og:description" content="<?php echo e($resolvedDescription); ?>">
+    <meta property="og:url" content="https://loopsbybex.co.uk">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://loopsbybex.co.uk/assets/launching.webp">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo e($resolvedTitle); ?>">
+    <meta name="twitter:description" content="<?php echo e($resolvedDescription); ?>">
+    <meta name="twitter:image" content="https://loopsbybex.co.uk/assets/launching.webp">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,7 +58,7 @@ $siteNavItems = [
 
     <link rel="stylesheet" href="/style/global.css">
     <?php foreach ($extraStyles as $styleHref): ?>
-    <link rel="stylesheet" href="<?php echo e($styleHref); ?>">
+        <link rel="stylesheet" href="<?php echo e($styleHref); ?>">
     <?php endforeach; ?>
     <link rel="icon" type="image/png" href="/assets/favicon.png">
 </head>
