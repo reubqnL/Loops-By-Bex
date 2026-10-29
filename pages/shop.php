@@ -94,7 +94,7 @@ require_once __DIR__ . '/../partials/header.php';
                             <input type="hidden" name="return_to" value="<?php echo e($returnUrl); ?>">
                             <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
                                 <label for="shop-color-<?php echo e($product['slug']); ?>" class="sr-only">Choose colour for <?php echo e($product['name']); ?></label>
-                                <select id="shop-color-<?php echo e($product['slug']); ?>" name="color" class="card-color-select">
+                                <select id="shop-color-<?php echo e($product['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
                                     <?php foreach ($product['color_options'] as $colorOpt): ?>
                                         <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
                                     <?php endforeach; ?>

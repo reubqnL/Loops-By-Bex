@@ -543,7 +543,9 @@ function get_all_products(?PDO $pdo): array
                 }, $rows);
             }
         } catch (PDOException $e) {
-            error_log('catalog query fallback: ' . $e->getMessage());
+            if (!str_contains(strtolower($e->getMessage()), 'no such table')) {
+                error_log('catalog query fallback: ' . $e->getMessage());
+            }
         }
     }
 

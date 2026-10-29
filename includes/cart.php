@@ -137,9 +137,7 @@ function cart_clear(): void
 function get_cart_summary(?PDO $pdo): array
 {
     $raw = get_raw_cart();
-    $items = [];
-    $subtotalPence = 0;
-    $totalCount = 0;
+    $normalized = [];
 
     foreach ($raw as $rawKey => $qty) {
         $qty = (int) $qty;
@@ -150,16 +148,25 @@ function get_cart_summary(?PDO $pdo): array
         [$slug, $color] = parse_cart_key($rawKey);
         $product = get_product_by_slug($pdo, $slug);
         if ($product === null) {
-            unset($_SESSION['cart'][$rawKey]);
             continue;
         }
 
         $resolvedColor = resolve_product_color($product, $color);
         $canonicalKey = build_cart_key($product['slug'], $resolvedColor);
-        if ($canonicalKey !== $rawKey) {
-            unset($_SESSION['cart'][$rawKey]);
-            $_SESSION['cart'][$canonicalKey] = ((int) ($_SESSION['cart'][$canonicalKey] ?? 0)) + $qty;
-            $qty = (int) $_SESSION['cart'][$canonicalKey];
+        $normalized[$canonicalKey] = ((int) ($normalized[$canonicalKey] ?? 0)) + $qty;
+    }
+
+    $_SESSION['cart'] = $normalized;
+
+    $items = [];
+    $subtotalPence = 0;
+    $totalCount = 0;
+
+    foreach ($normalized as $canonicalKey => $qty) {
+        [$slug, $resolvedColor] = parse_cart_key($canonicalKey);
+        $product = get_product_by_slug($pdo, $slug);
+        if ($product === null) {
+            continue;
         }
 
         $clampedQty = min($qty, CART_MAX_QTY_PER_ITEM, max(1, (int) $product['stock_qty']));

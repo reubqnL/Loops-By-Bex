@@ -22,6 +22,22 @@ function e(mixed $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function asset_url(string $path): string
+{
+    if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+        return $path;
+    }
+    $cleanPath = (string) parse_url($path, PHP_URL_PATH);
+    $diskFile = __DIR__ . '/..' . $cleanPath;
+    if (is_file($diskFile)) {
+        $mtime = @filemtime($diskFile);
+        if ($mtime !== false) {
+            return $cleanPath . '?v=' . $mtime;
+        }
+    }
+    return $path;
+}
+
 function format_gbp(int $pence): string
 {
     $negative = $pence < 0;

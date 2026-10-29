@@ -70,7 +70,7 @@ require_once __DIR__ . '/../partials/header.php';
                                 <input type="hidden" name="return_to" value="/cart">
                                 <?php if (!empty($colorOpts)): ?>
                                     <label for="color-<?php echo e($rowId); ?>" class="sr-only">Colour for <?php echo e($item['name']); ?></label>
-                                    <select id="color-<?php echo e($rowId); ?>" name="color" class="cart-color-select">
+                                    <select id="color-<?php echo e($rowId); ?>" name="color" class="cart-color-select color-native-select" data-color-select data-auto-submit="true">
                                         <?php foreach ($colorOpts as $colorOpt): ?>
                                             <option value="<?php echo e((string) $colorOpt); ?>"<?php echo strcasecmp((string) $colorOpt, $selectedColor) === 0 ? ' selected' : ''; ?>>
                                                 <?php echo e((string) $colorOpt); ?>

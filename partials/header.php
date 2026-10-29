@@ -56,9 +56,9 @@ $siteNavItems = [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/style/global.css">
+    <link rel="stylesheet" href="<?php echo e(asset_url('/style/global.css')); ?>">
     <?php foreach ($extraStyles as $styleHref): ?>
-        <link rel="stylesheet" href="<?php echo e($styleHref); ?>">
+        <link rel="stylesheet" href="<?php echo e(asset_url((string) $styleHref)); ?>">
     <?php endforeach; ?>
     <link rel="icon" type="image/png" href="/assets/favicon.png">
 </head>

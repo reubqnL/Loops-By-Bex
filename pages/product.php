@@ -88,7 +88,7 @@ require_once __DIR__ . '/../partials/header.php';
                         <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
                             <div class="product-option-box">
                                 <label for="product-color">Colour <span class="option-note">(available in different colours &amp; styles)</span></label>
-                                <select id="product-color" name="color">
+                                <select id="product-color" name="color" class="color-native-select" data-color-select>
                                     <?php foreach ($product['color_options'] as $colorOpt): ?>
                                         <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
                                     <?php endforeach; ?>
@@ -123,11 +123,22 @@ require_once __DIR__ . '/../partials/header.php';
                             <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"><?php echo e($item['name']); ?></a>
                         </h3>
                         <p class="product-card-price"><?php echo e(format_gbp((int) $item['price_pence'])); ?></p>
+                        <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
+                            <p class="product-card-variant-note">Available in different colours &amp; styles</p>
+                        <?php endif; ?>
                         <form action="/cart-action.php" method="POST" class="product-card-form">
                             <?php echo csrf_field(); ?>
                             <input type="hidden" name="action" value="add">
                             <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
                             <input type="hidden" name="return_to" value="/product?slug=<?php echo e($product['slug']); ?>">
+                            <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
+                                <label for="related-color-<?php echo e($item['slug']); ?>" class="sr-only">Choose colour for <?php echo e($item['name']); ?></label>
+                                <select id="related-color-<?php echo e($item['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
+                                    <?php foreach ($item['color_options'] as $colorOpt): ?>
+                                        <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php endif; ?>
                             <button type="submit" class="btn btn-primary">Add to Cart</button>
                         </form>
                     </article>
