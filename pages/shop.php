@@ -84,11 +84,22 @@ require_once __DIR__ . '/../partials/header.php';
                             <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?></a>
                         </h2>
                         <p class="product-card-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
+                        <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
+                            <p class="product-card-variant-note">Available in different colours &amp; styles</p>
+                        <?php endif; ?>
                         <form action="/cart-action.php" method="POST" class="product-card-form">
                             <?php echo csrf_field(); ?>
                             <input type="hidden" name="action" value="add">
                             <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
                             <input type="hidden" name="return_to" value="<?php echo e($returnUrl); ?>">
+                            <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
+                                <label for="shop-color-<?php echo e($product['slug']); ?>" class="sr-only">Choose colour for <?php echo e($product['name']); ?></label>
+                                <select id="shop-color-<?php echo e($product['slug']); ?>" name="color" class="card-color-select">
+                                    <?php foreach ($product['color_options'] as $colorOpt): ?>
+                                        <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php endif; ?>
                             <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                     <circle cx="9" cy="20" r="1.5"></circle>

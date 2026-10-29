@@ -84,9 +84,23 @@ require_once __DIR__ . '/../partials/header.php';
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
                         <input type="hidden" name="return_to" value="/cart">
-                        <label for="product-quantity" class="sr-only">Quantity for <?php echo e($product['name']); ?></label>
-                        <input type="number" id="product-quantity" name="quantity" value="1" min="1" max="<?php echo (int) min(10, (int) $product['stock_qty']); ?>" aria-label="Quantity">
-                        <button type="submit" class="btn btn-primary">Add to Cart &rarr;</button>
+
+                        <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
+                            <div class="product-option-box">
+                                <label for="product-color">Colour <span class="option-note">(available in different colours &amp; styles)</span></label>
+                                <select id="product-color" name="color">
+                                    <?php foreach ($product['color_options'] as $colorOpt): ?>
+                                        <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="add-detail-controls">
+                            <label for="product-quantity" class="sr-only">Quantity for <?php echo e($product['name']); ?></label>
+                            <input type="number" id="product-quantity" name="quantity" value="1" min="1" max="<?php echo (int) min(10, (int) $product['stock_qty']); ?>" aria-label="Quantity">
+                            <button type="submit" class="btn btn-primary">Add to Cart &rarr;</button>
+                        </div>
                     </form>
                 <?php else: ?>
                     <p><strong>Out of stock</strong> — message Bex on the <a href="/contact" class="text-arrow-link">Contact page</a> to request one made to order.</p>

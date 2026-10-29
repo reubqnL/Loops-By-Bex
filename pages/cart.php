@@ -39,11 +39,18 @@ require_once __DIR__ . '/../partials/header.php';
                         </form>
                     </div>
 
-                    <?php foreach ($summary['items'] as $line): ?>
-                        <?php $item = $line['product']; ?>
+                    <?php foreach ($summary['items'] as $idx => $line): ?>
+                        <?php
+                        $item = $line['product'];
+                        $cartKey = (string) ($line['cart_key'] ?? $item['slug']);
+                        $selectedColor = (string) ($line['selected_color'] ?? '');
+                        $colorOpts = isset($item['color_options']) && is_array($item['color_options']) ? $item['color_options'] : [];
+                        $rowId = 'cart-row-' . $idx;
+                        $maxQty = (int) min(10, max(1, (int) ($item['stock_qty'] ?? 10)));
+                        ?>
                         <div class="cart-item-row">
                             <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="cart-thumb">
-                                <img src="<?php echo e($item['image_path']); ?>" alt="<?php echo e($item['name']); ?>" width="84" height="70">
+                                <img src="<?php echo e($item['image_path']); ?>" alt="<?php echo e($item['name']); ?>" width="80" height="80">
                             </a>
 
                             <div>
@@ -58,10 +65,21 @@ require_once __DIR__ . '/../partials/header.php';
                             <form action="/cart-action.php" method="POST" class="cart-qty-form">
                                 <?php echo csrf_field(); ?>
                                 <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="cart_key" value="<?php echo e($cartKey); ?>">
                                 <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
                                 <input type="hidden" name="return_to" value="/cart">
-                                <label for="qty-<?php echo e($item['slug']); ?>" class="sr-only">Quantity for <?php echo e($item['name']); ?></label>
-                                <input type="number" id="qty-<?php echo e($item['slug']); ?>" name="quantity" value="<?php echo (int) $line['quantity']; ?>" min="0" max="10">
+                                <?php if (!empty($colorOpts)): ?>
+                                    <label for="color-<?php echo e($rowId); ?>" class="sr-only">Colour for <?php echo e($item['name']); ?></label>
+                                    <select id="color-<?php echo e($rowId); ?>" name="color" class="cart-color-select">
+                                        <?php foreach ($colorOpts as $colorOpt): ?>
+                                            <option value="<?php echo e((string) $colorOpt); ?>"<?php echo strcasecmp((string) $colorOpt, $selectedColor) === 0 ? ' selected' : ''; ?>>
+                                                <?php echo e((string) $colorOpt); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
+                                <label for="qty-<?php echo e($rowId); ?>" class="sr-only">Quantity for <?php echo e($item['name']); ?></label>
+                                <input type="number" id="qty-<?php echo e($rowId); ?>" name="quantity" value="<?php echo (int) $line['quantity']; ?>" min="0" max="<?php echo $maxQty; ?>">
                                 <button type="submit" class="btn btn-soft-pink btn-sm" aria-label="Update quantity for <?php echo e($item['name']); ?>">Update</button>
                             </form>
 
@@ -70,6 +88,7 @@ require_once __DIR__ . '/../partials/header.php';
                                 <form action="/cart-action.php" method="POST">
                                     <?php echo csrf_field(); ?>
                                     <input type="hidden" name="action" value="remove">
+                                    <input type="hidden" name="cart_key" value="<?php echo e($cartKey); ?>">
                                     <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
                                     <input type="hidden" name="return_to" value="/cart">
                                     <button type="submit" class="text-arrow-link" style="background: none; border: none; cursor: pointer; font-size: 0.82rem;" aria-label="Remove <?php echo e($item['name']); ?> from cart">Remove</button>

@@ -45,6 +45,19 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.cart-qty-form .cart-color-select {
+  height: 38px;
+  padding: 0 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
 }
 .cart-qty-form input[type=number] {
   width: 68px;

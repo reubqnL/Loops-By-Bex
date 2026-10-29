@@ -75,7 +75,10 @@ $footerNavItems = [
             </ul>
         </nav>
 
-        <p class="footer-copy">&copy; <?php echo date('Y'); ?> Loops by Bex. All rights reserved.</p>
+        <div class="footer-bottom">
+            <p class="footer-copy">&copy; <?php echo date('Y'); ?> Loops by Bex. All rights reserved.</p>
+            <p class="footer-credit">Made by <a href="https://reubenc.com" target="_blank" rel="noopener noreferrer">Reuben C</a></p>
+        </div>
     </div>
 </footer>
 
