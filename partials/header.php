@@ -26,6 +26,25 @@ $siteNavItems = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo e($resolvedTitle); ?></title>
 
+    <meta property="og:title" content="Loops By Bex - Junior Crocheter">
+    <meta property="og:description" content="Website and store for Loops By Bex - Junior Crotcher in the United Kingdom">
+    <meta name='language' content='English'>
+    <meta property="og:url" content="https://loopsbybex.co.uk">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Loops By Bex - Store">
+    <meta name="twitter:description" content="Junior Crocheter in the United Kingdom">
+
+    <meta name="viewport" content='width=device-width, initial-scale=1'>
+    <meta name="author" content="Loops By Bex">
+    <meta name="web-author" content="Reuben Cheetham - https://reubenc.com">
+    <meta name="description" content="<?php echo $pageDescription ?>">
+    <meta name='keywords' content="Crocheter, Store, Website, Blog">
+    <meta name="topic" content="Crochet Store">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#00AAFFFF">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">

@@ -16,3 +16,5 @@ storage/*.log
 *.njsproj
 
 .DS_Store
+
+stock.md
