@@ -1,14 +1,33 @@
 <?php
+if (basename((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === 'config.php') {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
+
+// optional php-based env config (cannot be read in plain text over http even without .htaccess)
+$phpEnvPath = __DIR__ . '/includes/env.php';
+if (is_file($phpEnvPath)) {
+    $phpEnvVars = require $phpEnvPath;
+    if (is_array($phpEnvVars)) {
+        foreach ($phpEnvVars as $k => $v) {
+            if (is_string($k) && $k !== '' && !array_key_exists($k, $_ENV)) {
+                $_ENV[$k] = (string) $v;
+            }
+        }
+    }
+}
+
+$envDir = is_file(dirname(__DIR__) . '/.env') ? dirname(__DIR__) : __DIR__;
 $autoloadPath = __DIR__ . '/vendor/autoload.php';
 if (is_file($autoloadPath)) {
     require_once $autoloadPath;
-    if (class_exists('Dotenv\\Dotenv')) {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    if (class_exists('Dotenv\\Dotenv') && is_file($envDir . '/.env')) {
+        $dotenv = Dotenv\Dotenv::createImmutable($envDir);
         $dotenv->safeLoad();
     }
-} elseif (is_file(__DIR__ . '/.env')) {
+} elseif (is_file($envDir . '/.env')) {
     // fallback if vendor folder isnt installed locally
-    $lines = file(__DIR__ . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+    $lines = file($envDir . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
     foreach ($lines as $line) {
         $trimmed = trim($line);
         if ($trimmed === '' || str_starts_with($trimmed, '#') || !str_contains($trimmed, '=')) {

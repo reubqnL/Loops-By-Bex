@@ -4,6 +4,7 @@ vendor/
 .env
 *.env
 !.env.example
+includes/env.php
 
 storage/*.sqlite
 storage/*.log
