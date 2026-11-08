@@ -26,10 +26,19 @@ if (in_array($method, ['GET', 'HEAD'], true)) {
         header('Location: /', true, 301);
         exit();
     }
+    if (preg_match('#^/sitemap\.php$#i', $uriPath)) {
+        header('Location: /sitemap.xml', true, 301);
+        exit();
+    }
     if (preg_match('#^/pages/([a-zA-Z0-9_-]+)\.php$#', $uriPath, $m)) {
         header('Location: /' . $m[1], true, 301);
         exit();
     }
+}
+
+if ($uriPath === '/sitemap.xml') {
+    require __DIR__ . '/sitemap.php';
+    return true;
 }
 
 if ($uriPath === '/') {

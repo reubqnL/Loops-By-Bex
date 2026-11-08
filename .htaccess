@@ -33,6 +33,11 @@ RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$ [NC]
 RewriteCond %{THE_REQUEST} \s/pages/([a-zA-Z0-9_-]+)\.php[\s?] [NC]
 RewriteRule ^pages/([a-zA-Z0-9_-]+)\.php$ /%1 [R=301,L]
 
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$ [NC]
+RewriteCond %{THE_REQUEST} \s/sitemap\.php[\s?] [NC]
+RewriteRule ^sitemap\.php$ /sitemap.xml [R=301,L]
+
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
 RewriteRule ^$ pages/index.php [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
