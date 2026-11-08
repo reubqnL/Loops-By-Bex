@@ -60,7 +60,6 @@ function create_stripe_checkout_session(
         'customer_email' => $customerEmail,
         'success_url' => $appUrl . '/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
         'cancel_url' => $appUrl . '/checkout?cancelled=1',
-        'payment_method_types' => ['card'],
         'metadata' => [
             'order_number' => $orderNumber,
         ],
@@ -119,7 +118,14 @@ function create_stripe_checkout_session(
     unset($ch);
 
     if (!is_string($rawResponse) || $httpStatus < 200 || $httpStatus >= 300) {
-        error_log('stripe session failed http ' . $httpStatus);
+        $errDetail = '';
+        if (is_string($rawResponse) && $rawResponse !== '') {
+            $errJson = json_decode($rawResponse, true);
+            if (is_array($errJson) && !empty($errJson['error']['message'])) {
+                $errDetail = ': ' . (string) $errJson['error']['message'];
+            }
+        }
+        error_log('stripe session failed http ' . $httpStatus . $errDetail);
         return null;
     }
 
@@ -129,8 +135,9 @@ function create_stripe_checkout_session(
     }
 
     $checkoutUrl = (string) $decoded['url'];
+    $checkoutScheme = strtolower((string) parse_url($checkoutUrl, PHP_URL_SCHEME));
     $checkoutHost = strtolower((string) parse_url($checkoutUrl, PHP_URL_HOST));
-    if ($checkoutHost !== 'checkout.stripe.com') {
+    if ($checkoutScheme !== 'https' || ($checkoutHost !== 'checkout.stripe.com' && !str_ends_with($checkoutHost, '.stripe.com'))) {
         return null;
     }
 
