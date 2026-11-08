@@ -219,11 +219,15 @@ function check_rate_limit(?PDO $pdo, string $action, int $maxAttempts, int $wind
             $row = $select->fetch();
 
             if (!is_array($row) || ($now - (int) $row['window_started_at']) >= $windowSeconds) {
-                $upsert = $pdo->prepare(
-                    'INSERT INTO rate_limits (action_key, ip_hash, attempts, window_started_at)
-                     VALUES (:action, :ip, 1, :now_insert)
-                     ON DUPLICATE KEY UPDATE attempts = 1, window_started_at = :now_update'
-                );
+                $isSqlite = strtolower((string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) === 'sqlite';
+                $upsertSql = $isSqlite
+                    ? 'INSERT INTO rate_limits (action_key, ip_hash, attempts, window_started_at)
+                       VALUES (:action, :ip, 1, :now_insert)
+                       ON CONFLICT(action_key, ip_hash) DO UPDATE SET attempts = 1, window_started_at = :now_update'
+                    : 'INSERT INTO rate_limits (action_key, ip_hash, attempts, window_started_at)
+                       VALUES (:action, :ip, 1, :now_insert)
+                       ON DUPLICATE KEY UPDATE attempts = 1, window_started_at = :now_update';
+                $upsert = $pdo->prepare($upsertSql);
                 $upsert->execute([
                     'action' => $action,
                     'ip' => $ipHash,

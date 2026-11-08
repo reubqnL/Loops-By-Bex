@@ -45,6 +45,61 @@ try {
         $pdo = new PDO('sqlite:' . $sqlitePath);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $pdo->exec('PRAGMA foreign_keys = ON');
+        $pdo->exec(
+            "CREATE TABLE IF NOT EXISTS waitlist (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL UNIQUE,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_number TEXT NOT NULL UNIQUE,
+                idempotency_key TEXT NOT NULL UNIQUE,
+                customer_name TEXT NOT NULL,
+                customer_email TEXT NOT NULL,
+                shipping_line1 TEXT NOT NULL,
+                shipping_line2 TEXT NOT NULL DEFAULT '',
+                shipping_city TEXT NOT NULL,
+                shipping_postcode TEXT NOT NULL,
+                shipping_country TEXT NOT NULL DEFAULT 'GB',
+                order_notes TEXT NOT NULL DEFAULT '',
+                subtotal_pence INTEGER NOT NULL DEFAULT 0,
+                shipping_pence INTEGER NOT NULL DEFAULT 0,
+                total_pence INTEGER NOT NULL DEFAULT 0,
+                currency TEXT NOT NULL DEFAULT 'GBP',
+                payment_provider TEXT NOT NULL DEFAULT 'stripe_hosted',
+                payment_reference TEXT NOT NULL DEFAULT '',
+                payment_status TEXT NOT NULL DEFAULT 'pending',
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS order_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_id INTEGER NOT NULL,
+                product_slug TEXT NOT NULL,
+                product_name TEXT NOT NULL,
+                unit_price_pence INTEGER NOT NULL DEFAULT 0,
+                quantity INTEGER NOT NULL DEFAULT 1,
+                line_total_pence INTEGER NOT NULL DEFAULT 0,
+                FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+            );
+            CREATE TABLE IF NOT EXISTS contact_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                subject TEXT NOT NULL,
+                message TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS rate_limits (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                action_key TEXT NOT NULL,
+                ip_hash TEXT NOT NULL,
+                attempts INTEGER NOT NULL DEFAULT 1,
+                window_started_at INTEGER NOT NULL,
+                UNIQUE (action_key, ip_hash)
+            );"
+        );
     } elseif ($dbHost !== '' && $dbName !== '' && $dbUser !== '') {
         $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4', $dbHost, $dbPort, $dbName);
         $options = [

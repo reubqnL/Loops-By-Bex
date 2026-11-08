@@ -27,6 +27,20 @@ function assert_no_raw_card_data_posted(): void
     }
 }
 
+function resolve_checkout_base_url(): string
+{
+    $remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    $httpHost = trim((string) ($_SERVER['HTTP_HOST'] ?? ''));
+    if (
+        in_array($remoteAddr, ['127.0.0.1', '::1'], true)
+        && preg_match('/^(localhost|127\.0\.0\.1)(:\d{1,5})?$/i', $httpHost)
+    ) {
+        return 'http://' . $httpHost;
+    }
+
+    return rtrim(env_val('APP_URL', 'https://loopsbybex.co.uk'), '/');
+}
+
 function create_stripe_checkout_session(
     string $stripeSecretKey,
     string $orderNumber,
@@ -39,7 +53,7 @@ function create_stripe_checkout_session(
         return null;
     }
 
-    $appUrl = rtrim(env_val('APP_URL', 'https://loopsbybex.co.uk'), '/');
+    $appUrl = resolve_checkout_base_url();
     $params = [
         'mode' => 'payment',
         'client_reference_id' => $orderNumber,
@@ -124,6 +138,51 @@ function create_stripe_checkout_session(
         'id' => (string) $decoded['id'],
         'url' => $checkoutUrl,
     ];
+}
+
+function retrieve_stripe_checkout_session(string $stripeSecretKey, string $sessionId): ?array
+{
+    $sessionId = trim($sessionId);
+    if (
+        $stripeSecretKey === ''
+        || !preg_match('/^cs_(test|live)_[A-Za-z0-9_]{10,200}$/', $sessionId)
+        || !function_exists('curl_init')
+    ) {
+        return null;
+    }
+
+    $ch = curl_init('https://api.stripe.com/v1/checkout/sessions/' . rawurlencode($sessionId));
+    if ($ch === false) {
+        return null;
+    }
+
+    curl_setopt_array($ch, [
+        CURLOPT_HTTPGET => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_CONNECTTIMEOUT => 8,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $stripeSecretKey,
+        ],
+    ]);
+
+    $rawResponse = curl_exec($ch);
+    $httpStatus = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    unset($ch);
+
+    if (!is_string($rawResponse) || $httpStatus < 200 || $httpStatus >= 300) {
+        error_log('stripe session lookup failed http ' . $httpStatus);
+        return null;
+    }
+
+    $decoded = json_decode($rawResponse, true);
+    if (!is_array($decoded) || ($decoded['id'] ?? '') !== $sessionId) {
+        return null;
+    }
+
+    return $decoded;
 }
 
 // check stripe-signature header + 5 min timestamp window

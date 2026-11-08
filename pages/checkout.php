@@ -159,6 +159,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 $idempotencyKey
             );
             if ($stripeSession === null) {
+                if ($pdo instanceof PDO) {
+                    try {
+                        $failStmt = $pdo->prepare("UPDATE orders SET payment_status = 'failed' WHERE order_number = :num");
+                        $failStmt->execute(['num' => $orderNumber]);
+                    } catch (PDOException $e) {
+                        error_log('[LoopsByBex Checkout] Failed marking order failed: ' . $e->getMessage());
+                    }
+                }
+                $_SESSION['checkout_idempotency_key'] = bin2hex(random_bytes(32));
+                $idempotencyKey = (string) $_SESSION['checkout_idempotency_key'];
                 $errors['general'] = 'Unable to connect to our secure payment gateway. Your card has not been charged.';
             } else {
                 if ($pdo instanceof PDO) {
@@ -169,8 +179,19 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                         error_log('[LoopsByBex Checkout] Failed saving Stripe session reference: ' . $e->getMessage());
                     }
                 }
+                $_SESSION['pending_stripe_order'] = [
+                    'stripe_session_id' => $stripeSession['id'],
+                    'order_number' => $orderNumber,
+                    'customer_name' => $values['customer_name'],
+                    'customer_email' => $values['customer_email'],
+                    'shipping_city' => $values['shipping_city'],
+                    'shipping_postcode' => $values['shipping_postcode'],
+                    'items' => $summary['items'],
+                    'total_pence' => $totalPence,
+                    'saved_in_db' => $savedInDb,
+                    'created_at' => time(),
+                ];
                 unset($_SESSION['checkout_idempotency_key']);
-                cart_clear();
                 header('Location: ' . $stripeSession['url'], true, 303);
                 exit();
             }
@@ -218,6 +239,10 @@ require_once __DIR__ . '/../partials/header.php';
         <?php if (!empty($errors['general'])): ?>
             <div class="flash-banner flash-error" role="alert" style="margin-bottom: 1.25rem;">
                 <?php echo e($errors['general']); ?>
+            </div>
+        <?php elseif (isset($_GET['cancelled'])): ?>
+            <div class="flash-banner flash-info" role="status" style="margin-bottom: 1.25rem;">
+                Checkout was cancelled — your items are still in your cart whenever you're ready.
             </div>
         <?php endif; ?>
 
