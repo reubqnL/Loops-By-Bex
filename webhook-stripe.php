@@ -29,7 +29,7 @@ if ($webhookSecret === '' || !($pdo instanceof PDO)) {
     exit();
 }
 
-$rawBody = file_get_contents('php://input');
+$rawBody = file_get_contents('php://input', false, null, 0, 262144);
 $sigHeader = (string) ($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '');
 
 if (!is_string($rawBody) || !verify_stripe_webhook_signature($rawBody, $sigHeader, $webhookSecret, 300)) {

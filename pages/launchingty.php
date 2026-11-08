@@ -9,7 +9,7 @@ if ($grantedAt <= 0 || (time() - $grantedAt) > 300) {
     exit();
 }
 
-$instagramUrl = env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/');
+$instagramUrl = safe_external_url(env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/'), 'https://www.instagram.com/bex2_011/');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +23,7 @@ $instagramUrl = env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/');
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/style/launching.css">
+    <link rel="stylesheet" href="<?php echo e(asset_url('/style/launching.css')); ?>">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>

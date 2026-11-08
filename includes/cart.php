@@ -1,4 +1,8 @@
 <?php
+if (!defined('LBB_BOOTSTRAPPED')) {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
 const CART_MAX_QTY_PER_ITEM = 10;
 
 // session stores cart_key => qty (cart_key is "slug" or "slug::Color"), prices come from server

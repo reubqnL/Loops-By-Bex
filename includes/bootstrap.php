@@ -1,4 +1,8 @@
 <?php
+if (basename((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === 'bootstrap.php') {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/security.php';
 if (is_file(__DIR__ . '/catalog.php')) {
@@ -20,6 +24,19 @@ function env_val(string $key, string $default = ''): string
 function e(mixed $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function safe_external_url(string $url, string $fallback = '#'): string
+{
+    $url = trim($url);
+    if ($url === '') {
+        return $fallback;
+    }
+    $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+    if (!in_array($scheme, ['https', 'http'], true)) {
+        return $fallback;
+    }
+    return $url;
 }
 
 function asset_url(string $path): string

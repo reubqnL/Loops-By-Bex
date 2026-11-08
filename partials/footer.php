@@ -1,7 +1,12 @@
 <?php
+if (!defined('LBB_BOOTSTRAPPED')) {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
 $currentNav = $activeNav ?? '';
-$instagramUrl = env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/');
-$etsyUrl = env_val('ETSY_SHOP_URL', '');
+$instagramUrl = safe_external_url(env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/'), 'https://www.instagram.com/bex2_011/');
+$rawEtsyUrl = trim(env_val('ETSY_SHOP_URL', ''));
+$etsyUrl = $rawEtsyUrl !== '' ? safe_external_url($rawEtsyUrl, '') : '';
 $contactEmail = env_val('CONTACT_EMAIL', 'hello@loopsbybex.co.uk');
 
 $footerNavItems = [

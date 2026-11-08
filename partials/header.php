@@ -1,4 +1,8 @@
 <?php
+if (basename((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === 'header.php') {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 $resolvedTitle = isset($pageTitle) && trim((string) $pageTitle) !== ''
@@ -146,9 +150,13 @@ $siteNavItems = [
 </header>
 
 <?php if ($flash !== null): ?>
-    <?php $isErrorFlash = (($flash['type'] ?? '') === 'error'); ?>
+    <?php
+    $rawFlashType = (string) ($flash['type'] ?? 'info');
+    $safeFlashType = in_array($rawFlashType, ['success', 'error', 'info'], true) ? $rawFlashType : 'info';
+    $isErrorFlash = ($safeFlashType === 'error');
+    ?>
     <div class="site-container flash-wrapper">
-        <div class="flash-banner flash-<?php echo e($flash['type'] ?? 'info'); ?>"
+        <div class="flash-banner flash-<?php echo e($safeFlashType); ?>"
              role="<?php echo $isErrorFlash ? 'alert' : 'status'; ?>"
              aria-live="<?php echo $isErrorFlash ? 'assertive' : 'polite'; ?>">
             <span><?php echo e($flash['message'] ?? ''); ?></span>

@@ -1,13 +1,15 @@
 Options -Indexes -MultiViews
+ServerSignature Off
 RewriteEngine On
 RewriteBase /
 
 ErrorDocument 404 /pages/404.php
 
-# block direct access to .env, dotfiles (except .well-known), backend folders and source files
+# block direct access to .env, all hidden dotfiles (except .well-known for ssl), backend folders and source files
 RewriteRule (^|/)\.env - [F,L,NC]
-RewriteRule ^(config\.php|router\.php|includes(/.*)?|partials(/.*)?|database(/.*)?|vendor(/.*)?|storage(/.*)?|assets/wireframe\.png)$ - [F,L,NC]
-RewriteRule \.(scss|map|sql|sqlite|env)$ - [F,L,NC]
+RewriteRule (^|/)\.(?!well-known(/|$)) - [F,L,NC]
+RewriteRule ^(config\.php|router\.php|includes(/.*)?|partials(/.*)?|database(/.*)?|vendor(/.*)?|storage(/.*)?|composer\.(json|lock)|LICENSE|README\.md|assets/wireframe\.png)$ - [F,L,NC]
+RewriteRule \.(scss|map|sql|sqlite|sqlite3|db|log|env|bak|sh|md)$ - [F,L,NC]
 
 # force https + non-www on live domain
 RewriteCond %{HTTP_HOST} ^(www\.)?loopsbybex\.co\.uk$ [NC]
@@ -48,7 +50,7 @@ RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L,QSA]
     </IfModule>
 </Files>
 
-<FilesMatch "^(\.env.*|\.git.*|composer\.(json|lock)|LICENSE)$">
+<FilesMatch "^(\.env.*|\.git.*|composer\.(json|lock)|LICENSE|README\.md)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -64,4 +66,5 @@ RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L,QSA]
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), usb=()"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
 </IfModule>

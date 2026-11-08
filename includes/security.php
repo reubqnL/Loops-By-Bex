@@ -1,4 +1,8 @@
 <?php
+if (!defined('LBB_BOOTSTRAPPED')) {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
 function is_https_request(): bool
 {
     if (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') {
@@ -87,6 +91,7 @@ function send_security_headers(string $appEnv = 'production'): void
     header(
         "Content-Security-Policy: "
         . "default-src 'self'; "
+        . "object-src 'none'; "
         . "script-src 'self' https://js.stripe.com; "
         . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         . "font-src 'self' https://fonts.gstatic.com; "

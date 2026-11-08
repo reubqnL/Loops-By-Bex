@@ -6,7 +6,7 @@ $pageTitle = 'Contact';
 $activeNav = 'contact';
 $pageStyles = ['/style/cart.css'];
 $contactEmail = env_val('CONTACT_EMAIL', 'loopsbybex@outlook.com');
-$instagramUrl = env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/');
+$instagramUrl = safe_external_url(env_val('INSTAGRAM_URL', 'https://www.instagram.com/bex2_011/'), 'https://www.instagram.com/bex2_011/');
 
 $errors = [];
 $submitted = false;

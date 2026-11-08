@@ -3,6 +3,9 @@ if (basename((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === 'config.php') {
     http_response_code(403);
     exit('403 Forbidden');
 }
+if (!defined('LBB_BOOTSTRAPPED')) {
+    define('LBB_BOOTSTRAPPED', true);
+}
 
 // optional php-based env config (cannot be read in plain text over http even without .htaccess)
 $phpEnvPath = __DIR__ . '/includes/env.php';

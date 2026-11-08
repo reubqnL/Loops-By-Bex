@@ -1,4 +1,8 @@
 <?php
+if (!defined('LBB_BOOTSTRAPPED')) {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
 // product list fallback when mysql products table isnt populated yet
 function default_placeholder_products(): array
 {

@@ -1,4 +1,8 @@
 <?php
+if (!defined('LBB_BOOTSTRAPPED')) {
+    http_response_code(403);
+    exit('403 Forbidden');
+}
 // stripe handles all card inputs on their hosted page - block raw card fields if anything ever posts them here
 function assert_no_raw_card_data_posted(): void
 {

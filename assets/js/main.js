@@ -163,7 +163,7 @@
         thumb.addEventListener('click', (event) => {
             const newSrc = thumb.getAttribute('data-src');
             const newAlt = thumb.getAttribute('data-alt');
-            if (!newSrc) {
+            if (!newSrc || !newSrc.startsWith('/') || newSrc.startsWith('//')) {
                 return;
             }
             event.preventDefault();
