@@ -194,7 +194,7 @@ require_once __DIR__ . '/../partials/header.php';
                 <h2 class="about-card-heading" id="about-preview-heading">About Me</h2>
                 <div class="about-preview-body">
                     <div class="about-preview-photo">
-                        <img src="/assets/placeholders/maker-placeholder.svg" alt="Placeholder portrait of Bex, the maker" width="150" height="180" loading="lazy">
+                        <img src="/assets/bex.webp" alt="Bex, creator of Loops by Bex" width="150" height="180" loading="lazy">
                     </div>
                     <div class="about-preview-content">
                         <h3>About Me</h3>
