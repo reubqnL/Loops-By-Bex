@@ -5,6 +5,7 @@ vendor/
 *.env
 !.env.example
 includes/env.php
+.deploy-cache.json
 
 storage/*.sqlite
 storage/*.log
