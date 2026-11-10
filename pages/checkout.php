@@ -3,6 +3,8 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/payments.php';
 enforce_site_mode('storefront');
 
+header('Cache-Control: no-store, private');
+
 $summary = get_cart_summary($pdo);
 if (empty($summary['items'])) {
     set_flash('info', 'Please add an item to your cart before checking out.');
@@ -71,6 +73,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
     // recalculate total on server before saving order
     $summary = get_cart_summary($pdo, $values['shipping_postcode']);
+    if (empty($summary['items'])) {
+        set_flash('error', 'Sorry, the items in your basket just sold out. Your card has not been charged.');
+        header('Location: /cart', true, 303);
+        exit();
+    }
     $totalPence = (int) $summary['total_pence'];
     $stripeSecret = env_val('STRIPE_SECRET_KEY', '');
 
@@ -79,7 +86,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     }
 
     if (empty($errors)) {
-        $orderNumber = 'LBB-' . strtoupper(bin2hex(random_bytes(4)));
+        $orderNumber = 'LBB-' . strtoupper(bin2hex(random_bytes(5)));
         $paymentProvider = $totalPence === 0 ? 'placeholder_free' : 'stripe_hosted';
         $paymentStatus = $totalPence === 0 ? 'paid' : 'pending';
         $savedInDb = false;

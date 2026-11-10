@@ -231,3 +231,65 @@ function verify_stripe_webhook_signature(string $payload, string $sigHeader, str
 
     return false;
 }
+
+// atomically mark pending order paid and decrement stock once
+function mark_order_paid_and_decrement_stock(PDO $pdo, string $orderNumber, string $sessionId, int $amountTotal): bool
+{
+    $isSqlite = strtolower((string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) === 'sqlite';
+
+    $pdo->beginTransaction();
+    try {
+        $markPaid = $pdo->prepare(
+            "UPDATE orders
+             SET payment_status = 'paid', payment_reference = :session_id
+             WHERE order_number = :order_number
+               AND total_pence = :amount_total
+               AND currency = 'GBP'
+               AND payment_status = 'pending'"
+        );
+        $markPaid->execute([
+            'session_id' => $sessionId,
+            'order_number' => $orderNumber,
+            'amount_total' => $amountTotal,
+        ]);
+
+        if ($markPaid->rowCount() > 0) {
+            $orderIdStmt = $pdo->prepare('SELECT id FROM orders WHERE order_number = :order_number LIMIT 1');
+            $orderIdStmt->execute(['order_number' => $orderNumber]);
+            $orderId = (int) $orderIdStmt->fetchColumn();
+
+            if ($orderId > 0) {
+                $itemsStmt = $pdo->prepare('SELECT product_slug, quantity FROM order_items WHERE order_id = :order_id');
+                $itemsStmt->execute(['order_id' => $orderId]);
+                $soldItems = $itemsStmt->fetchAll() ?: [];
+
+                $decSql = $isSqlite
+                    ? 'UPDATE products SET stock_qty = MAX(stock_qty - :qty, 0) WHERE slug = :slug'
+                    : 'UPDATE products SET stock_qty = CASE WHEN stock_qty >= :qty_check THEN stock_qty - :qty_sub ELSE 0 END WHERE slug = :slug';
+                $decStmt = $pdo->prepare($decSql);
+
+                foreach ($soldItems as $sold) {
+                    $qty = max(1, (int) ($sold['quantity'] ?? 1));
+                    $slug = (string) ($sold['product_slug'] ?? '');
+                    if ($slug === '') {
+                        continue;
+                    }
+                    if ($isSqlite) {
+                        $decStmt->execute(['qty' => $qty, 'slug' => $slug]);
+                    } else {
+                        $decStmt->execute(['qty_check' => $qty, 'qty_sub' => $qty, 'slug' => $slug]);
+                    }
+                }
+            }
+        }
+
+        $pdo->commit();
+        return true;
+    } catch (PDOException $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
+    }
+}
+

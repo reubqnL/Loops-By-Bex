@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 enforce_site_mode('storefront');
 
+header('Cache-Control: no-store, private');
+
 $pageTitle = 'Order Lookup';
 $activeNav = 'account';
 $pageStyles = ['/style/cart.css'];

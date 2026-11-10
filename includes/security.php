@@ -191,7 +191,8 @@ function get_client_ip_hash(): string
 {
     // hash ip so we dont store raw visitor ips in mysql
     $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
-    $pepper = env_val('APP_KEY', 'loops-by-bex-rate-limit-v1');
+    $secretSeed = env_val('APP_KEY', '') . '|' . env_val('STRIPE_WEBHOOK_SECRET', '') . '|' . env_val('DB_PASS', '') . '|loops-by-bex-rate-limit-v1';
+    $pepper = hash('sha256', $secretSeed);
     return hash_hmac('sha256', $ip, $pepper);
 }
 

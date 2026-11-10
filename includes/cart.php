@@ -196,11 +196,12 @@ function get_cart_summary(?PDO $pdo, ?string $shippingPostcode = null): array
     foreach ($normalized as $canonicalKey => $qty) {
         [$slug, $resolvedColor] = parse_cart_key($canonicalKey);
         $product = get_product_by_slug($pdo, $slug);
-        if ($product === null) {
+        if ($product === null || (int) $product['stock_qty'] <= 0) {
+            unset($_SESSION['cart'][$canonicalKey]);
             continue;
         }
 
-        $clampedQty = min($qty, CART_MAX_QTY_PER_ITEM, max(1, (int) $product['stock_qty']));
+        $clampedQty = min($qty, CART_MAX_QTY_PER_ITEM, (int) $product['stock_qty']);
         $unitPence = (int) $product['price_pence'];
         $linePence = $unitPence * $clampedQty;
 

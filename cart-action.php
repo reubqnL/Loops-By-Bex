@@ -10,7 +10,14 @@ $rawReturn = trim((string) ($_POST['return_to'] ?? '/cart'));
 
 // make sure redirect stays on our own site
 $returnTo = '/cart';
-if ($rawReturn !== '' && str_starts_with($rawReturn, '/') && !str_starts_with($rawReturn, '//') && !str_contains($rawReturn, "\r") && !str_contains($rawReturn, "\n")) {
+if (
+    $rawReturn !== ''
+    && str_starts_with($rawReturn, '/')
+    && !str_starts_with($rawReturn, '//')
+    && !str_contains($rawReturn, '\\')
+    && !str_contains($rawReturn, "\r")
+    && !str_contains($rawReturn, "\n")
+) {
     $returnTo = $rawReturn;
 }
 

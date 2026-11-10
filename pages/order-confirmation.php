@@ -3,6 +3,9 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/payments.php';
 enforce_site_mode('storefront');
 
+header('Cache-Control: no-store, private');
+header('Referrer-Policy: no-referrer');
+
 $order = null;
 $sessionId = trim((string) ($_GET['session_id'] ?? ''));
 
@@ -21,19 +24,7 @@ if ($sessionId !== '') {
 
     if ($pdo instanceof PDO && $orderNumber !== '' && $currency === 'GBP' && $amountTotal >= 0) {
         try {
-            $markPaid = $pdo->prepare(
-                "UPDATE orders
-                 SET payment_status = 'paid', payment_reference = :session_id
-                 WHERE order_number = :order_number
-                   AND total_pence = :amount_total
-                   AND currency = 'GBP'
-                   AND payment_status = 'pending'"
-            );
-            $markPaid->execute([
-                'session_id' => $sessionId,
-                'order_number' => $orderNumber,
-                'amount_total' => $amountTotal,
-            ]);
+            mark_order_paid_and_decrement_stock($pdo, $orderNumber, $sessionId, $amountTotal);
 
             $orderStmt = $pdo->prepare(
                 'SELECT id, order_number, customer_name, customer_email, shipping_city, shipping_postcode, total_pence
@@ -100,6 +91,8 @@ if ($sessionId !== '') {
         $_SESSION['last_order'] = $order;
         unset($_SESSION['pending_stripe_order']);
         cart_clear();
+        header('Location: /order-confirmation', true, 303);
+        exit();
     }
 } else {
     $recent = $_SESSION['last_order'] ?? null;

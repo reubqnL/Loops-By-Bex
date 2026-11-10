@@ -56,22 +56,7 @@ if ($event['type'] === 'checkout.session.completed') {
 
     if ($orderNumber !== '' && $paymentStatus === 'paid' && $currency === 'GBP' && $amountTotal >= 0) {
         try {
-            $stmt = $pdo->prepare(
-                'UPDATE orders
-                 SET payment_status = :paid_status, payment_reference = :session_id
-                 WHERE order_number = :order_number
-                   AND total_pence = :amount_total
-                   AND currency = :currency
-                   AND payment_status = :pending_status'
-            );
-            $stmt->execute([
-                'paid_status' => 'paid',
-                'session_id' => $sessionId,
-                'order_number' => $orderNumber,
-                'amount_total' => $amountTotal,
-                'currency' => 'GBP',
-                'pending_status' => 'pending',
-            ]);
+            mark_order_paid_and_decrement_stock($pdo, $orderNumber, $sessionId, $amountTotal);
         } catch (PDOException $e) {
             error_log('webhook order update error: ' . $e->getMessage());
             http_response_code(500);
