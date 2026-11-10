@@ -253,6 +253,29 @@
   p {
     color: var(--text-secondary);
   }
+
+  .product-maker-note {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 0.35rem 0.8rem;
+    border-radius: 10px;
+    background: #f6f1fa;
+    border: 1px solid var(--border-subtle);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .product-safety-note {
+    font-size: 0.83rem;
+    line-height: 1.5;
+    padding: 0.7rem 0.9rem;
+    border-radius: 12px;
+    background: #faf6fc;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
 }
 
 .product-card-variant-note {

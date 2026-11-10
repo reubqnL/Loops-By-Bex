@@ -4,6 +4,33 @@ if (!defined('LBB_BOOTSTRAPPED')) {
     exit('403 Forbidden');
 }
 const CART_MAX_QTY_PER_ITEM = 10;
+const STANDARD_UK_SHIPPING_PENCE = 250;
+
+// sheffield outcodes within 5 miles of s6 (hillsborough / walkley / wadsley)
+function is_free_local_s6_postcode(string $postcode): bool
+{
+    $clean = strtoupper((string) preg_replace('/\s+/', '', $postcode));
+    if ($clean === '' || !preg_match('/^([A-Z]{1,2}[0-9][0-9A-Z]?)[0-9][A-Z]{2}$/', $clean, $matches)) {
+        return false;
+    }
+
+    $freeLocalOutcodes = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'S11', 'S14', 'S35'];
+    return in_array($matches[1], $freeLocalOutcodes, true);
+}
+
+function calculate_shipping_pence(int $subtotalPence, ?string $shippingPostcode = null): int
+{
+    if ($subtotalPence <= 0) {
+        return 0;
+    }
+    if ($shippingPostcode === null) {
+        return 0;
+    }
+    if (is_free_local_s6_postcode($shippingPostcode)) {
+        return 0;
+    }
+    return STANDARD_UK_SHIPPING_PENCE;
+}
 
 // session stores cart_key => qty (cart_key is "slug" or "slug::Color"), prices come from server
 function get_raw_cart(): array
@@ -138,7 +165,7 @@ function cart_clear(): void
     $_SESSION['cart'] = [];
 }
 
-function get_cart_summary(?PDO $pdo): array
+function get_cart_summary(?PDO $pdo, ?string $shippingPostcode = null): array
 {
     $raw = get_raw_cart();
     $normalized = [];
@@ -196,8 +223,7 @@ function get_cart_summary(?PDO $pdo): array
         $totalCount += $clampedQty;
     }
 
-    // update postage pence here when live stock goes up
-    $shippingPence = 0;
+    $shippingPence = calculate_shipping_pence($subtotalPence, $shippingPostcode);
     $totalPence = $subtotalPence + $shippingPence;
 
     return [
@@ -205,6 +231,7 @@ function get_cart_summary(?PDO $pdo): array
         'item_count' => $totalCount,
         'subtotal_pence' => $subtotalPence,
         'shipping_pence' => $shippingPence,
+        'is_free_local_delivery' => ($shippingPostcode !== null && $shippingPostcode !== '' && is_free_local_s6_postcode($shippingPostcode)),
         'total_pence' => $totalPence,
     ];
 }

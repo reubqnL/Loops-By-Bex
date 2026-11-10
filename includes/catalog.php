@@ -432,8 +432,9 @@ function default_placeholder_products(): array
             'slug' => 'elephant-dog-bandana',
             'name' => 'Elephant Dog Bandana',
             'category' => 'Pets',
-            'short_description' => 'Handmade slip-on pink elephant print dog bandana.',
-            'description' => 'Handmade over-the-collar cotton dog bandana in dusty rose with an elephant family print.',
+            'short_description' => 'Slip-on pink elephant print dog bandana (created by someone else for Loops By Bex to use).',
+            'description' => 'Over-the-collar cotton dog bandana in dusty rose with an elephant family print. Created by someone else for Loops By Bex to use and sell.',
+            'maker_note' => 'Created by someone else for Loops By Bex to use',
             'price_pence' => 450,
             'image_path' => '/assets/elephant-dog-bandana.webp',
             'side_image_path' => '',
@@ -446,8 +447,9 @@ function default_placeholder_products(): array
             'slug' => 'emoji-dog-bandana',
             'name' => 'Emoji Dog Bandana',
             'category' => 'Pets',
-            'short_description' => 'Handmade slip-on red emoji print dog bandana.',
-            'description' => 'Bright handmade over-the-collar cotton dog bandana with a cheerful emoji pattern.',
+            'short_description' => 'Slip-on red emoji print dog bandana (created by someone else for Loops By Bex to use).',
+            'description' => 'Bright over-the-collar cotton dog bandana with a cheerful emoji pattern. Created by someone else for Loops By Bex to use and sell.',
+            'maker_note' => 'Created by someone else for Loops By Bex to use',
             'price_pence' => 450,
             'image_path' => '/assets/emoji-dog-bandana.webp',
             'side_image_path' => '',
@@ -460,8 +462,9 @@ function default_placeholder_products(): array
             'slug' => 'jungle-blue-dog-bandana',
             'name' => 'Jungle Blue Dog Bandana',
             'category' => 'Pets',
-            'short_description' => 'Handmade slip-on mint blue bear & panda dog bandana.',
-            'description' => 'Handmade over-the-collar cotton dog bandana in soft mint blue with cute bear illustrations.',
+            'short_description' => 'Slip-on mint blue bear & panda dog bandana (created by someone else for Loops By Bex to use).',
+            'description' => 'Over-the-collar cotton dog bandana in soft mint blue with cute bear illustrations. Created by someone else for Loops By Bex to use and sell.',
+            'maker_note' => 'Created by someone else for Loops By Bex to use',
             'price_pence' => 450,
             'image_path' => '/assets/jungle-blue-dog-bandana.webp',
             'side_image_path' => '',
@@ -474,8 +477,9 @@ function default_placeholder_products(): array
             'slug' => 'jungle-pink-dog-bandana',
             'name' => 'Jungle Pink Dog Bandana',
             'category' => 'Pets',
-            'short_description' => 'Handmade slip-on blush pink bear & panda dog bandana.',
-            'description' => 'Handmade over-the-collar cotton dog bandana in dusky pink with cute bear illustrations.',
+            'short_description' => 'Slip-on blush pink bear & panda dog bandana (created by someone else for Loops By Bex to use).',
+            'description' => 'Over-the-collar cotton dog bandana in dusky pink with cute bear illustrations. Created by someone else for Loops By Bex to use and sell.',
+            'maker_note' => 'Created by someone else for Loops By Bex to use',
             'price_pence' => 450,
             'image_path' => '/assets/jungle-pink-dog-bandana.webp',
             'side_image_path' => '',
@@ -488,8 +492,9 @@ function default_placeholder_products(): array
             'slug' => 'swan-dog-bandana',
             'name' => 'Swan Dog Bandana',
             'category' => 'Pets',
-            'short_description' => 'Handmade slip-on sunshine yellow swan print dog bandana.',
-            'description' => 'Handmade over-the-collar cotton dog bandana in bright yellow patterned with white swans.',
+            'short_description' => 'Slip-on sunshine yellow swan print dog bandana (created by someone else for Loops By Bex to use).',
+            'description' => 'Over-the-collar cotton dog bandana in bright yellow patterned with white swans. Created by someone else for Loops By Bex to use and sell.',
+            'maker_note' => 'Created by someone else for Loops By Bex to use',
             'price_pence' => 450,
             'image_path' => '/assets/swan-dog-bandana.webp',
             'side_image_path' => '',
@@ -543,6 +548,12 @@ function get_all_products(?PDO $pdo): array
                         ? (string) $row['side_image_path']
                         : $fallbackSide;
                     $row['color_options'] = $defaultsBySlug[$slug]['color_options'] ?? [];
+                    $makerNote = (string) ($defaultsBySlug[$slug]['maker_note'] ?? '');
+                    $row['maker_note'] = $makerNote;
+                    if ($makerNote !== '' && isset($defaultsBySlug[$slug]['description'])) {
+                        $row['short_description'] = $defaultsBySlug[$slug]['short_description'];
+                        $row['description'] = $defaultsBySlug[$slug]['description'];
+                    }
                     return $row;
                 }, $rows);
             }

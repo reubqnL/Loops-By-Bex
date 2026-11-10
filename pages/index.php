@@ -17,7 +17,8 @@ $heroSlides = [
     [
         'tagline' => 'Handmade with love ♡',
         'heading' => 'Crochet Friends for Every Mood',
-        'description' => 'Unique, handmade crochet creations, perfect for gifts, play and home.',
+        'description' => 'Handmade crochet creations, ideal for gifts.',
+        'disclaimer' => 'Disclaimer: small parts are used, so please bear this in mind when gifting to others as items are not recommended for under 4s.',
         'cta_label' => 'Shop Now →',
         'cta_href' => '/shop',
         'image' => '/assets/love-bunny.webp',
@@ -27,21 +28,12 @@ $heroSlides = [
     [
         'tagline' => 'Crafted stitch by stitch ♡',
         'heading' => 'The Story Behind Every Loop',
-        'description' => 'Discover how a passion for soft yarn and cosy designs grew into handmade keepsakes made with care.',
+        'description' => 'Read Bex’s blurb to discover the love behind her loops.',
+        'disclaimer' => '',
         'cta_label' => 'Read My Story →',
         'cta_href' => '/about',
         'image' => '/assets/bee.webp',
         'image_alt' => 'Handmade chunky blue and brown striped crochet bumblebee',
-        'is_h1' => false,
-    ],
-    [
-        'tagline' => 'Custom ideas welcome ♡',
-        'heading' => 'Have a Question or Custom Idea?',
-        'description' => 'Looking for a particular colour combination or gifting advice? Reach out directly and say hello.',
-        'cta_label' => 'Get in Touch →',
-        'cta_href' => '/contact',
-        'image' => '/assets/bright-pink-christmas-loaf-cat.webp',
-        'image_alt' => 'Handmade pink and white crochet loaf cat wearing a sparkly Santa hat',
         'is_h1' => false,
     ],
 ];
@@ -84,6 +76,9 @@ require_once __DIR__ . '/../partials/header.php';
                                     <h2 class="hero-heading"><?php echo e($slide['heading']); ?></h2>
                                 <?php endif; ?>
                                 <p class="hero-description"><?php echo e($slide['description']); ?></p>
+                                <?php if (!empty($slide['disclaimer'])): ?>
+                                    <p class="hero-disclaimer"><?php echo e($slide['disclaimer']); ?></p>
+                                <?php endif; ?>
                                 <a href="<?php echo e($slide['cta_href']); ?>" class="btn btn-primary">
                                     <?php echo e($slide['cta_label']); ?>
                                 </a>

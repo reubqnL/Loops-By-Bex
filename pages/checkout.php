@@ -27,6 +27,8 @@ $values = [
     'order_notes' => trim((string) ($_POST['order_notes'] ?? '')),
 ];
 
+$summary = get_cart_summary($pdo, $values['shipping_postcode']);
+
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     assert_no_raw_card_data_posted();
     verify_csrf_or_redirect('/checkout');
@@ -52,8 +54,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if ($values['shipping_city'] === '' || mb_strlen($values['shipping_city']) > 100) {
         $errors['shipping_city'] = 'Please enter your town or city.';
     }
-    if ($values['shipping_postcode'] === '' || !preg_match('/^[A-Z0-9 ]{5,10}$/', $values['shipping_postcode'])) {
-        $errors['shipping_postcode'] = 'Please enter a valid UK postcode.';
+    $compactPostcode = (string) preg_replace('/\s+/', '', $values['shipping_postcode']);
+    if ($compactPostcode === '' || !preg_match('/^([A-Z]{1,2}[0-9][0-9A-Z]?)([0-9][A-Z]{2})$/', $compactPostcode, $pcParts)) {
+        $errors['shipping_postcode'] = 'Please enter a valid UK postcode (e.g. S6 4AB).';
+    } else {
+        $values['shipping_postcode'] = $pcParts[1] . ' ' . $pcParts[2];
     }
     if (mb_strlen($values['order_notes']) > 500) {
         $errors['order_notes'] = 'Order notes must be 500 characters or fewer.';
@@ -65,7 +70,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     }
 
     // recalculate total on server before saving order
-    $summary = get_cart_summary($pdo);
+    $summary = get_cart_summary($pdo, $values['shipping_postcode']);
     $totalPence = (int) $summary['total_pence'];
     $stripeSecret = env_val('STRIPE_SECRET_KEY', '');
 
@@ -302,8 +307,10 @@ require_once __DIR__ . '/../partials/header.php';
                     <div class="form-field">
                         <label for="shipping_postcode">Postcode (UK) <span aria-hidden="true">*</span></label>
                         <input type="text" id="shipping_postcode" name="shipping_postcode" required maxlength="10" autocomplete="postal-code"
+                               data-checkout-postcode
                                value="<?php echo e($values['shipping_postcode']); ?>"
                                <?php echo isset($errors['shipping_postcode']) ? 'aria-invalid="true" aria-describedby="err-shipping-postcode"' : ''; ?>>
+                        <small style="color: var(--text-muted); font-size: 0.8rem;">Free delivery within 5 miles of S6 &middot; &pound;2.50 further</small>
                         <?php if (isset($errors['shipping_postcode'])): ?>
                             <small id="err-shipping-postcode" role="alert" style="color: #8f1d35;"><?php echo e($errors['shipping_postcode']); ?></small>
                         <?php endif; ?>
@@ -324,12 +331,12 @@ require_once __DIR__ . '/../partials/header.php';
                     <?php endif; ?>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    Complete Order (<?php echo e(format_gbp((int) $summary['total_pence'])); ?>)
+                <button type="submit" class="btn btn-primary" style="width: 100%;" data-checkout-submit>
+                    Complete Order (<span data-checkout-btn-total><?php echo e(format_gbp((int) $summary['total_pence'])); ?></span>)
                 </button>
             </form>
 
-            <aside class="panel-card">
+            <aside class="panel-card" data-checkout-summary data-subtotal-pence="<?php echo (int) $summary['subtotal_pence']; ?>">
                 <h2>Order Summary</h2>
                 <?php foreach ($summary['items'] as $line): ?>
                     <div class="summary-row">
@@ -338,13 +345,16 @@ require_once __DIR__ . '/../partials/header.php';
                     </div>
                 <?php endforeach; ?>
                 <div class="summary-row">
-                    <span>UK Delivery</span>
-                    <span><?php echo e(format_gbp((int) $summary['shipping_pence'])); ?></span>
+                    <span data-checkout-shipping-label><?php echo !empty($summary['is_free_local_delivery']) ? 'Local Delivery (within 5 miles of S6)' : 'UK Delivery'; ?></span>
+                    <span data-checkout-shipping-amount><?php echo !empty($summary['is_free_local_delivery']) ? 'Free' : e(format_gbp((int) $summary['shipping_pence'])); ?></span>
                 </div>
                 <div class="summary-row summary-total">
                     <span>Total to Pay</span>
-                    <span><?php echo e(format_gbp((int) $summary['total_pence'])); ?></span>
+                    <span data-checkout-total><?php echo e(format_gbp((int) $summary['total_pence'])); ?></span>
                 </div>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.75rem;" data-checkout-delivery-hint>
+                    Free local delivery within 5 miles of Sheffield S6, or &pound;2.50 across the rest of the UK.
+                </p>
             </aside>
         </div>
     </div>

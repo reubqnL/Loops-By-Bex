@@ -17,17 +17,17 @@ require_once __DIR__ . '/../partials/header.php';
 
             <h2>1. Handmade Products</h2>
             <p>
-                Every item sold by Loops By Bex is individually handmade in the United Kingdom. Slight stitch or tension variations are part of the unique character of handmade crochet work.
+                Crochet items sold by Loops By Bex are individually handmade in the United Kingdom; slight stitch or tension variations are part of the unique character of handmade crochet work. Any items created by someone else for Loops By Bex to use and sell (such as fabric dog bandanas) are clearly noted on their product pages.
             </p>
 
-            <h2>2. Pricing &amp; Payment</h2>
+            <h2>2. Pricing, Delivery &amp; Payment</h2>
             <p>
-                All prices are displayed in Pounds Sterling (&pound; GBP). Online card payments are processed securely through Stripe Hosted Checkout; card details are never stored on Loops By Bex servers.
+                All prices are displayed in Pounds Sterling (&pound; GBP). Delivery is free within 5 miles of Sheffield S6 and &pound;2.50 further across the UK. Online card payments are processed securely through Stripe Hosted Checkout; card details are never stored on Loops By Bex servers.
             </p>
 
             <h2>3. Product Safety</h2>
             <p>
-                Unless explicitly certified and labelled as suitable for infants, decorative crochet plushies and keepsakes may contain small components (such as safety eyes) and should be kept out of reach of children under 36 months.
+                Small parts (such as safety eyes) are used in handmade creations — please bear this in mind when gifting to others, as items are not recommended for children under 4 years old.
             </p>
 
             <h2>4. Contact</h2>

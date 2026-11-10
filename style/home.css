@@ -110,7 +110,19 @@
   font-size: 1rem;
   color: var(--text-secondary);
   max-width: 38ch;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.15rem;
+}
+
+.hero-disclaimer {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  max-width: 42ch;
+  padding: 0.45rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(208, 56, 116, 0.16);
+  margin-bottom: 0.25rem;
 }
 
 .hero-visual {

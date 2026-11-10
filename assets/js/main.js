@@ -473,3 +473,64 @@
     });
 })();
 
+(() => {
+    const postcodeInput = document.querySelector('[data-checkout-postcode]');
+    const summaryEl = document.querySelector('[data-checkout-summary]');
+    if (!postcodeInput || !summaryEl) {
+        return;
+    }
+
+    const subtotalPence = parseInt(summaryEl.getAttribute('data-subtotal-pence') || '0', 10);
+    if (!Number.isFinite(subtotalPence) || subtotalPence <= 0) {
+        return;
+    }
+
+    const shippingLabelEl = summaryEl.querySelector('[data-checkout-shipping-label]');
+    const shippingAmountEl = summaryEl.querySelector('[data-checkout-shipping-amount]');
+    const totalEl = summaryEl.querySelector('[data-checkout-total]');
+    const btnTotalEl = document.querySelector('[data-checkout-btn-total]');
+
+    const freeLocalOutcodes = new Set([
+        'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'S11', 'S14', 'S35'
+    ]);
+
+    function formatGbp(pence) {
+        return `£${(pence / 100).toFixed(2)}`;
+    }
+
+    function isFreeLocalPostcode(rawValue) {
+        const clean = String(rawValue || '').toUpperCase().replace(/\s+/g, '');
+        const fullMatch = clean.match(/^([A-Z]{1,2}[0-9][0-9A-Z]?)[0-9][A-Z]{2}$/);
+        if (fullMatch) {
+            return freeLocalOutcodes.has(fullMatch[1]);
+        }
+        return false;
+    }
+
+    function refreshShipping() {
+        const isFreeLocal = isFreeLocalPostcode(postcodeInput.value);
+        const shippingPence = isFreeLocal ? 0 : 250;
+        const totalPence = subtotalPence + shippingPence;
+
+        if (shippingLabelEl) {
+            shippingLabelEl.textContent = isFreeLocal
+                ? 'Local Delivery (within 5 miles of S6)'
+                : 'UK Delivery';
+        }
+        if (shippingAmountEl) {
+            shippingAmountEl.textContent = isFreeLocal ? 'Free' : formatGbp(shippingPence);
+        }
+        if (totalEl) {
+            totalEl.textContent = formatGbp(totalPence);
+        }
+        if (btnTotalEl) {
+            btnTotalEl.textContent = formatGbp(totalPence);
+        }
+    }
+
+    postcodeInput.addEventListener('input', refreshShipping);
+    postcodeInput.addEventListener('change', refreshShipping);
+    refreshShipping();
+})();
+
+

@@ -9,8 +9,8 @@ $resolvedTitle = isset($pageTitle) && trim((string) $pageTitle) !== ''
         ? trim((string) $pageTitle) . ' | Loops By Bex'
         : 'Loops By Bex';
 $resolvedDescription = isset($pageDescription) && trim((string) $pageDescription) !== ''
-        ? trim((string) $pageDescription)
-        : 'Handmade crochet plushies, keepsakes, and custom creations by Loops By Bex in the United Kingdom.';
+    ? trim((string) $pageDescription)
+    : 'Handmade crochet creations, ideal for gifts, by Loops By Bex — free local delivery within 5 miles of Sheffield S6 or £2.50 UK-wide.';
 $resolvedRobots = isset($pageRobots) && trim((string) $pageRobots) !== ''
         ? trim((string) $pageRobots)
         : 'index, follow';

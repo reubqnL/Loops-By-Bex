@@ -76,6 +76,9 @@ require_once __DIR__ . '/../partials/header.php';
                 <span class="badge-category"><?php echo e($product['category']); ?></span>
                 <h1><?php echo e($product['name']); ?></h1>
                 <p class="detail-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
+                <?php if (!empty($product['maker_note'])): ?>
+                    <p class="product-maker-note"><?php echo e((string) $product['maker_note']); ?>.</p>
+                <?php endif; ?>
                 <p><?php echo e($product['description']); ?></p>
 
                 <?php if ((int) $product['stock_qty'] > 0): ?>
@@ -103,7 +106,17 @@ require_once __DIR__ . '/../partials/header.php';
                         </div>
                     </form>
                 <?php else: ?>
-                    <p><strong>Out of stock</strong> — message Bex on the <a href="/contact" class="text-arrow-link">Contact page</a> to request one made to order.</p>
+                    <p><strong>Sold out</strong> — check back soon for future shop restocks.</p>
+                <?php endif; ?>
+
+                <?php if (!empty($product['maker_note'])): ?>
+                    <p class="product-safety-note">
+                        <strong>Delivery:</strong> Free local delivery within 5 miles of Sheffield S6 (&pound;2.50 further across the UK).
+                    </p>
+                <?php else: ?>
+                    <p class="product-safety-note">
+                        <strong>Disclaimer:</strong> Small parts are used, so please bear this in mind when gifting to others as items are not recommended for under 4s. Free local delivery within 5 miles of S6 (&pound;2.50 further).
+                    </p>
                 <?php endif; ?>
             </div>
         </section>
@@ -123,6 +136,9 @@ require_once __DIR__ . '/../partials/header.php';
                             <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"><?php echo e($item['name']); ?></a>
                         </h3>
                         <p class="product-card-price"><?php echo e(format_gbp((int) $item['price_pence'])); ?></p>
+                        <?php if (!empty($item['maker_note'])): ?>
+                            <p class="product-card-variant-note"><?php echo e((string) $item['maker_note']); ?></p>
+                        <?php endif; ?>
                         <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
                             <p class="product-card-variant-note">Available in different colours &amp; styles</p>
                         <?php endif; ?>

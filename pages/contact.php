@@ -85,7 +85,7 @@ require_once __DIR__ . '/../partials/header.php';
             <div class="page-header-band">
                 <div>
                     <h1>Get in Touch</h1>
-                    <p>Questions about an item, custom crochet colours, or an existing order? Send a note below.</p>
+                    <p>Have a question about an item in the shop, local delivery, or an existing order? Send a note below.</p>
                 </div>
             </div>
 

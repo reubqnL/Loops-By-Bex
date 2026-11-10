@@ -91,7 +91,7 @@ function create_stripe_checkout_session(
                 'currency' => 'gbp',
                 'unit_amount' => (int) $cartSummary['shipping_pence'],
                 'product_data' => [
-                    'name' => 'UK Tracked Delivery',
+                    'name' => 'UK Delivery',
                 ],
             ],
         ];

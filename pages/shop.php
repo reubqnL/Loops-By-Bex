@@ -84,6 +84,9 @@ require_once __DIR__ . '/../partials/header.php';
                             <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?></a>
                         </h2>
                         <p class="product-card-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
+                        <?php if (!empty($product['maker_note'])): ?>
+                            <p class="product-card-variant-note"><?php echo e((string) $product['maker_note']); ?></p>
+                        <?php endif; ?>
                         <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
                             <p class="product-card-variant-note">Available in different colours &amp; styles</p>
                         <?php endif; ?>

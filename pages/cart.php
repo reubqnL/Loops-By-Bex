@@ -105,16 +105,16 @@ require_once __DIR__ . '/../partials/header.php';
                         <span><?php echo e(format_gbp((int) $summary['subtotal_pence'])); ?></span>
                     </div>
                     <div class="summary-row">
-                        <span>UK Delivery</span>
-                        <span><?php echo e(format_gbp((int) $summary['shipping_pence'])); ?></span>
+                        <span>Delivery</span>
+                        <span>Calculated at checkout</span>
                     </div>
                     <div class="summary-row summary-total">
-                        <span>Total</span>
-                        <span><?php echo e(format_gbp((int) $summary['total_pence'])); ?></span>
+                        <span>Subtotal</span>
+                        <span><?php echo e(format_gbp((int) $summary['subtotal_pence'])); ?></span>
                     </div>
 
                     <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0.85rem 0 1.2rem;">
-                        Prices are shown in GBP (&pound;). Secure card checkout is powered by Stripe.
+                        <strong>Free local delivery</strong> within 5 miles of Sheffield S6, or <strong>&pound;2.50</strong> across the rest of the UK. Secure card checkout powered by Stripe.
                     </p>
 
                     <a href="/checkout" class="btn btn-primary" style="width: 100%;">Proceed to Checkout &rarr;</a>
