@@ -232,11 +232,9 @@ function verify_stripe_webhook_signature(string $payload, string $sigHeader, str
     return false;
 }
 
-// atomically mark pending order paid and decrement stock once
-function mark_order_paid_and_decrement_stock(PDO $pdo, string $orderNumber, string $sessionId, int $amountTotal): bool
+// atomically mark a paid order and its product listings sold once
+function mark_order_paid_and_mark_products_sold(PDO $pdo, string $orderNumber, string $sessionId, int $amountTotal): bool
 {
-    $isSqlite = strtolower((string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) === 'sqlite';
-
     $pdo->beginTransaction();
     try {
         $markPaid = $pdo->prepare(
@@ -259,25 +257,15 @@ function mark_order_paid_and_decrement_stock(PDO $pdo, string $orderNumber, stri
             $orderId = (int) $orderIdStmt->fetchColumn();
 
             if ($orderId > 0) {
-                $itemsStmt = $pdo->prepare('SELECT product_slug, quantity FROM order_items WHERE order_id = :order_id');
+                $itemsStmt = $pdo->prepare('SELECT DISTINCT product_slug FROM order_items WHERE order_id = :order_id');
                 $itemsStmt->execute(['order_id' => $orderId]);
                 $soldItems = $itemsStmt->fetchAll() ?: [];
-
-                $decSql = $isSqlite
-                    ? 'UPDATE products SET stock_qty = MAX(stock_qty - :qty, 0) WHERE slug = :slug'
-                    : 'UPDATE products SET stock_qty = CASE WHEN stock_qty >= :qty_check THEN stock_qty - :qty_sub ELSE 0 END WHERE slug = :slug';
-                $decStmt = $pdo->prepare($decSql);
+                $markSold = $pdo->prepare('UPDATE products SET stock_qty = 0 WHERE slug = :slug');
 
                 foreach ($soldItems as $sold) {
-                    $qty = max(1, (int) ($sold['quantity'] ?? 1));
                     $slug = (string) ($sold['product_slug'] ?? '');
-                    if ($slug === '') {
-                        continue;
-                    }
-                    if ($isSqlite) {
-                        $decStmt->execute(['qty' => $qty, 'slug' => $slug]);
-                    } else {
-                        $decStmt->execute(['qty_check' => $qty, 'qty_sub' => $qty, 'slug' => $slug]);
+                    if ($slug !== '') {
+                        $markSold->execute(['slug' => $slug]);
                     }
                 }
             }
@@ -292,4 +280,3 @@ function mark_order_paid_and_decrement_stock(PDO $pdo, string $orderNumber, stri
         throw $e;
     }
 }
-

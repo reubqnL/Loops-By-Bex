@@ -56,7 +56,7 @@ if ($event['type'] === 'checkout.session.completed') {
 
     if ($orderNumber !== '' && $paymentStatus === 'paid' && $currency === 'GBP' && $amountTotal >= 0) {
         try {
-            mark_order_paid_and_decrement_stock($pdo, $orderNumber, $sessionId, $amountTotal);
+            mark_order_paid_and_mark_products_sold($pdo, $orderNumber, $sessionId, $amountTotal);
         } catch (PDOException $e) {
             error_log('webhook order update error: ' . $e->getMessage());
             http_response_code(500);

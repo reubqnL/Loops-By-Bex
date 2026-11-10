@@ -4,6 +4,7 @@ Disallow: /cart
 Disallow: /checkout
 Disallow: /order-confirmation
 Disallow: /account
+Disallow: /admin
 Disallow: /launchingty
 Disallow: /cart-action.php
 Disallow: /process-waitlist.php

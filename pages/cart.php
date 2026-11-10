@@ -46,7 +46,7 @@ require_once __DIR__ . '/../partials/header.php';
                         $selectedColor = (string) ($line['selected_color'] ?? '');
                         $colorOpts = isset($item['color_options']) && is_array($item['color_options']) ? $item['color_options'] : [];
                         $rowId = 'cart-row-' . $idx;
-                        $maxQty = (int) min(10, max(1, (int) ($item['stock_qty'] ?? 10)));
+                        $maxQty = (int) min(CART_MAX_QTY_PER_ITEM, max(1, (int) ($item['stock_qty'] ?? 1)));
                         ?>
                         <div class="cart-item-row">
                             <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="cart-thumb">

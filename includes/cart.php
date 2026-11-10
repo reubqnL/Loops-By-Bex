@@ -3,7 +3,7 @@ if (!defined('LBB_BOOTSTRAPPED')) {
     http_response_code(403);
     exit('403 Forbidden');
 }
-const CART_MAX_QTY_PER_ITEM = 10;
+const CART_MAX_QTY_PER_ITEM = 1;
 const STANDARD_UK_SHIPPING_PENCE = 250;
 
 // sheffield outcodes within 5 miles of s6 (hillsborough / walkley / wadsley)

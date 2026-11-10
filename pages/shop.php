@@ -76,12 +76,14 @@ require_once __DIR__ . '/../partials/header.php';
         <?php else: ?>
             <div class="shop-grid">
                 <?php foreach ($filteredProducts as $product): ?>
-                    <article class="product-card">
-                        <a href="/product?slug=<?php echo urlencode($product['slug']); ?>" class="product-card-media">
+                    <?php $isSold = product_is_sold($product); ?>
+                    <article class="product-card<?php echo $isSold ? ' is-sold' : ''; ?>">
+                        <a href="/product?slug=<?php echo urlencode($product['slug']); ?>" class="product-card-media<?php echo $isSold ? ' is-sold' : ''; ?>">
                             <img src="<?php echo e($product['image_path']); ?>" alt="<?php echo e($product['name']); ?>" width="320" height="256" loading="lazy">
+                            <?php if ($isSold): ?><span class="product-sold-stamp">SOLD</span><?php endif; ?>
                         </a>
                         <h2 class="product-card-title">
-                            <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?></a>
+                            <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?><?php echo $isSold ? ' — SOLD' : ''; ?></a>
                         </h2>
                         <p class="product-card-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
                         <?php if (!empty($product['maker_note'])): ?>
@@ -90,28 +92,32 @@ require_once __DIR__ . '/../partials/header.php';
                         <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
                             <p class="product-card-variant-note">Available in different colours &amp; styles</p>
                         <?php endif; ?>
-                        <form action="/cart-action.php" method="POST" class="product-card-form">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="action" value="add">
-                            <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
-                            <input type="hidden" name="return_to" value="<?php echo e($returnUrl); ?>">
-                            <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
-                                <label for="shop-color-<?php echo e($product['slug']); ?>" class="sr-only">Choose colour for <?php echo e($product['name']); ?></label>
-                                <select id="shop-color-<?php echo e($product['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
-                                    <?php foreach ($product['color_options'] as $colorOpt): ?>
-                                        <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            <?php endif; ?>
-                            <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                                    <circle cx="9" cy="20" r="1.5"></circle>
-                                    <circle cx="18" cy="20" r="1.5"></circle>
-                                    <path d="M2.5 3h2.7l2.2 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21.5 7H6.2"></path>
-                                </svg>
-                                <span>Add to Cart</span>
-                            </button>
-                        </form>
+                        <?php if ($isSold): ?>
+                            <p class="product-sold-note"><?php echo e(product_sold_message($product)); ?></p>
+                        <?php else: ?>
+                            <form action="/cart-action.php" method="POST" class="product-card-form">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
+                                <input type="hidden" name="return_to" value="<?php echo e($returnUrl); ?>">
+                                <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
+                                    <label for="shop-color-<?php echo e($product['slug']); ?>" class="sr-only">Choose colour for <?php echo e($product['name']); ?></label>
+                                    <select id="shop-color-<?php echo e($product['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
+                                        <?php foreach ($product['color_options'] as $colorOpt): ?>
+                                            <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
+                                <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <circle cx="9" cy="20" r="1.5"></circle>
+                                        <circle cx="18" cy="20" r="1.5"></circle>
+                                        <path d="M2.5 3h2.7l2.2 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21.5 7H6.2"></path>
+                                    </svg>
+                                    <span>Add to Cart</span>
+                                </button>
+                            </form>
+                        <?php endif; ?>
                     </article>
                 <?php endforeach; ?>
             </div>

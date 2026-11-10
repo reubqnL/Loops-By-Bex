@@ -132,28 +132,34 @@ require_once __DIR__ . '/../partials/header.php';
 
                 <div class="product-grid-4">
                     <?php foreach ($mainArrivals as $product): ?>
-                        <article class="product-card">
-                            <a href="/product?slug=<?php echo urlencode($product['slug']); ?>" class="product-card-media" tabindex="-1" aria-hidden="true">
+                        <?php $isSold = product_is_sold($product); ?>
+                        <article class="product-card<?php echo $isSold ? ' is-sold' : ''; ?>">
+                            <a href="/product?slug=<?php echo urlencode($product['slug']); ?>" class="product-card-media<?php echo $isSold ? ' is-sold' : ''; ?>" tabindex="-1" aria-hidden="true">
                                 <img src="<?php echo e($product['image_path']); ?>" alt="" width="320" height="256" loading="lazy">
+                                <?php if ($isSold): ?><span class="product-sold-stamp">SOLD</span><?php endif; ?>
                             </a>
                             <h3 class="product-card-title">
-                                <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?></a>
+                                <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?><?php echo $isSold ? ' — SOLD' : ''; ?></a>
                             </h3>
                             <p class="product-card-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
-                            <form action="/cart-action.php" method="POST" class="product-card-form">
-                                <?php echo csrf_field(); ?>
-                                <input type="hidden" name="action" value="add">
-                                <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
-                                <input type="hidden" name="return_to" value="/">
-                                <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                                        <circle cx="9" cy="20" r="1.5"></circle>
-                                        <circle cx="18" cy="20" r="1.5"></circle>
-                                        <path d="M2.5 3h2.7l2.2 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21.5 7H6.2"></path>
-                                    </svg>
-                                    <span>Add to Cart</span>
-                                </button>
-                            </form>
+                            <?php if ($isSold): ?>
+                                <p class="product-sold-note"><?php echo e(product_sold_message($product)); ?></p>
+                            <?php else: ?>
+                                <form action="/cart-action.php" method="POST" class="product-card-form">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="action" value="add">
+                                    <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
+                                    <input type="hidden" name="return_to" value="/">
+                                    <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                            <circle cx="9" cy="20" r="1.5"></circle>
+                                            <circle cx="18" cy="20" r="1.5"></circle>
+                                            <path d="M2.5 3h2.7l2.2 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21.5 7H6.2"></path>
+                                        </svg>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
                         </article>
                     <?php endforeach; ?>
                 </div>
@@ -168,11 +174,13 @@ require_once __DIR__ . '/../partials/header.php';
                 </div>
                 <div class="sidebar-arrivals-grid">
                     <?php foreach ($sidebarArrivals as $item): ?>
+                        <?php $itemIsSold = product_is_sold($item); ?>
                         <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"
-                           class="mini-product-card"
-                           aria-label="<?php echo e($item['name'] . ', ' . format_gbp((int) $item['price_pence'])); ?>">
-                            <div class="mini-product-thumb">
+                           class="mini-product-card<?php echo $itemIsSold ? ' is-sold' : ''; ?>"
+                           aria-label="<?php echo e($item['name'] . ($itemIsSold ? ', sold' : '') . ', ' . format_gbp((int) $item['price_pence'])); ?>">
+                            <div class="mini-product-thumb<?php echo $itemIsSold ? ' is-sold' : ''; ?>">
                                 <img src="<?php echo e($item['image_path']); ?>" alt="" width="160" height="160" loading="lazy">
+                                <?php if ($itemIsSold): ?><span class="mini-product-sold-stamp">SOLD</span><?php endif; ?>
                             </div>
                             <span class="mini-product-name"><?php echo e($item['name']); ?></span>
                             <span class="mini-product-price"><?php echo e(format_gbp((int) $item['price_pence'])); ?></span>

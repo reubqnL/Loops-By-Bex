@@ -470,3 +470,42 @@
   line-height: 1.5;
   margin-bottom: 0.35rem;
 }
+
+.mini-product-thumb {
+  position: relative;
+}
+
+.mini-product-thumb.is-sold::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: -10%;
+  width: 120%;
+  height: 2px;
+  background: #ffffff;
+  transform: rotate(-14deg);
+  pointer-events: none;
+}
+
+.mini-product-sold-stamp {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid #ffffff;
+  border-radius: var(--radius-pill);
+  background: rgba(204, 38, 92, 0.96);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  transform: translate(-50%, -50%) rotate(-14deg);
+  pointer-events: none;
+}
+
+.mini-product-card.is-sold .mini-product-name {
+  text-decoration: line-through;
+  text-decoration-color: var(--brand-pink);
+}

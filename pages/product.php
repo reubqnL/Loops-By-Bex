@@ -11,6 +11,7 @@ if ($product === null) {
     exit();
 }
 
+$isSold = product_is_sold($product);
 $pageTitle = (string) $product['name'];
 $pageDescription = (string) ($product['short_description'] ?? $product['description']);
 $activeNav = 'shop';
@@ -40,12 +41,13 @@ require_once __DIR__ . '/../partials/header.php';
 
         <section class="product-detail-card">
             <div class="product-detail-media-wrap">
-                <div class="product-detail-media">
+                <div class="product-detail-media<?php echo $isSold ? ' is-sold' : ''; ?>">
                     <img src="<?php echo e($initialImage); ?>"
                          alt="<?php echo e($initialAlt); ?>"
                          width="600"
                          height="600"
                          data-product-main-img>
+                    <?php if ($isSold): ?><span class="product-sold-stamp">SOLD</span><?php endif; ?>
                 </div>
 
                 <?php if ($sideImage !== ''): ?>
@@ -74,14 +76,14 @@ require_once __DIR__ . '/../partials/header.php';
 
             <div class="product-detail-info">
                 <span class="badge-category"><?php echo e($product['category']); ?></span>
-                <h1><?php echo e($product['name']); ?></h1>
+                <h1><?php echo e($product['name']); ?><?php if ($isSold): ?> <span class="product-sold-inline">SOLD</span><?php endif; ?></h1>
                 <p class="detail-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
                 <?php if (!empty($product['maker_note'])): ?>
                     <p class="product-maker-note"><?php echo e((string) $product['maker_note']); ?>.</p>
                 <?php endif; ?>
                 <p><?php echo e($product['description']); ?></p>
 
-                <?php if ((int) $product['stock_qty'] > 0): ?>
+                <?php if (!$isSold): ?>
                     <form action="/cart-action.php" method="POST" class="add-detail-form">
                         <?php echo csrf_field(); ?>
                         <input type="hidden" name="action" value="add">
@@ -101,12 +103,12 @@ require_once __DIR__ . '/../partials/header.php';
 
                         <div class="add-detail-controls">
                             <label for="product-quantity" class="sr-only">Quantity for <?php echo e($product['name']); ?></label>
-                            <input type="number" id="product-quantity" name="quantity" value="1" min="1" max="<?php echo (int) min(10, (int) $product['stock_qty']); ?>" aria-label="Quantity">
+                            <input type="number" id="product-quantity" name="quantity" value="1" min="1" max="<?php echo (int) min(CART_MAX_QTY_PER_ITEM, (int) $product['stock_qty']); ?>" aria-label="Quantity">
                             <button type="submit" class="btn btn-primary">Add to Cart &rarr;</button>
                         </div>
                     </form>
                 <?php else: ?>
-                    <p><strong>Sold out</strong> — check back soon for future shop restocks.</p>
+                    <p class="product-sold-note"><?php echo e(product_sold_message($product)); ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($product['maker_note'])): ?>
@@ -128,12 +130,14 @@ require_once __DIR__ . '/../partials/header.php';
             </div>
             <div class="product-grid-4">
                 <?php foreach ($related as $item): ?>
-                    <article class="product-card">
-                        <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="product-card-media">
+                    <?php $itemIsSold = product_is_sold($item); ?>
+                    <article class="product-card<?php echo $itemIsSold ? ' is-sold' : ''; ?>">
+                        <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="product-card-media<?php echo $itemIsSold ? ' is-sold' : ''; ?>">
                             <img src="<?php echo e($item['image_path']); ?>" alt="<?php echo e($item['name']); ?>" width="320" height="320" loading="lazy">
+                            <?php if ($itemIsSold): ?><span class="product-sold-stamp">SOLD</span><?php endif; ?>
                         </a>
                         <h3 class="product-card-title">
-                            <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"><?php echo e($item['name']); ?></a>
+                            <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"><?php echo e($item['name']); ?><?php echo $itemIsSold ? ' — SOLD' : ''; ?></a>
                         </h3>
                         <p class="product-card-price"><?php echo e(format_gbp((int) $item['price_pence'])); ?></p>
                         <?php if (!empty($item['maker_note'])): ?>
@@ -142,21 +146,25 @@ require_once __DIR__ . '/../partials/header.php';
                         <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
                             <p class="product-card-variant-note">Available in different colours &amp; styles</p>
                         <?php endif; ?>
-                        <form action="/cart-action.php" method="POST" class="product-card-form">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="action" value="add">
-                            <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
-                            <input type="hidden" name="return_to" value="/product?slug=<?php echo e($product['slug']); ?>">
-                            <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
-                                <label for="related-color-<?php echo e($item['slug']); ?>" class="sr-only">Choose colour for <?php echo e($item['name']); ?></label>
-                                <select id="related-color-<?php echo e($item['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
-                                    <?php foreach ($item['color_options'] as $colorOpt): ?>
-                                        <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            <?php endif; ?>
-                            <button type="submit" class="btn btn-primary">Add to Cart</button>
-                        </form>
+                        <?php if ($itemIsSold): ?>
+                            <p class="product-sold-note"><?php echo e(product_sold_message($item)); ?></p>
+                        <?php else: ?>
+                            <form action="/cart-action.php" method="POST" class="product-card-form">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
+                                <input type="hidden" name="return_to" value="/product?slug=<?php echo e($product['slug']); ?>">
+                                <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
+                                    <label for="related-color-<?php echo e($item['slug']); ?>" class="sr-only">Choose colour for <?php echo e($item['name']); ?></label>
+                                    <select id="related-color-<?php echo e($item['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
+                                        <?php foreach ($item['color_options'] as $colorOpt): ?>
+                                            <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+                        <?php endif; ?>
                     </article>
                 <?php endforeach; ?>
             </div>

@@ -24,7 +24,7 @@ if ($sessionId !== '') {
 
     if ($pdo instanceof PDO && $orderNumber !== '' && $currency === 'GBP' && $amountTotal >= 0) {
         try {
-            mark_order_paid_and_decrement_stock($pdo, $orderNumber, $sessionId, $amountTotal);
+            mark_order_paid_and_mark_products_sold($pdo, $orderNumber, $sessionId, $amountTotal);
 
             $orderStmt = $pdo->prepare(
                 'SELECT id, order_number, customer_name, customer_email, shipping_city, shipping_postcode, total_pence
