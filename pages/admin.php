@@ -117,11 +117,10 @@ if ($isAdmin) {
                     i.quantity,
                     i.unit_price_pence,
                     i.line_total_pence
-                 FROM orders AS o
+                 FROM (
+                    SELECT * FROM orders ORDER BY created_at DESC, id DESC LIMIT 100
+                 ) AS o
                  LEFT JOIN order_items AS i ON i.order_id = o.id
-                 WHERE o.id IN (
-                    SELECT id FROM orders ORDER BY created_at DESC, id DESC LIMIT 100
-                 )
                  ORDER BY o.created_at DESC, o.id DESC, i.id ASC'
             );
             $rows = $ordersStmt ? ($ordersStmt->fetchAll() ?: []) : [];
