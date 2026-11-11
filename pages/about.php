@@ -24,7 +24,7 @@ require_once __DIR__ . '/../partials/header.php';
                     Hi there, I&rsquo;m Bex, the creator of &lsquo;Loops by Bex.&rsquo; Over the last few years, I have developed a passion for crochet, and I have lost track of the number of things I have made! Crochet quickly became my favourite hobby as well as being a great way for me to relieve stress.
                 </p>
                 <p>
-                    For the last almost year I have been selling my crochet handmade items through a local craft caf&eacute; in Hillsborough, but sadly they have had to close. I had previously considered selling my crochet items online, and the closure of The Crafty Cat has been the encouragement I needed to take this next step.
+                    For the last almost year I have been selling my handmade crochet items through a local craft caf&eacute; in Hillsborough, but sadly they have had to close. I had previously considered selling my crochet items online, and the closure of The Crafty Cat has been the encouragement I needed to take this next step.
                 </p>
                 <p>
                     Through selling my handmade items, I have raised funds that will enable me to complete some voluntary work overseas when all my studies are complete. I am so grateful for the support of so many people who have helped me with my fundraising. With the launch of my online shop, I will continue to put some of my earnings towards my fundraising, but I will also be using it as a personal income.

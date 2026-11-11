@@ -9,7 +9,12 @@ $pageTitle = 'Owner Orders';
 $activeNav = '';
 $pageStyles = ['/style/cart.css'];
 $adminPassword = env_val('ADMIN_PASSWORD', '');
-$adminConfigured = strlen($adminPassword) >= 16;
+$appEnvironment = strtolower(env_val('APP_ENV', 'production'));
+$appUrlHost = strtolower((string) parse_url(env_val('APP_URL', ''), PHP_URL_HOST));
+$adminPasswordIsLocalTest = $appEnvironment === 'development'
+    && in_array($appUrlHost, ['localhost', '127.0.0.1', '::1'], true)
+    && hash_equals('TEST_PASSWORD', $adminPassword);
+$adminConfigured = strlen($adminPassword) >= 16 || $adminPasswordIsLocalTest;
 $adminError = '';
 $ordersError = '';
 $restockError = '';
@@ -23,7 +28,7 @@ if (
     $adminError = 'Your private session expired. Please sign in again.';
 }
 
-$isAdmin = !empty($_SESSION['lbb_admin_authenticated']);
+$isAdmin = $adminConfigured && !empty($_SESSION['lbb_admin_authenticated']);
 
 if (!$adminConfigured) {
     http_response_code(503);
@@ -78,7 +83,7 @@ if (!$adminConfigured) {
     }
 }
 
-$isAdmin = !empty($_SESSION['lbb_admin_authenticated']);
+$isAdmin = $adminConfigured && !empty($_SESSION['lbb_admin_authenticated']);
 if ($isAdmin) {
     $_SESSION['lbb_admin_last_activity'] = time();
 }
@@ -152,10 +157,14 @@ if ($isAdmin) {
             }
             $orders = array_values($orders);
 
-            $inventoryStmt = $pdo->query(
-                'SELECT slug, name, stock_qty FROM products WHERE is_active = 1 ORDER BY sort_order ASC, id ASC'
+            $inventory = array_map(
+                static fn(array $product): array => [
+                    'slug' => (string) $product['slug'],
+                    'name' => (string) $product['name'],
+                    'stock_qty' => (int) $product['stock_qty'],
+                ],
+                get_all_products($pdo)
             );
-            $inventory = $inventoryStmt ? ($inventoryStmt->fetchAll() ?: []) : [];
         } catch (PDOException $e) {
             error_log('[LoopsByBex Admin] Order list failed: ' . $e->getMessage());
             $ordersError = 'Orders could not be loaded right now.';
@@ -171,7 +180,7 @@ require_once __DIR__ . '/../partials/header.php';
         <?php if (!$adminConfigured): ?>
             <section class="panel-card">
                 <h1>Owner Orders</h1>
-                <p>This private page has not been configured yet. Set an <code>ADMIN_PASSWORD</code> of at least 16 characters in the server-only environment settings before using it. Never add the password to GitHub or share it in chat.</p>
+                <p>This private page needs an <code>ADMIN_PASSWORD</code> of at least 16 characters in server-only environment settings. A short test password works only for local development on localhost. Never add a real password to GitHub or share it in chat.</p>
                 <p>Customers do not sign in here and can still check out as guests.</p>
             </section>
         <?php elseif (!$isAdmin): ?>
@@ -199,6 +208,9 @@ require_once __DIR__ . '/../partials/header.php';
                     <p class="admin-eyebrow">Private shop area</p>
                     <h1>Orders</h1>
                     <p>Recent orders and delivery details. Customers do not need an account to buy.</p>
+                    <?php if ($adminPasswordIsLocalTest): ?>
+                        <div class="flash-banner flash-info" role="status">Local test password active. Change <code>ADMIN_PASSWORD</code> before making this site public.</div>
+                    <?php endif; ?>
                 </div>
                 <form action="/admin" method="POST">
                     <?php echo csrf_field(); ?>

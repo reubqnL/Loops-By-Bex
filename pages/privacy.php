@@ -17,7 +17,7 @@ require_once __DIR__ . '/../partials/header.php';
 
             <h2>1. Data Controller</h2>
             <p>
-                Loops By Bex operates this website in the United Kingdom and acts as the data controller for personal information collected through our waitlist, contact form, and online shop.
+                Loops By Bex operates this website in the United Kingdom and acts as the data controller for personal information collected through our waitlist and online shop. If you email us directly, we use your details to respond to your message.
             </p>
 
             <h2>2. Information We Collect &amp; Lawful Basis</h2>
@@ -25,7 +25,6 @@ require_once __DIR__ . '/../partials/header.php';
                 <li><strong>Waitlist Signups (Consent):</strong> Your email address, collected solely to notify you when Loops By Bex launches and share occasional studio updates.</li>
                 <li><strong>Shop Orders (Contract &amp; Legal Obligation):</strong> Your name, email address, UK delivery address, and order items so we can fulfil your order and maintain statutory UK accounting records.</li>
                 <li><strong>Payments (PCI-DSS SAQ-A):</strong> Payment card numbers are processed directly by our accredited third-party payment provider (Stripe Hosted Checkout) and never pass through or get stored on Loops By Bex servers.</li>
-                <li><strong>Contact Enquiries (Legitimate Interests):</strong> Your name, email address, and message content so we can reply to your question.</li>
             </ul>
 
             <h2>3. Essential Cookies &amp; Third-Party Services</h2>

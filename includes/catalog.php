@@ -3,6 +3,17 @@ if (!defined('LBB_BOOTSTRAPPED')) {
     http_response_code(403);
     exit('403 Forbidden');
 }
+function hidden_product_slugs(): array
+{
+    return [
+        'elephant-dog-bandana',
+        'emoji-dog-bandana',
+        'jungle-blue-dog-bandana',
+        'jungle-pink-dog-bandana',
+        'swan-dog-bandana',
+    ];
+}
+
 // product list fallback when mysql products table isnt populated yet
 function default_placeholder_products(): array
 {
@@ -428,81 +439,6 @@ function default_placeholder_products(): array
             'is_featured_sidebar' => 0,
         ],
         [
-            'id' => 31,
-            'slug' => 'elephant-dog-bandana',
-            'name' => 'Elephant Dog Bandana',
-            'category' => 'Pets',
-            'short_description' => 'Slip-on pink elephant print dog bandana (created by someone else for Loops By Bex to use).',
-            'description' => 'Over-the-collar cotton dog bandana in dusty rose with an elephant family print. Created by someone else for Loops By Bex to use and sell.',
-            'maker_note' => 'Created by someone else for Loops By Bex to use',
-            'price_pence' => 450,
-            'image_path' => '/assets/elephant-dog-bandana.webp',
-            'side_image_path' => '',
-            'stock_qty' => 1,
-            'is_featured_main' => 0,
-            'is_featured_sidebar' => 0,
-        ],
-        [
-            'id' => 32,
-            'slug' => 'emoji-dog-bandana',
-            'name' => 'Emoji Dog Bandana',
-            'category' => 'Pets',
-            'short_description' => 'Slip-on red emoji print dog bandana (created by someone else for Loops By Bex to use).',
-            'description' => 'Bright over-the-collar cotton dog bandana with a cheerful emoji pattern. Created by someone else for Loops By Bex to use and sell.',
-            'maker_note' => 'Created by someone else for Loops By Bex to use',
-            'price_pence' => 450,
-            'image_path' => '/assets/emoji-dog-bandana.webp',
-            'side_image_path' => '',
-            'stock_qty' => 1,
-            'is_featured_main' => 0,
-            'is_featured_sidebar' => 0,
-        ],
-        [
-            'id' => 33,
-            'slug' => 'jungle-blue-dog-bandana',
-            'name' => 'Jungle Blue Dog Bandana',
-            'category' => 'Pets',
-            'short_description' => 'Slip-on mint blue bear & panda dog bandana (created by someone else for Loops By Bex to use).',
-            'description' => 'Over-the-collar cotton dog bandana in soft mint blue with cute bear illustrations. Created by someone else for Loops By Bex to use and sell.',
-            'maker_note' => 'Created by someone else for Loops By Bex to use',
-            'price_pence' => 450,
-            'image_path' => '/assets/jungle-blue-dog-bandana.webp',
-            'side_image_path' => '',
-            'stock_qty' => 1,
-            'is_featured_main' => 0,
-            'is_featured_sidebar' => 0,
-        ],
-        [
-            'id' => 34,
-            'slug' => 'jungle-pink-dog-bandana',
-            'name' => 'Jungle Pink Dog Bandana',
-            'category' => 'Pets',
-            'short_description' => 'Slip-on blush pink bear & panda dog bandana (created by someone else for Loops By Bex to use).',
-            'description' => 'Over-the-collar cotton dog bandana in dusky pink with cute bear illustrations. Created by someone else for Loops By Bex to use and sell.',
-            'maker_note' => 'Created by someone else for Loops By Bex to use',
-            'price_pence' => 450,
-            'image_path' => '/assets/jungle-pink-dog-bandana.webp',
-            'side_image_path' => '',
-            'stock_qty' => 1,
-            'is_featured_main' => 0,
-            'is_featured_sidebar' => 0,
-        ],
-        [
-            'id' => 35,
-            'slug' => 'swan-dog-bandana',
-            'name' => 'Swan Dog Bandana',
-            'category' => 'Pets',
-            'short_description' => 'Slip-on sunshine yellow swan print dog bandana (created by someone else for Loops By Bex to use).',
-            'description' => 'Over-the-collar cotton dog bandana in bright yellow patterned with white swans. Created by someone else for Loops By Bex to use and sell.',
-            'maker_note' => 'Created by someone else for Loops By Bex to use',
-            'price_pence' => 450,
-            'image_path' => '/assets/swan-dog-bandana.webp',
-            'side_image_path' => '',
-            'stock_qty' => 1,
-            'is_featured_main' => 0,
-            'is_featured_sidebar' => 0,
-        ],
-        [
             'id' => 36,
             'slug' => 'cat-nip-filled-toy',
             'name' => 'Cat Nip Filled Toy',
@@ -529,12 +465,17 @@ function get_all_products(?PDO $pdo): array
 
     if ($pdo instanceof PDO) {
         try {
-            $stmt = $pdo->query(
+            $hiddenSlugs = hidden_product_slugs();
+            $hiddenPlaceholders = implode(', ', array_fill(0, count($hiddenSlugs), '?'));
+            $stmt = $pdo->prepare(
                 "SELECT * FROM products
-                 WHERE is_active = 1 AND slug NOT LIKE 'placeholder-%'
+                 WHERE is_active = 1
+                   AND slug NOT LIKE 'placeholder-%'
+                   AND slug NOT IN ($hiddenPlaceholders)
                  ORDER BY sort_order ASC, id ASC"
             );
-            $rows = $stmt ? $stmt->fetchAll() : [];
+            $stmt->execute($hiddenSlugs);
+            $rows = $stmt->fetchAll();
             if (!empty($rows)) {
                 return array_map(static function (array $row) use ($defaultsBySlug): array {
                     $slug = (string) ($row['slug'] ?? '');

@@ -17,7 +17,7 @@ require_once __DIR__ . '/../partials/header.php';
 
             <h2>1. Handmade Products</h2>
             <p>
-                Crochet items sold by Loops By Bex are individually handmade in the United Kingdom; slight stitch or tension variations are part of the unique character of handmade crochet work. Any items created by someone else for Loops By Bex to use and sell (such as fabric dog bandanas) are clearly noted on their product pages.
+                Crochet items sold by Loops By Bex are individually handmade in the United Kingdom; slight stitch or tension variations are part of the unique character of handmade crochet work.
             </p>
 
             <h2>2. Pricing, Delivery &amp; Payment</h2>

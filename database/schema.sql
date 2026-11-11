@@ -69,15 +69,6 @@ CREATE TABLE IF NOT EXISTS order_items (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS contact_messages (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(120) NOT NULL,
-    email VARCHAR(254) NOT NULL,
-    subject VARCHAR(160) NOT NULL,
-    message TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS rate_limits (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     action_key VARCHAR(64) NOT NULL,
@@ -122,11 +113,6 @@ VALUES
     ('pink-and-purple-scrunchie', 'Pink and Purple Scrunchie', 'Accessories', 'Two-tone berry pink and lavender crochet scrunchie.', 'Soft chunky handmade crochet hair scrunchie in rose pink and lavender purple.', 150, '/assets/pink-and-purple-scrunchie.webp', '', 1, 0, 0, 1, 28),
     ('pink-scrunchie', 'Pink Scrunchie', 'Accessories', 'Fluffy pastel pink ruffled crochet scrunchie.', 'Super soft handmade ruffled crochet hair scrunchie in candyfloss pink.', 150, '/assets/pink-scrunchie.webp', '', 1, 0, 0, 1, 29),
     ('harry-potter-style-coffee-holder', 'Harry Potter Style Coffee Holder', 'Accessories', 'Reusable house-colours crochet takeaway cup sleeve.', 'Handmade reusable crochet coffee cup cosy striped in red, green, yellow, and blue with a stitched initial detail.', 100, '/assets/harry-potter-style-coffee-holder.webp', '', 1, 0, 0, 1, 30),
-    ('elephant-dog-bandana', 'Elephant Dog Bandana', 'Pets', 'Slip-on pink elephant print dog bandana (created by someone else for Loops By Bex to use).', 'Over-the-collar cotton dog bandana in dusty rose with an elephant family print. Created by someone else for Loops By Bex to use and sell.', 450, '/assets/elephant-dog-bandana.webp', '', 1, 0, 0, 1, 31),
-    ('emoji-dog-bandana', 'Emoji Dog Bandana', 'Pets', 'Slip-on red emoji print dog bandana (created by someone else for Loops By Bex to use).', 'Bright over-the-collar cotton dog bandana with a cheerful emoji pattern. Created by someone else for Loops By Bex to use and sell.', 450, '/assets/emoji-dog-bandana.webp', '', 1, 0, 0, 1, 32),
-    ('jungle-blue-dog-bandana', 'Jungle Blue Dog Bandana', 'Pets', 'Slip-on mint blue bear & panda dog bandana (created by someone else for Loops By Bex to use).', 'Over-the-collar cotton dog bandana in soft mint blue with cute bear illustrations. Created by someone else for Loops By Bex to use and sell.', 450, '/assets/jungle-blue-dog-bandana.webp', '', 1, 0, 0, 1, 33),
-    ('jungle-pink-dog-bandana', 'Jungle Pink Dog Bandana', 'Pets', 'Slip-on blush pink bear & panda dog bandana (created by someone else for Loops By Bex to use).', 'Over-the-collar cotton dog bandana in dusky pink with cute bear illustrations. Created by someone else for Loops By Bex to use and sell.', 450, '/assets/jungle-pink-dog-bandana.webp', '', 1, 0, 0, 1, 34),
-    ('swan-dog-bandana', 'Swan Dog Bandana', 'Pets', 'Slip-on sunshine yellow swan print dog bandana (created by someone else for Loops By Bex to use).', 'Over-the-collar cotton dog bandana in bright yellow patterned with white swans. Created by someone else for Loops By Bex to use and sell.', 450, '/assets/swan-dog-bandana.webp', '', 1, 0, 0, 1, 35),
     ('cat-nip-filled-toy', 'Cat Nip Filled Toy', 'Pets', 'Handmade crochet catnip toy — available in different colours and styles.', 'Handmade crochet cat toy stuffed with aromatic catnip and a dangling tail ribbon for batting and play. Available in different colours and styles — select your preferred colour below.', 250, '/assets/cat-nip-filled-toy.webp', '', 1, 0, 0, 1, 36)
 ON DUPLICATE KEY UPDATE
     name = VALUES(name),
