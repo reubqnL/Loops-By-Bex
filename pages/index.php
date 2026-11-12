@@ -22,7 +22,7 @@ $heroSlides = [
         'cta_label' => 'Shop Now →',
         'cta_href' => '/shop',
         'image' => '/assets/love-bunny.webp',
-        'image_alt' => 'Handmade white crochet Love Bunny holding a pastel pink heart',
+        'image_alt' => 'Handmade white crochet Heart Bunny holding a pastel pink heart',
         'is_h1' => true,
     ],
     [

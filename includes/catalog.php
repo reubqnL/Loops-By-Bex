@@ -21,7 +21,7 @@ function default_placeholder_products(): array
         [
             'id' => 1,
             'slug' => 'love-bunny',
-            'name' => 'Love Bunny',
+            'name' => 'Heart Bunny',
             'category' => 'Plushies',
             'short_description' => 'Soft chunky crochet bunny holding a pastel pink heart.',
             'description' => 'Handmade chunky chenille crochet bunny finished with floppy pink-trimmed ears and a soft pastel heart.',

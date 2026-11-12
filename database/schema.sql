@@ -83,7 +83,7 @@ DELETE FROM products WHERE slug LIKE 'placeholder-%';
 
 INSERT INTO products (slug, name, category, short_description, description, price_pence, image_path, side_image_path, stock_qty, is_featured_main, is_featured_sidebar, is_active, sort_order)
 VALUES
-    ('love-bunny', 'Love Bunny', 'Plushies', 'Soft chunky crochet bunny holding a pastel pink heart.', 'Handmade chunky chenille crochet bunny finished with floppy pink-trimmed ears and a soft pastel heart.', 1200, '/assets/love-bunny.webp', '', 1, 1, 0, 1, 1),
+    ('love-bunny', 'Heart Bunny', 'Plushies', 'Soft chunky crochet bunny holding a pastel pink heart.', 'Handmade chunky chenille crochet bunny finished with floppy pink-trimmed ears and a soft pastel heart.', 1200, '/assets/love-bunny.webp', '', 1, 1, 0, 1, 1),
     ('bee', 'Bee', 'Plushies', 'Fluffy blue and brown striped crochet bumblebee.', 'Handmade chunky crochet bee in pastel blue and chocolate brown stripes with soft cream wings and a stitched smile.', 700, '/assets/bee.webp', '/assets/bee-side-view.webp', 1, 1, 0, 1, 2),
     ('green-axolotl', 'Green Axolotl', 'Plushies', 'Mint green chunky crochet axolotl plushie.', 'Super soft mint and leaf-green handmade crochet axolotl with frilly side gills.', 800, '/assets/green-axolotl.webp', '/assets/green-axolotl-side-view.webp', 1, 1, 0, 1, 3),
     ('dinosaur', 'Dinosaur', 'Plushies', 'Pastel variegated long-neck crochet dinosaur.', 'Handmade long-neck dinosaur crocheted in pastel blue, lilac, pink, and white yarn.', 1000, '/assets/dinosaur.webp', '/assets/dinosaur-side-view.webp', 1, 1, 0, 1, 4),

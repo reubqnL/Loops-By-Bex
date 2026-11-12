@@ -14,7 +14,7 @@ $upcomingTopics = [
         'title' => 'From Yarn Stash to Finished Plushie',
         'blurb' => 'A peek inside Bex’s wool stash — choosing super-soft chunky chenille, pairing pastel shades, and bringing each character to life.',
         'image' => '/assets/love-bunny.webp',
-        'alt' => 'Handmade white crochet Love Bunny holding a pastel pink heart',
+        'alt' => 'Handmade white crochet Heart Bunny holding a pastel pink heart',
     ],
     [
         'tag' => 'Care Guide',
