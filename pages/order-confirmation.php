@@ -27,7 +27,7 @@ if ($sessionId !== '') {
             mark_order_paid_and_mark_products_sold($pdo, $orderNumber, $sessionId, $amountTotal);
 
             $orderStmt = $pdo->prepare(
-                'SELECT id, order_number, customer_name, customer_email, shipping_city, shipping_postcode, total_pence
+                'SELECT id, order_number, customer_name, customer_email, shipping_city, shipping_postcode, total_pence, payment_status
                  FROM orders
                  WHERE order_number = :order_number AND payment_reference = :session_id
                  LIMIT 1'
@@ -69,6 +69,7 @@ if ($sessionId !== '') {
                     'shipping_postcode' => (string) $orderRow['shipping_postcode'],
                     'items' => $formattedItems,
                     'total_pence' => (int) $orderRow['total_pence'],
+                    'payment_status' => (string) $orderRow['payment_status'],
                     'saved_in_db' => true,
                     'created_at' => time(),
                 ];
@@ -82,6 +83,7 @@ if ($sessionId !== '') {
         $pending = $_SESSION['pending_stripe_order'];
         if (($pending['stripe_session_id'] ?? '') === $sessionId) {
             $order = $pending;
+            $order['payment_status'] = (string) ($order['payment_status'] ?? 'stock_review');
             $order['created_at'] = time();
         }
     }
@@ -122,10 +124,16 @@ require_once __DIR__ . '/../partials/header.php';
                 Order Reference: <?php echo e($order['order_number']); ?>
             </span>
             <h1>Thank you, <?php echo e($order['customer_name']); ?>!</h1>
-            <p>
-                Your <?php echo e(format_gbp((int) $order['total_pence'])); ?> order has been recorded for
-                <strong><?php echo e($order['customer_email']); ?></strong>.
-            </p>
+            <?php if (($order['payment_status'] ?? '') === 'refund_pending'): ?>
+                <p>Your payment was received, but the order could not be completed because a one-off item may have overlapped with another checkout or the payment details need review. A full refund will be processed manually in Stripe. No action is needed from you.</p>
+            <?php elseif (($order['payment_status'] ?? '') === 'stock_review'): ?>
+                <p>Your payment was received and your order is being checked against one-off stock and payment details. If it cannot be fulfilled, it will be refunded in full.</p>
+            <?php else: ?>
+                <p>
+                    Your <?php echo e(format_gbp((int) $order['total_pence'])); ?> order has been recorded for
+                    <strong><?php echo e($order['customer_email']); ?></strong>.
+                </p>
+            <?php endif; ?>
 
             <div style="text-align: left; margin: 1.5rem 0; padding: 1.25rem; border-radius: 14px; background: #faf8fb; border: 1px solid var(--border-subtle);">
                 <h2 style="margin-top: 0;">Order Summary</h2>
@@ -136,7 +144,15 @@ require_once __DIR__ . '/../partials/header.php';
                     </div>
                 <?php endforeach; ?>
                 <div class="summary-row summary-total">
-                    <span>Total Paid</span>
+                    <span><?php
+                        if (($order['payment_status'] ?? '') === 'refund_pending') {
+                            echo 'Amount paid (refund pending)';
+                        } elseif (($order['payment_status'] ?? '') === 'stock_review') {
+                            echo 'Amount paid (stock review)';
+                        } else {
+                            echo 'Total paid';
+                        }
+                    ?></span>
                     <span><?php echo e(format_gbp((int) $order['total_pence'])); ?></span>
                 </div>
             </div>

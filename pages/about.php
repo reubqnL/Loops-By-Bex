@@ -14,7 +14,7 @@ require_once __DIR__ . '/../partials/header.php';
     <div class="site-container">
         <section class="product-detail-card about-detail-card">
             <div class="product-detail-media about-portrait-media">
-                <img src="/assets/bex.webp" alt="Bex, creator of Loops by Bex" width="450" height="600">
+                <img src="/assets/bex.webp" alt="Bex with a selection of handmade crochet creations" width="450" height="600">
             </div>
 
             <div class="product-detail-info">
@@ -30,7 +30,7 @@ require_once __DIR__ . '/../partials/header.php';
                     Through selling my handmade items, I have raised funds that will enable me to complete some voluntary work overseas when all my studies are complete. I am so grateful for the support of so many people who have helped me with my fundraising. With the launch of my online shop, I will continue to put some of my earnings towards my fundraising, but I will also be using it as a personal income.
                 </p>
                 <p>
-                    All the items available for sale can be seen and bought directly through my website&hellip; but once they have gone, they have gone! I will be regularly updating with new stock I have made so please keep an eye out. For the time being I am not committing to custom orders through my website as I need to maintain focus on my upcoming GCSEs. However, I do have a massive stash of wool so if there is something you would like in a different colour or if you have a crochet project you would really like, you are welcome to email through my website and if I have the capacity to undertake this I will let you know.
+                    All the items available for sale can be seen and bought directly through my website&hellip; but once they have gone, they have gone! I will be regularly updating the shop as I finish new stock, so please keep an eye out. I am not taking custom orders while I focus on my upcoming GCSEs.
                 </p>
                 <p>
                     Thank you so much for your support!<br>

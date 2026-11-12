@@ -183,6 +183,28 @@
   }
 }
 
+.admin-refund-panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #f0d58d;
+  border-radius: 12px;
+  background: #fff8e8;
+  color: #5d4a23;
+  font-size: 0.9rem;
+
+  p + p {
+    margin-top: 0.5rem;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+}
+
+.admin-refund-form {
+  margin-top: 0.75rem;
+}
+
 .admin-order-status {
   display: inline-flex;
   align-items: center;
@@ -200,7 +222,8 @@
     color: #216b45;
   }
 
-  &.is-pending {
+  &.is-pending,
+  &.is-refund-pending {
     background: #fff4db;
     color: #805600;
   }

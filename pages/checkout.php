@@ -200,6 +200,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                     'shipping_postcode' => $values['shipping_postcode'],
                     'items' => $summary['items'],
                     'total_pence' => $totalPence,
+                    'payment_status' => 'stock_review',
                     'saved_in_db' => $savedInDb,
                     'created_at' => time(),
                 ];

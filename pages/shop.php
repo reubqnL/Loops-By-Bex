@@ -7,10 +7,15 @@ $activeNav = 'shop';
 $pageStyles = ['/style/shop.css'];
 
 $allProducts = get_all_products($pdo);
-$categories = get_product_categories($allProducts);
+$shopProducts = array_values(array_filter($allProducts, static function (array $product): bool {
+    return (string) $product['slug'] !== 'octopus' || !product_is_sold($product);
+}));
+$categories = get_product_categories($shopProducts);
 $selectedCategory = trim((string) ($_GET['category'] ?? ''));
 $searchQuery = trim((string) ($_GET['q'] ?? ''));
-$filteredProducts = filter_products($allProducts, $searchQuery, $selectedCategory);
+$filteredProducts = filter_products($shopProducts, $searchQuery, $selectedCategory);
+$previouslySoldItems = get_previously_sold_items($pdo);
+$showPreviouslySold = $selectedCategory === '' && $searchQuery === '';
 
 $returnUrl = '/shop';
 $queryParts = [];
@@ -121,6 +126,32 @@ require_once __DIR__ . '/../partials/header.php';
                     </article>
                 <?php endforeach; ?>
             </div>
+        <?php endif; ?>
+
+        <?php if ($showPreviouslySold && !empty($previouslySoldItems)): ?>
+            <section class="previously-sold-section" aria-labelledby="previously-sold-title">
+                <div class="previously-sold-heading">
+                    <div>
+                        <h2 id="previously-sold-title">Previously Sold</h2>
+                        <p>These handmade pieces have found new homes.</p>
+                    </div>
+                </div>
+                <div class="previously-sold-grid">
+                    <?php foreach ($previouslySoldItems as $item): ?>
+                        <article class="previously-sold-card">
+                            <div class="previously-sold-media">
+                                <img src="<?php echo e($item['image_path']); ?>"
+                                     alt="<?php echo e($item['alt']); ?>"
+                                     width="900"
+                                     height="1200"
+                                     loading="lazy">
+                            </div>
+                            <h3><?php echo e($item['name']); ?></h3>
+                            <span class="previously-sold-badge">Sold</span>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
         <?php endif; ?>
     </div>
 </main>

@@ -56,7 +56,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                     'shipping_city' => $recent['shipping_city'],
                     'shipping_postcode' => $recent['shipping_postcode'],
                     'total_pence' => (int) $recent['total_pence'],
-                    'payment_status' => 'paid',
+                    'payment_status' => (string) ($recent['payment_status'] ?? 'paid'),
                     'created_at' => date('Y-m-d H:i:s', (int) ($recent['created_at'] ?? time())),
                 ];
             }
@@ -114,8 +114,11 @@ require_once __DIR__ . '/../partials/header.php';
                     </div>
                     <div class="summary-row">
                         <span>Payment Status</span>
-                        <span style="text-transform: capitalize; font-weight: 600;"><?php echo e($foundOrder['payment_status']); ?></span>
+                        <span style="text-transform: capitalize; font-weight: 600;"><?php echo e(str_replace('_', ' ', (string) $foundOrder['payment_status'])); ?></span>
                     </div>
+                    <?php if (($foundOrder['payment_status'] ?? '') === 'refund_pending'): ?>
+                        <p class="flash-banner flash-info" role="status">A full refund is being processed manually in Stripe because this paid order could not be completed against the recorded one-off stock or payment details.</p>
+                    <?php endif; ?>
                     <div class="summary-row summary-total">
                         <span>Order Total</span>
                         <span><?php echo e(format_gbp((int) $foundOrder['total_pence'])); ?></span>

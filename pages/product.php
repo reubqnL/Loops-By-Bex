@@ -101,9 +101,8 @@ require_once __DIR__ . '/../partials/header.php';
                             </div>
                         <?php endif; ?>
 
+                        <input type="hidden" name="quantity" value="1">
                         <div class="add-detail-controls">
-                            <label for="product-quantity" class="sr-only">Quantity for <?php echo e($product['name']); ?></label>
-                            <input type="number" id="product-quantity" name="quantity" value="1" min="1" max="<?php echo (int) min(CART_MAX_QTY_PER_ITEM, (int) $product['stock_qty']); ?>" aria-label="Quantity">
                             <button type="submit" class="btn btn-primary">Add to Cart &rarr;</button>
                         </div>
                     </form>

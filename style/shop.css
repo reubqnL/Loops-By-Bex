@@ -433,3 +433,69 @@
   text-decoration-thickness: 2px;
   vertical-align: middle;
 }
+
+.previously-sold-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.previously-sold-heading {
+  margin-bottom: 1.15rem;
+}
+.previously-sold-heading h2 {
+  margin-bottom: 0.2rem;
+  font-size: 1.45rem;
+}
+.previously-sold-heading p {
+  color: var(--text-secondary);
+}
+
+.previously-sold-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.1rem;
+}
+
+.previously-sold-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+.previously-sold-card h3 {
+  margin-top: 0.15rem;
+  font-size: 0.98rem;
+}
+
+.previously-sold-media {
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: #f8f2f7;
+}
+.previously-sold-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.previously-sold-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg-soft-pink);
+  color: var(--brand-pink-soft-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

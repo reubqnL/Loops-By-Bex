@@ -232,7 +232,7 @@ function verify_stripe_webhook_signature(string $payload, string $sigHeader, str
     return false;
 }
 
-// atomically mark a paid order and its product listings sold once
+// atomically claim stock and queue paid orders that cannot be fulfilled for a manual full refund
 function mark_order_paid_and_mark_products_sold(PDO $pdo, string $orderNumber, string $sessionId, int $amountTotal): bool
 {
     $pdo->beginTransaction();
@@ -251,26 +251,82 @@ function mark_order_paid_and_mark_products_sold(PDO $pdo, string $orderNumber, s
             'amount_total' => $amountTotal,
         ]);
 
-        if ($markPaid->rowCount() > 0) {
-            $orderIdStmt = $pdo->prepare('SELECT id FROM orders WHERE order_number = :order_number LIMIT 1');
-            $orderIdStmt->execute(['order_number' => $orderNumber]);
-            $orderId = (int) $orderIdStmt->fetchColumn();
+        if ($markPaid->rowCount() === 0) {
+            $existingOrderStmt = $pdo->prepare(
+                'SELECT payment_status
+                 FROM orders
+                 WHERE order_number = :order_number
+                 LIMIT 1'
+            );
+            $existingOrderStmt->execute(['order_number' => $orderNumber]);
+            $existingStatus = (string) $existingOrderStmt->fetchColumn();
 
-            if ($orderId > 0) {
-                $itemsStmt = $pdo->prepare('SELECT DISTINCT product_slug FROM order_items WHERE order_id = :order_id');
-                $itemsStmt->execute(['order_id' => $orderId]);
-                $soldItems = $itemsStmt->fetchAll() ?: [];
-                $markSold = $pdo->prepare('UPDATE products SET stock_qty = 0 WHERE slug = :slug');
+            if (in_array($existingStatus, ['pending', 'failed'], true)) {
+                $refundQueue = $pdo->prepare(
+                    "UPDATE orders
+                     SET payment_status = 'refund_pending', payment_reference = :session_id
+                     WHERE order_number = :order_number AND payment_status = :current_status"
+                );
+                $refundQueue->execute([
+                    'session_id' => $sessionId,
+                    'order_number' => $orderNumber,
+                    'current_status' => $existingStatus,
+                ]);
+            }
 
-                foreach ($soldItems as $sold) {
-                    $slug = (string) ($sold['product_slug'] ?? '');
-                    if ($slug !== '') {
-                        $markSold->execute(['slug' => $slug]);
-                    }
-                }
+            $pdo->commit();
+            return true;
+        }
+
+        $orderIdStmt = $pdo->prepare('SELECT id FROM orders WHERE order_number = :order_number LIMIT 1');
+        $orderIdStmt->execute(['order_number' => $orderNumber]);
+        $orderId = (int) $orderIdStmt->fetchColumn();
+
+        $itemsStmt = $pdo->prepare(
+            'SELECT product_slug, SUM(quantity) AS quantity
+             FROM order_items
+             WHERE order_id = :order_id
+             GROUP BY product_slug
+             ORDER BY product_slug ASC'
+        );
+        $itemsStmt->execute(['order_id' => $orderId]);
+        $items = $itemsStmt->fetchAll() ?: [];
+        $pdo->exec('SAVEPOINT lbb_stock_claims');
+
+        $claimStock = $pdo->prepare(
+            'UPDATE products SET stock_qty = 0 WHERE slug = :slug AND stock_qty > 0'
+        );
+        $stockConflict = $orderId <= 0 || empty($items);
+
+        foreach ($items as $item) {
+            if ($stockConflict) {
+                break;
+            }
+
+            $slug = (string) ($item['product_slug'] ?? '');
+            $quantity = (int) ($item['quantity'] ?? 0);
+            if ($slug === '' || $quantity !== 1) {
+                $stockConflict = true;
+                break;
+            }
+
+            $claimStock->execute(['slug' => $slug]);
+            if ($claimStock->rowCount() !== 1) {
+                $stockConflict = true;
             }
         }
 
+        if ($stockConflict) {
+            $pdo->exec('ROLLBACK TO SAVEPOINT lbb_stock_claims');
+            $refundQueue = $pdo->prepare(
+                "UPDATE orders
+                 SET payment_status = 'refund_pending'
+                 WHERE order_number = :order_number AND payment_status = 'paid'"
+            );
+            $refundQueue->execute(['order_number' => $orderNumber]);
+        }
+
+        $pdo->exec('RELEASE SAVEPOINT lbb_stock_claims');
         $pdo->commit();
         return true;
     } catch (PDOException $e) {

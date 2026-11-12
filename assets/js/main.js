@@ -532,5 +532,3 @@
     postcodeInput.addEventListener('change', refreshShipping);
     refreshShipping();
 })();
-
-

@@ -182,7 +182,7 @@ function default_placeholder_products(): array
             'price_pence' => 500,
             'image_path' => '/assets/octopus.webp',
             'side_image_path' => '',
-            'stock_qty' => 1,
+            'stock_qty' => 0,
             'is_featured_main' => 0,
             'is_featured_sidebar' => 0,
         ],
@@ -462,7 +462,7 @@ function default_placeholder_products(): array
             'description' => 'Handmade crochet nutcracker soldier with a tall black hat, yellow trim, a red jacket, blue trousers, and a white moustache.',
             'price_pence' => 1200,
             'image_path' => '/assets/christmas-nutcracker.webp',
-            'side_image_path' => '',
+            'side_image_path' => '/assets/christmas-nutcracker-side-view.webp',
             'stock_qty' => 1,
             'is_featured_main' => 0,
             'is_featured_sidebar' => 0,
@@ -484,6 +484,62 @@ function default_placeholder_products(): array
     ];
 }
 
+function ensure_sqlite_product_rows(PDO $pdo, array $defaultsBySlug): void
+{
+    if (strtolower((string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) !== 'sqlite') {
+        return;
+    }
+
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'Plushies',
+            short_description TEXT NOT NULL DEFAULT '',
+            description TEXT NOT NULL,
+            price_pence INTEGER NOT NULL DEFAULT 0,
+            image_path TEXT NOT NULL,
+            side_image_path TEXT NOT NULL DEFAULT '',
+            stock_qty INTEGER NOT NULL DEFAULT 1,
+            is_featured_main INTEGER NOT NULL DEFAULT 0,
+            is_featured_sidebar INTEGER NOT NULL DEFAULT 0,
+            is_active INTEGER NOT NULL DEFAULT 1,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )"
+    );
+
+    $insert = $pdo->prepare(
+        'INSERT OR IGNORE INTO products (
+            slug, name, category, short_description, description, price_pence,
+            image_path, side_image_path, stock_qty, is_featured_main,
+            is_featured_sidebar, is_active, sort_order
+        ) VALUES (
+            :slug, :name, :category, :short_description, :description, :price_pence,
+            :image_path, :side_image_path, :stock_qty, :is_featured_main,
+            :is_featured_sidebar, 1, :sort_order
+        )'
+    );
+
+    foreach ($defaultsBySlug as $product) {
+        $insert->execute([
+            'slug' => $product['slug'],
+            'name' => $product['name'],
+            'category' => $product['category'],
+            'short_description' => $product['short_description'],
+            'description' => $product['description'],
+            'price_pence' => (int) $product['price_pence'],
+            'image_path' => $product['image_path'],
+            'side_image_path' => $product['side_image_path'],
+            'stock_qty' => (int) $product['stock_qty'],
+            'is_featured_main' => (int) $product['is_featured_main'],
+            'is_featured_sidebar' => (int) $product['is_featured_sidebar'],
+            'sort_order' => (int) $product['id'],
+        ]);
+    }
+}
+
 function get_all_products(?PDO $pdo): array
 {
     $defaultsBySlug = [];
@@ -493,6 +549,7 @@ function get_all_products(?PDO $pdo): array
 
     if ($pdo instanceof PDO) {
         try {
+            ensure_sqlite_product_rows($pdo, $defaultsBySlug);
             $hiddenSlugs = hidden_product_slugs();
             $hiddenPlaceholders = implode(', ', array_fill(0, count($hiddenSlugs), '?'));
             $stmt = $pdo->prepare(
@@ -579,11 +636,40 @@ function product_is_sold(array $product): bool
 
 function product_sold_message(array $product): string
 {
-    if (!empty($product['maker_note'])) {
-        return 'This item has sold. Check back for future stock.';
+    return 'This item has sold. Check back for future stock.';
+}
+
+function get_previously_sold_items(?PDO $pdo): array
+{
+    $items = [
+        [
+            'name' => 'Giant Octopus',
+            'alt' => 'Orange crochet octopus with long pink-trimmed tentacles',
+            'image_path' => '/assets/previously-sold/giant-octopus.webp',
+        ],
+        [
+            'name' => 'Large Octopus',
+            'alt' => 'Pale grey crochet octopus with long tentacles',
+            'image_path' => '/assets/previously-sold/large-octopus.webp',
+        ],
+    ];
+
+    $miniOctopus = get_product_by_slug($pdo, 'octopus');
+    if ($miniOctopus === null || product_is_sold($miniOctopus)) {
+        $items[] = [
+            'name' => 'Mini Octopus',
+            'alt' => 'Small sage green crochet octopus',
+            'image_path' => '/assets/previously-sold/mini-octopus.webp',
+        ];
     }
 
-    return 'This piece has sold, but Bex can make another in this style. Look out for a restock.';
+    $items[] = [
+        'name' => 'Brown Bear Holding a Heart',
+        'alt' => 'Brown crochet bear holding a pink heart',
+        'image_path' => '/assets/previously-sold/brown-bear-heart.webp',
+    ];
+
+    return $items;
 }
 
 function filter_products(array $products, string $query = '', string $category = ''): array

@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS orders (
     currency CHAR(3) NOT NULL DEFAULT 'GBP',
     payment_provider VARCHAR(32) NOT NULL DEFAULT 'stripe_hosted',
     payment_reference VARCHAR(191) NOT NULL DEFAULT '',
-    payment_status ENUM('pending', 'paid', 'failed', 'refunded') NOT NULL DEFAULT 'pending',
+    payment_status ENUM('pending', 'paid', 'failed', 'refunded', 'refund_pending') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_orders_number (order_number),
     UNIQUE KEY uq_orders_idempotency (idempotency_key),
@@ -94,7 +94,7 @@ VALUES
     ('mushroom', 'Mushroom', 'Plushies', 'Terracotta spotted toadstool crochet plushie.', 'Handmade chunky crochet toadstool mushroom with a spotted rust-orange cap and smiling cream stem.', 700, '/assets/mushroom.webp', '', 1, 0, 1, 1, 9),
     ('bright-pink-christmas-loaf-cat', 'Bright Pink Christmas Loaf Cat', 'Christmas', 'Festive pink-and-white crochet loaf cat wearing a sparkly Santa hat.', 'Handmade chunky crochet loaf cat in cream and candy pink patches, topped with a sparkly red-and-white Santa hat.', 600, '/assets/bright-pink-christmas-loaf-cat.webp', '/assets/bright-pink-christmas-loaf-cat-side-view.webp', 1, 0, 1, 1, 10),
     ('mini-love-bunny', 'Mini Love Bunny', 'Plushies', 'Pocket-sized crochet bunny hugging a pastel heart.', 'Mini handmade chunky crochet bunny in soft white and blush pink with a little crochet heart.', 500, '/assets/mini-love-bunny.webp', '', 1, 0, 0, 1, 11),
-    ('octopus', 'Octopus', 'Plushies', 'Sage green chunky crochet mini octopus.', 'Cute handmade sage green crochet octopus with curly bobble tentacles and a stitched smile.', 500, '/assets/octopus.webp', '', 1, 0, 0, 1, 12),
+    ('octopus', 'Octopus', 'Plushies', 'Sage green chunky crochet mini octopus.', 'Cute handmade sage green crochet octopus with curly bobble tentacles and a stitched smile.', 500, '/assets/octopus.webp', '', 0, 0, 0, 1, 12),
     ('blue-penguin', 'Blue Penguin', 'Plushies', 'Chubby pastel blue crochet penguin.', 'Handmade round crochet penguin wearing a cosy pastel blue jumper.', 500, '/assets/blue-penguin.webp', '', 1, 0, 0, 1, 13),
     ('green-penguin', 'Green Penguin', 'Plushies', 'Chubby sage green crochet penguin.', 'Handmade round crochet penguin finished in soft sage and forest green yarn.', 500, '/assets/green-penguin.webp', '', 1, 0, 0, 1, 14),
     ('orange-penguin', 'Orange Penguin', 'Plushies', 'Chubby burnt-orange crochet penguin.', 'Handmade round crochet penguin crafted in warm terracotta orange yarn.', 500, '/assets/orange-penguin.webp', '', 1, 0, 0, 1, 15),
@@ -114,7 +114,7 @@ VALUES
     ('pink-scrunchie', 'Pink Scrunchie', 'Accessories', 'Fluffy pastel pink ruffled crochet scrunchie.', 'Super soft handmade ruffled crochet hair scrunchie in candyfloss pink.', 150, '/assets/pink-scrunchie.webp', '', 1, 0, 0, 1, 29),
     ('harry-potter-style-coffee-holder', 'Harry Potter Style Coffee Holder', 'Accessories', 'Reusable house-colours crochet takeaway cup sleeve.', 'Handmade reusable crochet coffee cup cosy striped in red, green, yellow, and blue with a stitched initial detail.', 100, '/assets/harry-potter-style-coffee-holder.webp', '', 1, 0, 0, 1, 30),
     ('cat-nip-filled-toy', 'Cat Nip Filled Toy', 'Pets', 'Handmade crochet catnip toy — available in different colours and styles.', 'Handmade crochet cat toy stuffed with aromatic catnip and a dangling tail ribbon for batting and play. Available in different colours and styles — select your preferred colour below.', 250, '/assets/cat-nip-filled-toy.webp', '', 1, 0, 0, 1, 36),
-    ('christmas-nutcracker', 'Christmas Nutcracker', 'Christmas', 'Festive crochet nutcracker with a tall black-and-yellow hat and red uniform.', 'Handmade crochet nutcracker soldier with a tall black hat, yellow trim, a red jacket, blue trousers, and a white moustache.', 1200, '/assets/christmas-nutcracker.webp', '', 1, 0, 0, 1, 37),
+    ('christmas-nutcracker', 'Christmas Nutcracker', 'Christmas', 'Festive crochet nutcracker with a tall black-and-yellow hat and red uniform.', 'Handmade crochet nutcracker soldier with a tall black hat, yellow trim, a red jacket, blue trousers, and a white moustache.', 1200, '/assets/christmas-nutcracker.webp', '/assets/christmas-nutcracker-side-view.webp', 1, 0, 0, 1, 37),
     ('winter-bunny', 'Winter Bunny', 'Christmas', 'Soft white crochet bunny in a pale-blue winter outfit with a snowflake detail.', 'A cuddly white handmade crochet bunny wearing a pale-blue winter outfit with a snowflake motif.', 1200, '/assets/winter-bunny.webp', '', 1, 0, 0, 1, 38)
 ON DUPLICATE KEY UPDATE
     name = VALUES(name),

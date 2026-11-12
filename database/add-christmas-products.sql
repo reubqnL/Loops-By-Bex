@@ -13,7 +13,7 @@ VALUES
         'Handmade crochet nutcracker soldier with a tall black hat, yellow trim, a red jacket, blue trousers, and a white moustache.',
         1200,
         '/assets/christmas-nutcracker.webp',
-        '',
+        '/assets/christmas-nutcracker-side-view.webp',
         1,
         0,
         0,

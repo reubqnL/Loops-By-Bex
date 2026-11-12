@@ -153,6 +153,19 @@ textarea:focus-visible {
   z-index: 100;
 }
 
+.development-banner {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #f1d79b;
+  background: #fff6df;
+  color: #5d4a23;
+  font-size: 0.88rem;
+  line-height: 1.45;
+
+  strong {
+    color: #453514;
+  }
+}
+
 .header-inner {
   min-height: 82px;
   display: grid;

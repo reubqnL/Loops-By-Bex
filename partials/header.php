@@ -149,6 +149,12 @@ $siteNavItems = [
     </div>
 </header>
 
+<div class="development-banner" role="status">
+    <div class="site-container">
+        <strong>Site still in development:</strong> If overlapping checkouts result in the same one-off item being sold twice, the duplicate order will be refunded in full. Refunds are processed manually.
+    </div>
+</div>
+
 <?php if ($flash !== null): ?>
     <?php
     $rawFlashType = (string) ($flash['type'] ?? 'info');

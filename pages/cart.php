@@ -46,7 +46,6 @@ require_once __DIR__ . '/../partials/header.php';
                         $selectedColor = (string) ($line['selected_color'] ?? '');
                         $colorOpts = isset($item['color_options']) && is_array($item['color_options']) ? $item['color_options'] : [];
                         $rowId = 'cart-row-' . $idx;
-                        $maxQty = (int) min(CART_MAX_QTY_PER_ITEM, max(1, (int) ($item['stock_qty'] ?? 1)));
                         ?>
                         <div class="cart-item-row">
                             <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="cart-thumb">
@@ -58,17 +57,19 @@ require_once __DIR__ . '/../partials/header.php';
                                     <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"><?php echo e($item['name']); ?></a>
                                 </h3>
                                 <p style="font-size: 0.88rem; color: var(--text-secondary);">
-                                    Unit price: <?php echo e(format_gbp((int) $line['unit_price_pence'])); ?>
+                                    Unit price: <?php echo e(format_gbp((int) $line['unit_price_pence'])); ?><br>
+                                    Quantity: 1
                                 </p>
                             </div>
 
-                            <form action="/cart-action.php" method="POST" class="cart-qty-form">
-                                <?php echo csrf_field(); ?>
-                                <input type="hidden" name="action" value="update">
-                                <input type="hidden" name="cart_key" value="<?php echo e($cartKey); ?>">
-                                <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
-                                <input type="hidden" name="return_to" value="/cart">
-                                <?php if (!empty($colorOpts)): ?>
+                            <?php if (!empty($colorOpts)): ?>
+                                <form action="/cart-action.php" method="POST" class="cart-qty-form">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="action" value="update">
+                                    <input type="hidden" name="cart_key" value="<?php echo e($cartKey); ?>">
+                                    <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
+                                    <input type="hidden" name="return_to" value="/cart">
+                                    <input type="hidden" name="quantity" value="1">
                                     <label for="color-<?php echo e($rowId); ?>" class="sr-only">Colour for <?php echo e($item['name']); ?></label>
                                     <select id="color-<?php echo e($rowId); ?>" name="color" class="cart-color-select color-native-select" data-color-select data-auto-submit="true">
                                         <?php foreach ($colorOpts as $colorOpt): ?>
@@ -77,11 +78,9 @@ require_once __DIR__ . '/../partials/header.php';
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
-                                <?php endif; ?>
-                                <label for="qty-<?php echo e($rowId); ?>" class="sr-only">Quantity for <?php echo e($item['name']); ?></label>
-                                <input type="number" id="qty-<?php echo e($rowId); ?>" name="quantity" value="<?php echo (int) $line['quantity']; ?>" min="0" max="<?php echo $maxQty; ?>">
-                                <button type="submit" class="btn btn-soft-pink btn-sm" aria-label="Update quantity for <?php echo e($item['name']); ?>">Update</button>
-                            </form>
+                                    <button type="submit" class="btn btn-soft-pink btn-sm" aria-label="Update colour for <?php echo e($item['name']); ?>">Update colour</button>
+                                </form>
+                            <?php endif; ?>
 
                             <div style="text-align: right;">
                                 <p style="font-weight: 700;"><?php echo e(format_gbp((int) $line['line_total_pence'])); ?></p>

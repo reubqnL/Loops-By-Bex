@@ -96,6 +96,12 @@ function cart_add_item(?PDO $pdo, string $slug, int $quantity = 1, string $color
     $cartKey = build_cart_key($product['slug'], $resolvedColor);
 
     $cart = get_raw_cart();
+    foreach ($cart as $existingKey => $existingQty) {
+        [$existingSlug] = parse_cart_key((string) $existingKey);
+        if ($existingSlug === (string) $product['slug'] && (string) $existingKey !== $cartKey) {
+            unset($cart[$existingKey]);
+        }
+    }
     $current = (int) ($cart[$cartKey] ?? 0);
     $maxAllowed = min(CART_MAX_QTY_PER_ITEM, (int) $product['stock_qty']);
     $desired = $current + max(1, $quantity);
@@ -137,6 +143,17 @@ function cart_set_quantity(?PDO $pdo, string $cartKey, int $quantity, string $ne
     $resolvedColor = resolve_product_color($product, $newColor !== '' ? $newColor : $existingColor);
     $targetKey = build_cart_key($product['slug'], $resolvedColor);
 
+    foreach ($cart as $existingKey => $existingQty) {
+        [$existingSlug] = parse_cart_key((string) $existingKey);
+        if (
+            $existingSlug === (string) $product['slug']
+            && (string) $existingKey !== $cartKey
+            && (string) $existingKey !== $targetKey
+        ) {
+            unset($cart[$existingKey]);
+        }
+    }
+
     $maxAllowed = min(CART_MAX_QTY_PER_ITEM, (int) $product['stock_qty']);
     if ($targetKey !== $cartKey) {
         unset($cart[$cartKey]);
@@ -169,6 +186,7 @@ function get_cart_summary(?PDO $pdo, ?string $shippingPostcode = null): array
 {
     $raw = get_raw_cart();
     $normalized = [];
+    $normalizedKeyBySlug = [];
 
     foreach ($raw as $rawKey => $qty) {
         $qty = (int) $qty;
@@ -184,7 +202,13 @@ function get_cart_summary(?PDO $pdo, ?string $shippingPostcode = null): array
 
         $resolvedColor = resolve_product_color($product, $color);
         $canonicalKey = build_cart_key($product['slug'], $resolvedColor);
-        $normalized[$canonicalKey] = ((int) ($normalized[$canonicalKey] ?? 0)) + $qty;
+        $productSlug = (string) $product['slug'];
+        $previousKey = $normalizedKeyBySlug[$productSlug] ?? null;
+        if (is_string($previousKey) && $previousKey !== $canonicalKey) {
+            unset($normalized[$previousKey]);
+        }
+        $normalized[$canonicalKey] = 1;
+        $normalizedKeyBySlug[$productSlug] = $canonicalKey;
     }
 
     $_SESSION['cart'] = $normalized;

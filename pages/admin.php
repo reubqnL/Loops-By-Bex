@@ -18,6 +18,7 @@ $adminConfigured = strlen($adminPassword) >= 16 || $adminPasswordIsLocalTest;
 $adminError = '';
 $ordersError = '';
 $restockError = '';
+$refundError = '';
 $now = time();
 
 if (
@@ -54,6 +55,27 @@ if (!$adminConfigured) {
         regenerate_session_safely();
         header('Location: /admin?logged_out=1', true, 303);
         exit();
+    } elseif ($action === 'mark_refunded' && $isAdmin) {
+        $orderId = (int) ($_POST['order_id'] ?? 0);
+        if ($orderId < 1 || !($pdo instanceof PDO)) {
+            $refundError = 'That refund could not be updated.';
+        } else {
+            try {
+                $refundStmt = $pdo->prepare(
+                    "UPDATE orders SET payment_status = 'refunded'
+                     WHERE id = :order_id AND payment_status = 'refund_pending'"
+                );
+                $refundStmt->execute(['order_id' => $orderId]);
+                if ($refundStmt->rowCount() > 0) {
+                    header('Location: /admin?refund_updated=1', true, 303);
+                    exit();
+                }
+                $refundError = 'That order is no longer waiting for a refund.';
+            } catch (PDOException $e) {
+                error_log('[LoopsByBex Admin] Refund status update failed: ' . $e->getMessage());
+                $refundError = 'The refund status could not be updated right now.';
+            }
+        }
     } elseif (($action === 'mark_sold' || $action === 'restock') && $isAdmin) {
         $slug = trim((string) ($_POST['slug'] ?? ''));
         if (!preg_match('/^[a-z0-9-]{1,120}$/', $slug)) {
@@ -111,6 +133,7 @@ if ($isAdmin) {
                     o.shipping_pence,
                     o.total_pence,
                     o.payment_status,
+                    o.payment_reference,
                     o.created_at,
                     i.id AS order_item_id,
                     i.product_name,
@@ -128,7 +151,9 @@ if ($isAdmin) {
                 $orderId = (int) $row['order_id'];
                 if (!isset($orders[$orderId])) {
                     $orders[$orderId] = [
+                        'id' => $orderId,
                         'order_number' => (string) $row['order_number'],
+                        'payment_reference' => (string) $row['payment_reference'],
                         'customer_name' => (string) $row['customer_name'],
                         'customer_email' => (string) $row['customer_email'],
                         'shipping_line1' => (string) $row['shipping_line1'],
@@ -221,6 +246,12 @@ require_once __DIR__ . '/../partials/header.php';
             <?php if (isset($_GET['inventory_updated'])): ?>
                 <div class="flash-banner flash-success" role="status">Product availability updated.</div>
             <?php endif; ?>
+            <?php if (isset($_GET['refund_updated'])): ?>
+                <div class="flash-banner flash-success" role="status">Refund status updated. The refund was processed in Stripe.</div>
+            <?php endif; ?>
+            <?php if ($refundError !== ''): ?>
+                <div class="flash-banner flash-error" role="alert"><?php echo e($refundError); ?></div>
+            <?php endif; ?>
             <?php if ($restockError !== ''): ?>
                 <div class="flash-banner flash-error" role="alert"><?php echo e($restockError); ?></div>
             <?php endif; ?>
@@ -236,9 +267,11 @@ require_once __DIR__ . '/../partials/header.php';
                 <?php foreach ($orders as $order): ?>
                     <?php
                     $status = strtolower((string) $order['payment_status']);
-                    if (!in_array($status, ['paid', 'pending', 'failed', 'refunded'], true)) {
+                    if (!in_array($status, ['paid', 'pending', 'failed', 'refunded', 'refund_pending'], true)) {
                         $status = 'unknown';
                     }
+                    $statusClass = str_replace('_', '-', $status);
+                    $displayStatus = $status === 'refund_pending' ? 'Refund pending' : ucfirst($status);
                     try {
                         $orderDate = (new DateTimeImmutable($order['created_at'], new DateTimeZone('UTC')))
                             ->setTimezone(new DateTimeZone('Europe/London'))
@@ -253,8 +286,20 @@ require_once __DIR__ . '/../partials/header.php';
                                 <h2><?php echo e($order['order_number']); ?></h2>
                                 <p><?php echo e($orderDate); ?></p>
                             </div>
-                            <span class="admin-order-status is-<?php echo e($status); ?>"><?php echo e(ucfirst($status)); ?></span>
+                            <span class="admin-order-status is-<?php echo e($statusClass); ?>"><?php echo e($displayStatus); ?></span>
                         </header>
+                        <?php if ($status === 'refund_pending'): ?>
+                            <div class="admin-refund-panel" role="alert">
+                                <p><strong>Manual full refund required.</strong> This paid order could not be completed against the recorded stock or payment details. Issue a full refund in Stripe, then update the order status here. The site does not send refunds to Stripe automatically.</p>
+                                <p>Stripe Checkout Session: <code><?php echo e($order['payment_reference']); ?></code></p>
+                                <form action="/admin" method="POST" class="admin-refund-form">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="action" value="mark_refunded">
+                                    <input type="hidden" name="order_id" value="<?php echo (int) $order['id']; ?>">
+                                    <button type="submit" class="btn btn-primary btn-sm">Mark refund complete</button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
                         <div class="admin-order-columns">
                             <section>
                                 <h3>Items</h3>
@@ -295,7 +340,7 @@ require_once __DIR__ . '/../partials/header.php';
 
             <section class="panel-card admin-inventory-panel">
                 <h2>Product availability</h2>
-                <p>Paid orders mark their items SOLD automatically. Use these controls to mark an existing item sold or relist one after Bex has made another.</p>
+                <p>Paid orders mark their items SOLD automatically. Use these controls to mark an item sold or restock one unit when it is ready.</p>
                 <?php if (empty($inventory)): ?>
                     <p>No active products were found.</p>
                 <?php else: ?>
