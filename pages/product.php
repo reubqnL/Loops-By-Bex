@@ -1,0 +1,174 @@
+<?php
+require_once __DIR__ . '/../includes/bootstrap.php';
+enforce_site_mode('storefront');
+
+$slug = trim((string) ($_GET['slug'] ?? ''));
+$product = get_product_by_slug($pdo, $slug);
+
+if ($product === null) {
+    http_response_code(404);
+    require __DIR__ . '/404.php';
+    exit();
+}
+
+$isSold = product_is_sold($product);
+$pageTitle = (string) $product['name'];
+$pageDescription = (string) ($product['short_description'] ?? $product['description']);
+$activeNav = 'shop';
+$pageStyles = ['/style/shop.css'];
+
+$sideImage = trim((string) ($product['side_image_path'] ?? ''));
+$activeView = (($_GET['view'] ?? '') === 'side' && $sideImage !== '') ? 'side' : 'front';
+$initialImage = $activeView === 'side' ? $sideImage : (string) $product['image_path'];
+$initialAlt = $activeView === 'side'
+    ? $product['name'] . ' — side view'
+    : (string) $product['name'];
+
+$related = array_values(array_filter(
+    get_all_products($pdo),
+    static fn(array $item): bool => $item['slug'] !== $product['slug']
+));
+$related = array_slice($related, 0, 4);
+
+require_once __DIR__ . '/../partials/header.php';
+?>
+
+<main class="site-main" id="main-content">
+    <div class="site-container">
+        <p style="margin-bottom: 1rem;">
+            <a href="/shop" class="text-arrow-link">&larr; Back to Shop</a>
+        </p>
+
+        <section class="product-detail-card">
+            <div class="product-detail-media-wrap">
+                <div class="product-detail-media<?php echo $isSold ? ' is-sold' : ''; ?>">
+                    <img src="<?php echo e($initialImage); ?>"
+                         alt="<?php echo e($initialAlt); ?>"
+                         width="600"
+                         height="600"
+                         data-product-main-img>
+                    <?php if ($isSold): ?><span class="product-sold-stamp">SOLD</span><?php endif; ?>
+                </div>
+
+                <?php if ($sideImage !== ''): ?>
+                    <div class="product-thumb-row" role="group" aria-label="Product photo views">
+                        <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"
+                           class="product-thumb-btn<?php echo $activeView === 'front' ? ' is-active' : ''; ?>"
+                           data-product-thumb
+                           data-src="<?php echo e($product['image_path']); ?>"
+                           data-alt="<?php echo e($product['name']); ?>"
+                           aria-pressed="<?php echo $activeView === 'front' ? 'true' : 'false'; ?>">
+                            <img src="<?php echo e($product['image_path']); ?>" alt="" width="44" height="44">
+                            <span>Front view</span>
+                        </a>
+                        <a href="/product?slug=<?php echo urlencode($product['slug']); ?>&amp;view=side"
+                           class="product-thumb-btn<?php echo $activeView === 'side' ? ' is-active' : ''; ?>"
+                           data-product-thumb
+                           data-src="<?php echo e($sideImage); ?>"
+                           data-alt="<?php echo e($product['name'] . ' — side view'); ?>"
+                           aria-pressed="<?php echo $activeView === 'side' ? 'true' : 'false'; ?>">
+                            <img src="<?php echo e($sideImage); ?>" alt="" width="44" height="44">
+                            <span>Side view</span>
+                        </a>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="product-detail-info">
+                <span class="badge-category"><?php echo e($product['category']); ?></span>
+                <h1><?php echo e($product['name']); ?><?php if ($isSold): ?> <span class="product-sold-inline">SOLD</span><?php endif; ?></h1>
+                <p class="detail-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
+                <?php if (!empty($product['maker_note'])): ?>
+                    <p class="product-maker-note"><?php echo e((string) $product['maker_note']); ?>.</p>
+                <?php endif; ?>
+                <p><?php echo e($product['description']); ?></p>
+
+                <?php if (!$isSold): ?>
+                    <form action="/cart-action.php" method="POST" class="add-detail-form">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="action" value="add">
+                        <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
+                        <input type="hidden" name="return_to" value="/cart">
+
+                        <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
+                            <div class="product-option-box">
+                                <label for="product-color">Colour <span class="option-note">(available in different colours &amp; styles)</span></label>
+                                <select id="product-color" name="color" class="color-native-select" data-color-select>
+                                    <?php foreach ($product['color_options'] as $colorOpt): ?>
+                                        <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        <?php endif; ?>
+
+                        <input type="hidden" name="quantity" value="1">
+                        <div class="add-detail-controls">
+                            <button type="submit" class="btn btn-primary">Add to Cart &rarr;</button>
+                        </div>
+                    </form>
+                <?php else: ?>
+                    <p class="product-sold-note"><?php echo e(product_sold_message($product)); ?></p>
+                <?php endif; ?>
+
+                <?php if (!empty($product['maker_note'])): ?>
+                    <p class="product-safety-note">
+                        <strong>Delivery:</strong> Free local delivery within 5 miles of Sheffield S6 (&pound;2.50 further across the UK).
+                    </p>
+                <?php else: ?>
+                    <p class="product-safety-note">
+                        <strong>Disclaimer:</strong> Small parts are used, so please bear this in mind when gifting to others as items are not recommended for under 4s. Free local delivery within 5 miles of S6 (&pound;2.50 further).
+                    </p>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <section class="section-new-arrivals" style="margin-top: 2.5rem;">
+            <div class="sidebar-card-header">
+                <h2>You Might Also Like</h2>
+                <a href="/shop" class="text-arrow-link">View All &rarr;</a>
+            </div>
+            <div class="product-grid-4">
+                <?php foreach ($related as $item): ?>
+                    <?php $itemIsSold = product_is_sold($item); ?>
+                    <article class="product-card<?php echo $itemIsSold ? ' is-sold' : ''; ?>">
+                        <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="product-card-media<?php echo $itemIsSold ? ' is-sold' : ''; ?>">
+                            <img src="<?php echo e($item['image_path']); ?>" alt="<?php echo e($item['name']); ?>" width="320" height="320" loading="lazy">
+                            <?php if ($itemIsSold): ?><span class="product-sold-stamp">SOLD</span><?php endif; ?>
+                        </a>
+                        <h3 class="product-card-title">
+                            <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"><?php echo e($item['name']); ?><?php echo $itemIsSold ? ' — SOLD' : ''; ?></a>
+                        </h3>
+                        <p class="product-card-price"><?php echo e(format_gbp((int) $item['price_pence'])); ?></p>
+                        <?php if (!empty($item['maker_note'])): ?>
+                            <p class="product-card-variant-note"><?php echo e((string) $item['maker_note']); ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
+                            <p class="product-card-variant-note">Available in different colours &amp; styles</p>
+                        <?php endif; ?>
+                        <?php if ($itemIsSold): ?>
+                            <p class="product-sold-note"><?php echo e(product_sold_message($item)); ?></p>
+                        <?php else: ?>
+                            <form action="/cart-action.php" method="POST" class="product-card-form">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
+                                <input type="hidden" name="return_to" value="/product?slug=<?php echo e($product['slug']); ?>">
+                                <?php if (!empty($item['color_options']) && is_array($item['color_options'])): ?>
+                                    <label for="related-color-<?php echo e($item['slug']); ?>" class="sr-only">Choose colour for <?php echo e($item['name']); ?></label>
+                                    <select id="related-color-<?php echo e($item['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
+                                        <?php foreach ($item['color_options'] as $colorOpt): ?>
+                                            <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    </div>
+</main>
+
+<?php require_once __DIR__ . '/../partials/footer.php'; ?>

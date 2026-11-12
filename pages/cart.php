@@ -1,0 +1,126 @@
+<?php
+require_once __DIR__ . '/../includes/bootstrap.php';
+enforce_site_mode('storefront');
+
+$pageTitle = 'Your Cart';
+$activeNav = 'cart';
+$pageStyles = ['/style/cart.css'];
+$summary = get_cart_summary($pdo);
+
+require_once __DIR__ . '/../partials/header.php';
+?>
+
+<main class="site-main" id="main-content">
+    <div class="site-container">
+        <div class="page-header-band">
+            <div>
+                <h1>Your Shopping Cart</h1>
+                <p><?php echo (int) $summary['item_count']; ?> item<?php echo $summary['item_count'] === 1 ? '' : 's'; ?> in your basket</p>
+            </div>
+            <a href="/shop" class="btn btn-outline-pink btn-sm">&larr; Continue Shopping</a>
+        </div>
+
+        <?php if (empty($summary['items'])): ?>
+            <div class="panel-card" style="text-align: center; padding: 3rem 1.5rem;">
+                <h2>Your cart is currently empty</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.35rem;">Explore handmade crochet plushies, scrunchies, and gifts in the shop.</p>
+                <a href="/shop" class="btn btn-primary">Browse Shop &rarr;</a>
+            </div>
+        <?php else: ?>
+            <div class="two-col-panel">
+                <section class="panel-card">
+                    <div class="sidebar-card-header">
+                        <h2>Items</h2>
+                        <form action="/cart-action.php" method="POST">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="action" value="clear">
+                            <input type="hidden" name="return_to" value="/cart">
+                            <button type="submit" class="text-arrow-link" style="background: none; border: none; cursor: pointer;">Clear cart</button>
+                        </form>
+                    </div>
+
+                    <?php foreach ($summary['items'] as $idx => $line): ?>
+                        <?php
+                        $item = $line['product'];
+                        $cartKey = (string) ($line['cart_key'] ?? $item['slug']);
+                        $selectedColor = (string) ($line['selected_color'] ?? '');
+                        $colorOpts = isset($item['color_options']) && is_array($item['color_options']) ? $item['color_options'] : [];
+                        $rowId = 'cart-row-' . $idx;
+                        ?>
+                        <div class="cart-item-row">
+                            <a href="/product?slug=<?php echo urlencode($item['slug']); ?>" class="cart-thumb">
+                                <img src="<?php echo e($item['image_path']); ?>" alt="<?php echo e($item['name']); ?>" width="80" height="80">
+                            </a>
+
+                            <div>
+                                <h3 style="font-size: 1rem;">
+                                    <a href="/product?slug=<?php echo urlencode($item['slug']); ?>"><?php echo e($item['name']); ?></a>
+                                </h3>
+                                <p style="font-size: 0.88rem; color: var(--text-secondary);">
+                                    Unit price: <?php echo e(format_gbp((int) $line['unit_price_pence'])); ?><br>
+                                    Quantity: 1
+                                </p>
+                            </div>
+
+                            <?php if (!empty($colorOpts)): ?>
+                                <form action="/cart-action.php" method="POST" class="cart-qty-form">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="action" value="update">
+                                    <input type="hidden" name="cart_key" value="<?php echo e($cartKey); ?>">
+                                    <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
+                                    <input type="hidden" name="return_to" value="/cart">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <label for="color-<?php echo e($rowId); ?>" class="sr-only">Colour for <?php echo e($item['name']); ?></label>
+                                    <select id="color-<?php echo e($rowId); ?>" name="color" class="cart-color-select color-native-select" data-color-select data-auto-submit="true">
+                                        <?php foreach ($colorOpts as $colorOpt): ?>
+                                            <option value="<?php echo e((string) $colorOpt); ?>"<?php echo strcasecmp((string) $colorOpt, $selectedColor) === 0 ? ' selected' : ''; ?>>
+                                                <?php echo e((string) $colorOpt); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="submit" class="btn btn-soft-pink btn-sm" aria-label="Update colour for <?php echo e($item['name']); ?>">Update colour</button>
+                                </form>
+                            <?php endif; ?>
+
+                            <div style="text-align: right;">
+                                <p style="font-weight: 700;"><?php echo e(format_gbp((int) $line['line_total_pence'])); ?></p>
+                                <form action="/cart-action.php" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="action" value="remove">
+                                    <input type="hidden" name="cart_key" value="<?php echo e($cartKey); ?>">
+                                    <input type="hidden" name="slug" value="<?php echo e($item['slug']); ?>">
+                                    <input type="hidden" name="return_to" value="/cart">
+                                    <button type="submit" class="text-arrow-link" style="background: none; border: none; cursor: pointer; font-size: 0.82rem;" aria-label="Remove <?php echo e($item['name']); ?> from cart">Remove</button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </section>
+
+                <aside class="panel-card">
+                    <h2>Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span><?php echo e(format_gbp((int) $summary['subtotal_pence'])); ?></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery</span>
+                        <span>Calculated at checkout</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Subtotal</span>
+                        <span><?php echo e(format_gbp((int) $summary['subtotal_pence'])); ?></span>
+                    </div>
+
+                    <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0.85rem 0 1.2rem;">
+                        <strong>Free local delivery</strong> within 5 miles of Sheffield S6, or <strong>&pound;2.50</strong> across the rest of the UK. Secure card checkout powered by Stripe.
+                    </p>
+
+                    <a href="/checkout" class="btn btn-primary" style="width: 100%;">Proceed to Checkout &rarr;</a>
+                </aside>
+            </div>
+        <?php endif; ?>
+    </div>
+</main>
+
+<?php require_once __DIR__ . '/../partials/footer.php'; ?>

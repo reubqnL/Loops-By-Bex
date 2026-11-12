@@ -1,0 +1,159 @@
+<?php
+require_once __DIR__ . '/../includes/bootstrap.php';
+enforce_site_mode('storefront');
+
+$pageTitle = 'Shop';
+$activeNav = 'shop';
+$pageStyles = ['/style/shop.css'];
+
+$allProducts = get_all_products($pdo);
+$shopProducts = array_values(array_filter($allProducts, static function (array $product): bool {
+    return (string) $product['slug'] !== 'octopus' || !product_is_sold($product);
+}));
+$categories = get_product_categories($shopProducts);
+$selectedCategory = trim((string) ($_GET['category'] ?? ''));
+$searchQuery = trim((string) ($_GET['q'] ?? ''));
+$filteredProducts = filter_products($shopProducts, $searchQuery, $selectedCategory);
+$previouslySoldItems = get_previously_sold_items($pdo);
+$showPreviouslySold = $selectedCategory === '' && $searchQuery === '';
+
+$returnUrl = '/shop';
+$queryParts = [];
+if ($selectedCategory !== '') {
+    $queryParts['category'] = $selectedCategory;
+}
+if ($searchQuery !== '') {
+    $queryParts['q'] = $searchQuery;
+}
+if (!empty($queryParts)) {
+    $returnUrl .= '?' . http_build_query($queryParts);
+}
+
+require_once __DIR__ . '/../partials/header.php';
+?>
+
+<main class="site-main" id="main-content">
+    <div class="site-container">
+        <div class="page-header-band">
+            <div>
+                <h1>Handmade Crochet Shop</h1>
+                <p>Handmade crochet plushies, festive makes, scrunchies, keyrings, and pet accessories.</p>
+            </div>
+            <a href="/cart" class="btn btn-soft-pink btn-sm">View Cart (<?php echo (int) get_cart_item_count(); ?>) &rarr;</a>
+        </div>
+
+        <div class="filter-bar">
+            <nav class="category-pills" aria-label="Product categories">
+                <a href="/shop<?php echo $searchQuery !== '' ? '?q=' . urlencode($searchQuery) : ''; ?>"
+                   class="category-pill<?php echo $selectedCategory === '' ? ' is-active' : ''; ?>"
+                   <?php echo $selectedCategory === '' ? 'aria-current="page"' : ''; ?>>
+                    All Items
+                </a>
+                <?php foreach ($categories as $cat): ?>
+                    <?php
+                    $catParams = ['category' => $cat];
+                    if ($searchQuery !== '') {
+                        $catParams['q'] = $searchQuery;
+                    }
+                    $isSelectedCat = strcasecmp($selectedCategory, $cat) === 0;
+                    ?>
+                    <a href="/shop?<?php echo e(http_build_query($catParams)); ?>"
+                       class="category-pill<?php echo $isSelectedCat ? ' is-active' : ''; ?>"
+                       <?php echo $isSelectedCat ? 'aria-current="page"' : ''; ?>>
+                        <?php echo e($cat); ?>
+                    </a>
+                <?php endforeach; ?>
+            </nav>
+
+            <?php if ($searchQuery !== '' || $selectedCategory !== ''): ?>
+                <a href="/shop" class="text-arrow-link">Clear filters &times;</a>
+            <?php endif; ?>
+        </div>
+
+        <?php if (empty($filteredProducts)): ?>
+            <div class="panel-card">
+                <h2>No matching crochet items found</h2>
+                <p>Try clearing your search filter or browsing all categories.</p>
+                <p style="margin-top: 1rem;">
+                    <a href="/shop" class="btn btn-primary btn-sm">Show All Products</a>
+                </p>
+            </div>
+        <?php else: ?>
+            <div class="shop-grid">
+                <?php foreach ($filteredProducts as $product): ?>
+                    <?php $isSold = product_is_sold($product); ?>
+                    <article class="product-card<?php echo $isSold ? ' is-sold' : ''; ?>">
+                        <a href="/product?slug=<?php echo urlencode($product['slug']); ?>" class="product-card-media<?php echo $isSold ? ' is-sold' : ''; ?>">
+                            <img src="<?php echo e($product['image_path']); ?>" alt="<?php echo e($product['name']); ?>" width="320" height="256" loading="lazy">
+                            <?php if ($isSold): ?><span class="product-sold-stamp">SOLD</span><?php endif; ?>
+                        </a>
+                        <h2 class="product-card-title">
+                            <a href="/product?slug=<?php echo urlencode($product['slug']); ?>"><?php echo e($product['name']); ?><?php echo $isSold ? ' — SOLD' : ''; ?></a>
+                        </h2>
+                        <p class="product-card-price"><?php echo e(format_gbp((int) $product['price_pence'])); ?></p>
+                        <?php if (!empty($product['maker_note'])): ?>
+                            <p class="product-card-variant-note"><?php echo e((string) $product['maker_note']); ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
+                            <p class="product-card-variant-note">Available in different colours &amp; styles</p>
+                        <?php endif; ?>
+                        <?php if ($isSold): ?>
+                            <p class="product-sold-note"><?php echo e(product_sold_message($product)); ?></p>
+                        <?php else: ?>
+                            <form action="/cart-action.php" method="POST" class="product-card-form">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="slug" value="<?php echo e($product['slug']); ?>">
+                                <input type="hidden" name="return_to" value="<?php echo e($returnUrl); ?>">
+                                <?php if (!empty($product['color_options']) && is_array($product['color_options'])): ?>
+                                    <label for="shop-color-<?php echo e($product['slug']); ?>" class="sr-only">Choose colour for <?php echo e($product['name']); ?></label>
+                                    <select id="shop-color-<?php echo e($product['slug']); ?>" name="color" class="card-color-select color-native-select" data-color-select>
+                                        <?php foreach ($product['color_options'] as $colorOpt): ?>
+                                            <option value="<?php echo e((string) $colorOpt); ?>"><?php echo e((string) $colorOpt); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
+                                <button type="submit" class="btn btn-primary" aria-label="Add <?php echo e($product['name']); ?> to cart">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <circle cx="9" cy="20" r="1.5"></circle>
+                                        <circle cx="18" cy="20" r="1.5"></circle>
+                                        <path d="M2.5 3h2.7l2.2 11.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.4L21.5 7H6.2"></path>
+                                    </svg>
+                                    <span>Add to Cart</span>
+                                </button>
+                            </form>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($showPreviouslySold && !empty($previouslySoldItems)): ?>
+            <section class="previously-sold-section" aria-labelledby="previously-sold-title">
+                <div class="previously-sold-heading">
+                    <div>
+                        <h2 id="previously-sold-title">Previously Sold</h2>
+                        <p>These handmade pieces have found new homes.</p>
+                    </div>
+                </div>
+                <div class="previously-sold-grid">
+                    <?php foreach ($previouslySoldItems as $item): ?>
+                        <article class="previously-sold-card">
+                            <div class="previously-sold-media">
+                                <img src="<?php echo e($item['image_path']); ?>"
+                                     alt="<?php echo e($item['alt']); ?>"
+                                     width="900"
+                                     height="1200"
+                                     loading="lazy">
+                            </div>
+                            <h3><?php echo e($item['name']); ?></h3>
+                            <span class="previously-sold-badge">Sold</span>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif; ?>
+    </div>
+</main>
+
+<?php require_once __DIR__ . '/../partials/footer.php'; ?>
