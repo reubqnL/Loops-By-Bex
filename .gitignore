@@ -4,6 +4,7 @@ vendor/
 .env
 *.env
 !.env.example
+/FETCH_HEAD
 includes/env.php
 .deploy-cache.json
 

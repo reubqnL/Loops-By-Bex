@@ -8,6 +8,23 @@ header('Referrer-Policy: no-referrer');
 
 $order = null;
 $sessionId = trim((string) ($_GET['session_id'] ?? ''));
+$pendingStripeOrder = $_SESSION['pending_stripe_order'] ?? null;
+$pendingSessionId = is_array($pendingStripeOrder)
+    ? (string) ($pendingStripeOrder['stripe_session_id'] ?? '')
+    : '';
+$pendingOrderNumber = is_array($pendingStripeOrder)
+    ? (string) ($pendingStripeOrder['order_number'] ?? '')
+    : '';
+$hasMatchingPendingSession = $sessionId !== ''
+    && $pendingSessionId !== ''
+    && hash_equals($pendingSessionId, $sessionId);
+
+// Stripe session IDs are bearer references. Bind confirmation to the browser session
+// that initiated checkout before making an API lookup or displaying order details.
+if ($sessionId !== '' && !$hasMatchingPendingSession) {
+    header('Location: /shop', true, 302);
+    exit();
+}
 
 if ($sessionId !== '') {
     $stripeSecret = env_val('STRIPE_SECRET_KEY', '');
@@ -19,6 +36,15 @@ if ($sessionId !== '') {
     }
 
     $orderNumber = trim((string) ($stripeSession['client_reference_id'] ?? ($stripeSession['metadata']['order_number'] ?? '')));
+    if (
+        $orderNumber === ''
+        || $pendingOrderNumber === ''
+        || !hash_equals($pendingOrderNumber, $orderNumber)
+    ) {
+        header('Location: /shop', true, 302);
+        exit();
+    }
+
     $amountTotal = isset($stripeSession['amount_total']) ? (int) $stripeSession['amount_total'] : -1;
     $currency = strtoupper((string) ($stripeSession['currency'] ?? ''));
 

@@ -9,6 +9,7 @@ $uriPath = rawurldecode((string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_U
 
 if (
     preg_match('#^/(config\.php|router\.php|includes(/|$)|partials(/|$)|database(/|$)|vendor(/|$)|storage(/|$)|\.|composer\.|LICENSE)#i', $uriPath)
+    || preg_match('#(?:^|/)(FETCH_HEAD|ORIG_HEAD|MERGE_HEAD|CHERRY_PICK_HEAD|REVERT_HEAD|COMMIT_EDITMSG|MERGE_MSG|SQUASH_MSG|BISECT_LOG|REBASE_HEAD)$#i', $uriPath)
     || preg_match('#\.(scss|map|sql|sqlite)$#i', $uriPath)
 ) {
     http_response_code(403);

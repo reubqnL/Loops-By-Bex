@@ -8,6 +8,7 @@ ErrorDocument 404 /pages/404.php
 # block direct access to .env, all hidden dotfiles (except .well-known for ssl), backend folders and source files
 RewriteRule (^|/)\.env - [F,L,NC]
 RewriteRule (^|/)\.(?!well-known(/|$)) - [F,L,NC]
+RewriteRule (^|/)(FETCH_HEAD|ORIG_HEAD|MERGE_HEAD|CHERRY_PICK_HEAD|REVERT_HEAD|COMMIT_EDITMSG|MERGE_MSG|SQUASH_MSG|BISECT_LOG|REBASE_HEAD)$ - [F,L,NC]
 RewriteRule ^(config\.php|router\.php|includes(/.*)?|partials(/.*)?|database(/.*)?|vendor(/.*)?|storage(/.*)?|composer\.(json|lock)|LICENSE|README\.md|assets/wireframe\.png)$ - [F,L,NC]
 RewriteRule \.(scss|map|sql|sqlite|sqlite3|db|log|env|bak|sh|md)$ - [F,L,NC]
 
@@ -55,7 +56,7 @@ RewriteRule ^([a-zA-Z0-9_-]+)$ pages/$1.php [L,QSA]
     </IfModule>
 </Files>
 
-<FilesMatch "^(\.env.*|\.git.*|composer\.(json|lock)|LICENSE|README\.md)$">
+<FilesMatch "^(\.env.*|\.git.*|composer\.(json|lock)|LICENSE|README\.md|FETCH_HEAD|ORIG_HEAD|MERGE_HEAD|CHERRY_PICK_HEAD|REVERT_HEAD|COMMIT_EDITMSG|MERGE_MSG|SQUASH_MSG|BISECT_LOG|REBASE_HEAD)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>

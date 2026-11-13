@@ -72,6 +72,19 @@ EXCLUDED_EXACT = {
     "LICENSE",
 }
 
+GIT_ADMIN_FILES = {
+    "FETCH_HEAD",
+    "ORIG_HEAD",
+    "MERGE_HEAD",
+    "CHERRY_PICK_HEAD",
+    "REVERT_HEAD",
+    "COMMIT_EDITMSG",
+    "MERGE_MSG",
+    "SQUASH_MSG",
+    "BISECT_LOG",
+    "REBASE_HEAD",
+}
+
 EXCLUDED_PATTERNS = (
     ".env.*",
     "*.env",
@@ -95,7 +108,7 @@ def is_excluded(rel_posix: str) -> bool:
     if rel_posix in EXCLUDED_EXACT:
         return True
     base = posixpath.basename(rel_posix)
-    if base == ".DS_Store" or base.startswith(".env"):
+    if base in GIT_ADMIN_FILES or base == ".DS_Store" or base.startswith(".env"):
         return True
     for pat in EXCLUDED_PATTERNS:
         if fnmatch.fnmatch(rel_posix, pat) or fnmatch.fnmatch(base, pat):
@@ -112,13 +125,36 @@ def sha256_file(path: str) -> str:
 
 
 cache_path = ".deploy-cache.json"
+target_identity = "\0".join((host.lower(), user, configured_port or "auto", posixpath.normpath(remote_root)))
+target_cache_key = hashlib.sha256(target_identity.encode("utf-8")).hexdigest()
 cache = {}
-if os.path.isfile(cache_path) and not force_all:
+cache_store = {"format_version": 2, "targets": {}}
+if os.path.isfile(cache_path):
     try:
         with open(cache_path, "r", encoding="utf-8") as cf:
-            cache = json.load(cf)
+            saved_cache = json.load(cf)
+        if (
+            isinstance(saved_cache, dict)
+            and saved_cache.get("format_version") == 2
+            and isinstance(saved_cache.get("targets"), dict)
+        ):
+            cache_store = saved_cache
     except Exception:
-        cache = {}
+        pass
+
+if not force_all:
+    target_cache = cache_store["targets"].get(target_cache_key, {})
+    if isinstance(target_cache, dict):
+        cache = target_cache
+
+
+def save_cache() -> None:
+    targets = cache_store.setdefault("targets", {})
+    targets[target_cache_key] = cache
+    cache_store["format_version"] = 2
+    with open(cache_path, "w", encoding="utf-8") as cf:
+        json.dump(cache_store, cf, indent=2, sort_keys=True)
+
 
 all_files = []
 to_upload = []
@@ -135,11 +171,16 @@ for root, dirs, files in os.walk("."):
         if force_all or cache.get(rel) != digest:
             to_upload.append((rel, full, digest))
 
+if remote_root in ("", "."):
+    print("warning: DEPLOY_PATH is '.', relative to the SSH/FTP account's starting directory; confirm this is the live site's document root or set DEPLOY_PATH.")
+if not force_all and all_files and not cache:
+    print("notice: no per-target deploy cache is available; all local production files will be checked for this target.")
+
 if dry_run:
     print(f"dry-run: {len(to_upload)} of {len(all_files)} production files queued for {user}@{host} ({remote_root}):")
     for rel, _, _ in to_upload:
         print(f"  + {rel}")
-    print("\n(automatically blocked: .env*, includes/env.php, .git/, style/*.scss, router.php, deploy.sh, database/)")
+    print("\n(automatically blocked: Git metadata files including FETCH_HEAD, .env*, includes/env.php, .git/, style/*.scss, router.php, deploy.sh, database/)")
     sys.exit(0)
 
 if not to_upload:
@@ -175,8 +216,19 @@ if chosen_port is None:
 if chosen_port == 22:
     target_dir = remote_root if remote_root == "/" else f"{remote_root.rstrip('/')}/"
     cmd = [
-        "rsync", "-avz",
+        "rsync", "-avz", "--checksum",
         "--exclude=.git/",
+        "--exclude=FETCH_HEAD",
+        "--exclude=ORIG_HEAD",
+        "--exclude=MERGE_HEAD",
+        "--exclude=CHERRY_PICK_HEAD",
+        "--exclude=REVERT_HEAD",
+        "--exclude=COMMIT_EDITMSG",
+        "--exclude=MERGE_MSG",
+        "--exclude=SQUASH_MSG",
+        "--exclude=BISECT_LOG",
+        "--exclude=REBASE_HEAD",
+        "--exclude=Unselected files/",
         "--exclude=.gitattributes",
         "--exclude=.gitignore",
         "--exclude=.idea/",
@@ -184,6 +236,7 @@ if chosen_port == 22:
         "--exclude=.DS_Store",
         "--exclude=.env",
         "--exclude=.env.*",
+        "--exclude=.env*",
         "--exclude=*.env",
         "--exclude=.deploy-cache.json",
         "--exclude=includes/env.php",
@@ -205,6 +258,14 @@ if chosen_port == 22:
         "--exclude=composer.lock",
         "--exclude=LICENSE",
         "--exclude=*.md",
+        "--exclude=*.scss",
+        "--exclude=*.map",
+        "--exclude=*.sql",
+        "--exclude=*.sqlite",
+        "--exclude=*.sqlite3",
+        "--exclude=*.db",
+        "--exclude=*.log",
+        "--exclude=*.sh",
         "./",
         f"{user}@{host}:{target_dir}",
     ]
@@ -213,8 +274,7 @@ if chosen_port == 22:
     if rc == 0:
         for rel, _, digest in all_files:
             cache[rel] = digest
-        with open(cache_path, "w", encoding="utf-8") as cf:
-            json.dump(cache, cf, indent=2, sort_keys=True)
+        save_cache()
         print("deploy complete!")
     sys.exit(rc)
 
@@ -273,8 +333,7 @@ for idx, (rel, full, digest) in enumerate(to_upload, 1):
     with open(full, "rb") as fh:
         ftp.storbinary(f"STOR {rel}", fh)
     cache[rel] = digest
-    with open(cache_path, "w", encoding="utf-8") as cf:
-        json.dump(cache, cf, indent=2, sort_keys=True)
+    save_cache()
     print(f"  [{idx}/{len(to_upload)}] {rel}")
 
 try:
