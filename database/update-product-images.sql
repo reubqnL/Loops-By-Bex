@@ -37,6 +37,7 @@ SET
         WHEN 'cat-nip-filled-toy' THEN '/assets/cat-nip-filled-toy.webp'
         WHEN 'christmas-nutcracker' THEN '/assets/christmas-nutcracker.webp'
         WHEN 'winter-bunny' THEN '/assets/winter-bunny.webp'
+        WHEN 'pop-it-mushroom' THEN '/assets/pop-it-mushroom.webp'
         ELSE image_path
     END,
     side_image_path = CASE slug
@@ -73,6 +74,7 @@ SET
         WHEN 'cat-nip-filled-toy' THEN ''
         WHEN 'christmas-nutcracker' THEN '/assets/christmas-nutcracker-side-view.webp'
         WHEN 'winter-bunny' THEN ''
+        WHEN 'pop-it-mushroom' THEN ''
         ELSE side_image_path
     END
 WHERE slug IN (
@@ -108,5 +110,6 @@ WHERE slug IN (
     'harry-potter-style-coffee-holder',
     'cat-nip-filled-toy',
     'christmas-nutcracker',
-    'winter-bunny'
+    'winter-bunny',
+    'pop-it-mushroom'
 );
