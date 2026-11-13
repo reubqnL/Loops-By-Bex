@@ -481,6 +481,20 @@ function default_placeholder_products(): array
             'is_featured_main' => 0,
             'is_featured_sidebar' => 0,
         ],
+        [
+            'id' => 39,
+            'slug' => 'pop-it-mushroom',
+            'name' => 'Pop it Mushroom',
+            'category' => 'Accessories',
+            'short_description' => 'Handmade crochet mushroom keyring charm.',
+            'description' => 'A cute handmade crochet mushroom charm finished with a metal keyring loop.',
+            'price_pence' => 400,
+            'image_path' => '/assets/pop-it-mushroom.webp',
+            'side_image_path' => '',
+            'stock_qty' => 1,
+            'is_featured_main' => 0,
+            'is_featured_sidebar' => 0,
+        ],
     ];
 }
 

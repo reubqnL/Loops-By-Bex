@@ -256,6 +256,9 @@ function check_rate_limit(?PDO $pdo, string $action, int $maxAttempts, int $wind
             return $attempts <= $maxAttempts;
         } catch (PDOException $e) {
             error_log('rate limit db fallback: ' . $e->getMessage());
+            if ($action === 'admin_login') {
+                return false;
+            }
         }
     }
 

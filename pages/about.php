@@ -33,6 +33,9 @@ require_once __DIR__ . '/../partials/header.php';
                     All the items available for sale can be seen and bought directly through my website&hellip; but once they have gone, they have gone! I will be regularly updating the shop as I finish new stock, so please keep an eye out. I am not taking custom orders while I focus on my upcoming GCSEs.
                 </p>
                 <p>
+                    I have a massive stash of wool, so I always have lots of ideas for new creations! If you have any questions about my work or anything in the shop, please get in touch &mdash; I&rsquo;d love to hear from you.
+                </p>
+                <p>
                     Thank you so much for your support!<br>
                     <strong>Bex.</strong>
                 </p>

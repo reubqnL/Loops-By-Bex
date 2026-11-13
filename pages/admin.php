@@ -39,8 +39,10 @@ if (!$adminConfigured) {
 
     if ($action === 'login') {
         $submittedPassword = (string) ($_POST['password'] ?? '');
-        if (!check_rate_limit($pdo, 'admin_login', 5, 900)) {
-            $adminError = 'Too many sign-in attempts. Please wait 15 minutes and try again.';
+        if (!($pdo instanceof PDO)) {
+            $adminError = 'Owner sign-in is temporarily unavailable. Please try again later.';
+        } elseif (!check_rate_limit($pdo, 'admin_login', 5, 900)) {
+            $adminError = 'Too many sign-in attempts or sign-in is temporarily unavailable. Please wait 15 minutes and try again.';
         } elseif ($submittedPassword === '' || !hash_equals($adminPassword, $submittedPassword)) {
             $adminError = 'The password was not recognised.';
         } else {
